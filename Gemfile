@@ -59,3 +59,6 @@ gem 'devise'
 
 
 gem 'rails_layout', git: 'https://github.com/RailsApps/rails_layout.git'
+gem 'bootstrap-sass'
+gem "factory_girl_rails", :group => [:development, :test]
+gem "email_spec", :group => [:development, :test]

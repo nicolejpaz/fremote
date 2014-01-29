@@ -1,0 +1,4 @@
+= form_for :remote, :url => { :controller => 'remotes', :action => 'create' } do |f|
+	= label_tag :video_label, "Video URL", :class => 'header_label' 
+	= text_field_tag :video_url, "", :class => 'form-control', placeholder: 'Paste video URL here...'
+	= submit_tag "Create Remote", class: "btn btn-success"

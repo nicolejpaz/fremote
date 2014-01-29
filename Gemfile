@@ -14,7 +14,7 @@ gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.0.0'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-# gem 'therubyracer', platforms: :ruby
+gem 'therubyracer', platforms: :ruby
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
@@ -62,3 +62,4 @@ gem 'rails_layout', git: 'https://github.com/RailsApps/rails_layout.git'
 gem 'bootstrap-sass'
 gem "factory_girl_rails", :group => [:development, :test]
 gem "email_spec", :group => [:development, :test]
+gem 'video_info', git: 'https://github.com/thibaudgg/video_info.git'

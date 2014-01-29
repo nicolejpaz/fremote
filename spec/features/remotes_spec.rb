@@ -2,11 +2,11 @@ require 'spec_helper'
 
 feature 'Create Remote' do
   let!(:user) { FactoryGirl.create :user }
-  let!(:fremote) { FactoryGirl.create :fremote }
+  let!(:remote) { FactoryGirl.create :remote }
 
-  before(:each) do
-    web_login user
-  end
+  # before(:each) do
+  #   web_login user
+  # end
 
   context 'on host main page' do
 
@@ -34,3 +34,4 @@ feature 'Create Remote' do
   end
 
 end
+

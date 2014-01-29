@@ -18,4 +18,30 @@ class Remote
   validates_presence_of :status
   validates_presence_of :duration
   validates_presence_of :start_at
+
+  def populate(url)
+    unless url == ""
+
+      begin
+        video = VideoInfo.new(url)
+        self.video_id = video.video_id
+        self.provider = video.provider
+        self.title = video.title
+        self.description = video.description
+        self.duration = video.duration
+        self.thumbnail_small = video.thumbnail_small
+        self.thumbnail_medium = video.thumbnail_medium
+        self.thumbnail_large = video.thumbnail_large
+        self.embed_url = video.embed_url
+        self.embed_code = video.embed_code
+        self.date = video.date
+        return { message: "Congratulations!", status: :success }
+      rescue
+        return { message: "Invalid URL", status: :danger }
+      end
+    else
+      return { message: "URL can't be blank", status: :danger }
+    end
+  end
+
 end

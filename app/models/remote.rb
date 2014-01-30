@@ -20,6 +20,10 @@ class Remote
   validates_presence_of :duration
   validates_presence_of :start_at
 
+  def to_param
+    remote_id
+  end
+
   def populate(url)
     unless url == ""
 

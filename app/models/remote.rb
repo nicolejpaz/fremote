@@ -1,6 +1,7 @@
 class Remote
   include Mongoid::Document
   field :video_id, type: String
+  field :remote_id, type: String
   field :provider, type: String
   field :title, type: String
   field :description, type: String
@@ -35,6 +36,7 @@ class Remote
         self.embed_url = video.embed_url
         self.embed_code = video.embed_code
         self.date = video.date
+        self.remote_id = Digest::MD5.hexdigest(video_id + DateTime.now.to_s + DateTime.now.nsec.to_s).slice(0..9)
         return { message: "Congratulations!", status: :success }
       rescue
         return { message: "Invalid URL", status: :danger }

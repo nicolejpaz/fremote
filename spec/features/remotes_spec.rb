@@ -8,7 +8,7 @@ feature 'Create Remote' do
   #   web_login user
   # end
 
-  context 'on host main page' do
+  context 'on landing page' do
 
     it 'can create remote with valid input' do
       visit root_path

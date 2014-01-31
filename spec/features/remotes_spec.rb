@@ -35,3 +35,23 @@ feature 'Create Remote' do
 
 end
 
+
+
+feature 'View Remote' do
+  let!(:user) { FactoryGirl.create :user }
+  let!(:remote) { FactoryGirl.create :remote }
+
+  context 'on show page' do
+
+    it 'can show correct youtube video' do
+      visit root_path
+      fill_in 'video_url',   with: "http://www.youtube.com/embed/mZqGqE0D0n4"
+      expect{click_button "Create Remote"}.to change{Remote.all.count}.by(1)
+      node = page.find('body')
+      node.native.inner_html.should include('mZqGqE0D0n4')
+    end
+
+  end
+
+end
+

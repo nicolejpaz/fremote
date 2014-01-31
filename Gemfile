@@ -63,3 +63,4 @@ gem 'bootstrap-sass'
 gem "factory_girl_rails", :group => [:development, :test]
 gem "email_spec", :group => [:development, :test]
 gem 'video_info', git: 'https://github.com/thibaudgg/video_info.git'
+gem 'guard-rails'

@@ -1,10 +1,8 @@
 class RemotesController < ApplicationController
-	# include ActionController::Live
+	include ActionController::Live
 
 	def new
 		@remote = Remote.new
-		ActiveSupport::Notifications.instrument('render', extra: :information) do
-		end
 	end
 
 	def create
@@ -26,21 +24,29 @@ class RemotesController < ApplicationController
 		@remote.start_at = params["start_at"].to_i
 		@remote.save
 
+		ActiveSupport::Notifications.instrument(@remote.remote_id, extra: :information) do
+		end
     render json: {rammstein:"mein land"}.to_json
 	end
 
 	def show
 		@remote = Remote.find_by({remote_id: params[:id]})
 		@remote_json = @remote.to_json
-		# response.headers['Content-Type'] = 'text/event-stream'
-		# ActiveSupport::Notifications.subscribe("render") do |*args|
-		# 		response.stream.write "hello world\n"
-		# end
-		# sleep
-		# rescue IOError
-  # 			p "Client Disconnected"
-		# ensure
-		# 	response.stream.close
+	end
+
+	def stream
+		response.headers['Content-Type'] = 'text/event-stream'
+		ActiveSupport::Notifications.subscribe(params[:id]) do |name, start, finish, id, payload|
+				response.stream.write "event: #{params[:id]}\n"
+				response.stream.write "data: hello world \n\n"
+		end
+		sleep(30.seconds)
+		rescue IOError
+  			p "Client Disconnected"
+		ensure
+			p "client disconnected"
+			ActiveSupport::Notifications.unsubscribe(params[:id])
+			response.stream.close
 	end
 
 end

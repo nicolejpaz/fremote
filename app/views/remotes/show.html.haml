@@ -9,6 +9,10 @@
 				dataType: 'JSON'
 			})
 		}
+		var source = new EventSource(Remote.remote_id + '/stream')
+		source.addEventListener(Remote.remote_id, function(e){
+			alert(e.data)
+		})
 
 = javascript_include_tag "providers/youtube"
 

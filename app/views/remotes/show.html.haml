@@ -1,5 +1,15 @@
-= javascript_tag do
-	var videoID = '#{@remote.video_id}'
+%script{:type=>"text/javascript"}
+	:plain
+		var Remote = #{@remote.to_json}
+		Remote.update = function(){
+			$.ajax({
+				type: 'POST',
+				url: '/remotes/' + Remote.remote_id,
+				data: { _method:'PUT', status: Remote.status, start_at: Remote.start_at },
+				dataType: 'JSON'
+			})
+		}
+
 = javascript_include_tag "providers/youtube"
 
 #player

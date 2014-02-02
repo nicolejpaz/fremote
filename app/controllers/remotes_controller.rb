@@ -11,11 +11,13 @@ class RemotesController < ApplicationController
 
 		@remote.save
 		flash[:success] = dispatch[:message]
+
 		if dispatch[:status] == :success
 			redirect_to remote_path(@remote.remote_id)
 		else
 			redirect_to root_path
 		end
+	
 	end
 
 	def update
@@ -39,7 +41,7 @@ class RemotesController < ApplicationController
 				response.stream.write "event: #{params[:id]}\n"
 				response.stream.write "data: #{payload} \n\n"
 		end
-		sleep 10.minutes
+		sleep 25.seconds
 		rescue IOError
   			p "Client Disconnected"
  			# ActiveSupport::Notifications.unsubscribe(params[:id])

@@ -39,7 +39,7 @@ class RemotesController < ApplicationController
 				response.stream.write "event: #{params[:id]}\n"
 				response.stream.write "data: #{payload} \n\n"
 		end
-		sleep
+		sleep 10.minutes
 		rescue IOError
   			p "Client Disconnected"
  			# ActiveSupport::Notifications.unsubscribe(params[:id])

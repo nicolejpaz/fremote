@@ -21,11 +21,11 @@
 			console.log(data)
 			
 				player.seekTo(data.start_at, true)
-				if (data.status == -1 && data.status != player.getPlayerState()){
+				if (data.status == -1){
 					player.stopVideo()
-				} else if (data.status == 1 && data.status != player.getPlayerState()){
+				} else if (data.status == 1){
 					player.playVideo()
-				} else if (data.status == 2 && data.status != player.getPlayerState()){
+				} else if (data.status == 2){
 					player.pauseVideo()
 				}
 			

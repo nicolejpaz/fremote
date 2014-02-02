@@ -5,17 +5,36 @@
 			$.ajax({
 				type: 'POST',
 				url: '/remotes/' + Remote.remote_id,
-				data: { _method:'PUT', status: Remote.status, start_at: Remote.start_at },
+				data: { _method:'PUT', status: Remote.status, start_at: Remote.start_at, sender: user },
 				dataType: 'JSON'
 			})
 		}
-		var source = new EventSource(Remote.remote_id + '/stream')
-		source.addEventListener(Remote.remote_id, function(e){
-			alert(e.data)
-		})
 
-= javascript_include_tag "providers/youtube"
+		var source = new EventSource(Remote.remote_id + '/stream')
+
+		var user = Math.floor((Math.random()*10000)+1)
+
+		var send = true
+
+		source.addEventListener(Remote.remote_id, function(event){
+			var data = JSON.parse(event.data)
+			console.log(data)
+			
+				player.seekTo(data.start_at, true)
+				if (data.status == -1 && data.status != player.getPlayerState()){
+					player.stopVideo()
+				} else if (data.status == 1 && data.status != player.getPlayerState()){
+					player.playVideo()
+				} else if (data.status == 2 && data.status != player.getPlayerState()){
+					player.pauseVideo()
+				}
+			
+		})
 
 #player
 
 #remote
+	= button_tag "Play", id: "play"
+	= button_tag "Pause", id: "pause"
+
+= javascript_include_tag "providers/youtube"

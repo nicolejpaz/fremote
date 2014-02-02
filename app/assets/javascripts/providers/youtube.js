@@ -29,12 +29,25 @@ function onPlayerReady(event) {
 var done = false
 
 function onPlayerStateChange(event) {
-	Remote.status = player.getPlayerState()
-	Remote.start_at = player.getCurrentTime()
-	Remote.update()
+	// if (send == true){
+	// 	Remote.status = player.getPlayerState()
+	// 	Remote.start_at = player.getCurrentTime()
+	// 	Remote.update()
+	// }
 }
 
 function stopVideo() {
 	player.stopVideo()
 }
 
+$('#play').on('click', function(){
+	Remote.status = 1
+	Remote.start_at = player.getCurrentTime()
+	Remote.update()
+})
+
+$('#pause').on('click', function(){
+	Remote.status = 2
+	Remote.start_at = player.getCurrentTime()
+	Remote.update()
+})

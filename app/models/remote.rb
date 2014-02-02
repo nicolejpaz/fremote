@@ -13,7 +13,7 @@ class Remote
   field :embed_url, type: String
   field :embed_code, type: String
   field :date, type: DateTime
-  field :status, type: String, default: -1
+  field :status, type: Integer, default: -1
   field :start_at, type: Integer, default: 0
   validates_presence_of :video_id
   validates_presence_of :provider

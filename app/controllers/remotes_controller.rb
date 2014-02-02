@@ -41,16 +41,13 @@ class RemotesController < ApplicationController
 				response.stream.write "event: #{params[:id]}\n"
 				response.stream.write "data: #{payload} \n\n"
 		end
-		# sleep 25.seconds
 		loop do
 			sleep 10.seconds
 			response.stream.write "event: heartbeat\n"
 		end
 		rescue IOError
   			p "Client Disconnected"
- 			# ActiveSupport::Notifications.unsubscribe(params[:id])
 		ensure
-			p "client disconnected"
 			ActiveSupport::Notifications.unsubscribe(params[:id])
 			response.stream.close
 	end

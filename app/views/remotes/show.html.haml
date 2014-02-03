@@ -40,5 +40,6 @@
 #remote
 	= button_tag "Play", id: "play"
 	= button_tag "Pause", id: "pause"
+	%input{ id: "slider", max: "10", min: "0", name: "points", type: "range", step: "1", value:"0"}/
 
 = javascript_include_tag "providers/youtube"

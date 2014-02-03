@@ -25,21 +25,25 @@
 					player.stopVideo()
 				} else if (data.status == 1){
 					player.playVideo()
+					document.getElementById("control_icon").className = ""
+					document.getElementById("control_icon").className = "glyphicon glyphicon-pause"
 				} else if (data.status == 2){
 					player.pauseVideo()
+					document.getElementById("control_icon").className = ""
+					document.getElementById("control_icon").className = "glyphicon glyphicon-play"
 				}
 			
 		})
 
-		source.addEventListener('heartbeat', function(event){
-			console.log('thump thump') 
-		})
 
 #player
-
+		
 #remote
-	= button_tag "Play", id: "play"
-	= button_tag "Pause", id: "pause"
-	%input{ id: "slider", max: "10", min: "0", name: "points", type: "range", step: "1", value:"0"}/
+	.input-group.input-group-sm
+		%span.input-group-btn
+			%button.btn.btn-default{type: "button", id: "play"}
+				%span#control_icon.glyphicon.glyphicon-play
+		%div.form-control{}
+			%input{ id: "slider", max: "10", min: "0", name: "points", type: "range", step: "1", value:"0", class: "", style:"height: 5px; width: 100%;"}/
 
 = javascript_include_tag "providers/youtube"

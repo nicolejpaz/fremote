@@ -10,7 +10,7 @@ function onYouTubeIframeAPIReady() {
 		height: '390',
 		width: '640',
 		videoId: Remote.video_id,
-		playerVars: { 'autoplay': 0, 'start': Remote.start_time },
+		playerVars: { 'autoplay': 0, 'start': Remote.start_time, 'controls': 0 },
 		events: {
 			'onReady': onPlayerReady,
 			'onStateChange': onPlayerStateChange
@@ -50,7 +50,12 @@ function stopVideo() {
 
 $('#play').on('click', function(){
 	console.log('play button clicked')
-	Remote.status = 1
+	var currentStatus = player.getPlayerState()
+	if (currentStatus !=1){
+		Remote.status = 1
+	} else if (currentStatus == 1){
+		Remote.status = 2
+	}
 	Remote.start_at = player.getCurrentTime()
 	Remote.update()
 })

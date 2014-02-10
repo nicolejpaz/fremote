@@ -56,7 +56,7 @@ class RemotesController < ApplicationController
 	def stream
     response.headers['Content-Type'] = 'text/event-stream'
 
-    # Subscribe the current user to message notifications.
+    # Subscribe the current user to notifications.
     ActiveSupport::Notifications.subscribe(params[:id]) do |name, start, finish, id, payload|
     		@event = params[:id]
         @payload = payload
@@ -82,7 +82,7 @@ class RemotesController < ApplicationController
     # Make sure that the stream is closed and the current process is unsubscribed.
     rescue IOError
     ensure
-      ActiveSupport::Notifications.unsubscribe('messages')
+      ActiveSupport::Notifications.unsubscribe(params[:id])
       response.stream.close
       p "stream closed"
 	end

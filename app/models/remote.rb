@@ -44,7 +44,7 @@ class Remote
         self.embed_code = video.embed_code
         self.date = video.date
         self.remote_id = Digest::MD5.hexdigest(video_id + DateTime.now.to_s + DateTime.now.nsec.to_s).slice(0..9)
-        return { message: "Congratulations!", status: :success }
+        return { message: "Congratulations!  Use the controls below the video to remote control it.", status: :success }
       rescue
         return { message: "Invalid URL", status: :danger }
       end

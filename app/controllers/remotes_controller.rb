@@ -16,11 +16,12 @@ class RemotesController < ApplicationController
 		dispatch = @remote.populate(params[:video_url])
 		@remote.admin_only = params[:admin_only] || false
 		@remote.save
-		flash[:success] = dispatch[:message]
 
 		if dispatch[:status] == :success
+			flash[:notice] = dispatch[:message]
 			redirect_to remote_path(@remote.remote_id)
 		else
+			flash[:alert] = dispatch[:message]
 			redirect_to root_path
 		end
 

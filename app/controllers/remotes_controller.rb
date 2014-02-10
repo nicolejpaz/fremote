@@ -6,9 +6,15 @@ class RemotesController < ApplicationController
 	end
 
 	def create
-		@remote = Remote.new
-		dispatch = @remote.populate(params[:video_url])
+		@user = current_user if current_user
+		if @user
+			@remote = @user.remotes.new
+		else
+			@remote = Remote.new
+		end
 
+		dispatch = @remote.populate(params[:video_url])
+		@remote.admin_only = params[:admin_only] || false
 		@remote.save
 		flash[:success] = dispatch[:message]
 
@@ -21,17 +27,29 @@ class RemotesController < ApplicationController
 	end
 
 	def update
-		@remote = Remote.find_by({remote_id: params[:id]})
-		@remote.status = params["status"]
-		@remote.start_at = params["start_at"].to_i
-		@remote.save
-		ActiveSupport::Notifications.instrument(@remote.remote_id, {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.updated_at, 'sender' => params['sender'] }.to_json) do
+		@user = current_user if current_user
+		if @user
+			@remote = @user.remotes.find_by({remote_id: params[:id]})
+		else
+			@remote = Remote.find_by({remote_id: params[:id]})
 		end
-    render json: {rammstein:"mein land"}.to_json
+		if @remote.admin_only == true && @user || @remote.admin_only == false
+			@remote.status = params["status"]
+			@remote.start_at = params["start_at"].to_i
+			@remote.save
+			ActiveSupport::Notifications.instrument(@remote.remote_id, {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.updated_at, 'sender' => params['sender'] }.to_json) do
+			end
+		end
+    render json: {}.to_json
 	end
 
 	def show
-		@remote = Remote.find_by({remote_id: params[:id]})
+		@user = current_user if current_user
+		# if @user
+		# 	@remote = @user.remotes.find_by({remote_id: params[:id]})
+		# else
+			@remote = Remote.find_by({remote_id: params[:id]})
+		# end
 		@remote_json = @remote.to_json
 	end
 

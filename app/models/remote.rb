@@ -15,11 +15,13 @@ class Remote
   field :date, type: DateTime
   field :status, type: Integer, default: -1
   field :start_at, type: Integer, default: 0
+  field :admin_only, type: Boolean, default: false
   validates_presence_of :video_id
   validates_presence_of :provider
   validates_presence_of :status
   validates_presence_of :duration
   validates_presence_of :start_at
+  belongs_to :user
 
   def to_param
     remote_id

@@ -35,15 +35,15 @@
 			
 		})
 
-
-#player
-		
-#remote
-	.input-group.input-group-sm
-		%span.input-group-btn
-			%button.btn.btn-default{type: "button", id: "play"}
-				%span#control_icon.glyphicon.glyphicon-play
-		%div.form-control{}
-			%input{ id: "slider", max: "10", min: "0", name: "points", type: "range", step: "1", value:"0", class: "", style:"height: 5px; width: 100%;"}/
+#center_column
+	#player
+			
+	#remote
+		.input-group.input-group-sm
+			%span.input-group-btn
+				%button.btn.btn-default{type: "button", id: "play"}
+					%span#control_icon.glyphicon.glyphicon-play
+			%div.form-control{}
+				%input{ id: "slider", max: "10", min: "0", name: "points", type: "range", step: "1", value:"0", class: "", style:"height: 5px; width: 100%;"}/
 
 = javascript_include_tag "providers/youtube"

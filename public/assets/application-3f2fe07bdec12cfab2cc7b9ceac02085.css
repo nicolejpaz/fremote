@@ -3303,7 +3303,7 @@ main > .navbar-collapse {
           background-image: none; } }
   @media (min-width: 768px) {
     .navbar-nav {
-      float: left;
+      float: right;
       margin: 0; }
       .navbar-nav > li {
         float: left; }

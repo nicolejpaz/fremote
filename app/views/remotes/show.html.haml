@@ -19,7 +19,7 @@
 		source.addEventListener(Remote.remote_id, function(event){
 			var data = JSON.parse(event.data)
 			console.log(data)
-			
+
 				player.seekTo(data.start_at, true)
 				if (data.status == -1){
 					player.stopVideo()
@@ -32,12 +32,12 @@
 					document.getElementById("control_icon").className = ""
 					document.getElementById("control_icon").className = "glyphicon glyphicon-play"
 				}
-			
+
 		})
 
 #center_column
 	#player
-			
+
 	#remote
 		.input-group.input-group-sm
 			%span.input-group-btn

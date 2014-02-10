@@ -19,7 +19,7 @@ Fremote::Application.configure do
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
-  config.action_dispatch.best_standards_support = :builtin﻿
+  # config.action_dispatch.best_standards_support = :builtin﻿
   # Debug mode disables concatenation and preprocessing of assets.
   # This option may cause significant delays in view rendering with a large
   # number of complex assets.

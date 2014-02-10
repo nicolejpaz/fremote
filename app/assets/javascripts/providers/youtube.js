@@ -40,7 +40,8 @@ function onPlayerReady(event) {
 var done = false
 
 function onPlayerStateChange(event) {
-
+	var playerSlider = document.getElementById('slider')
+	playerSlider.setAttribute("max", player.getDuration())
 }
 
 function stopVideo() {

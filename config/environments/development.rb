@@ -7,7 +7,7 @@ Fremote::Application.configure do
   config.cache_classes = true
 
   # Do not eager load code on boot.
-  config.eager_load = true
+  config.eager_load = false
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true

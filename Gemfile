@@ -50,7 +50,6 @@ gem 'mongoid-rspec', :group => [:test, :development]
 
 group :test do
   gem 'database_cleaner'
-  gem "factory_girl_rails"
   gem "capybara"
 end
 
@@ -66,3 +65,4 @@ gem 'video_info', git: 'https://github.com/thibaudgg/video_info.git'
 gem 'guard-rails'
 # gem 'goliath'
 gem 'rails_12factor', group: :production
+gem 'videojs_rails'

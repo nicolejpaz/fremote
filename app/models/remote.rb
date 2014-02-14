@@ -10,18 +10,19 @@ class Remote
   field :thumbnail_small, type: String
   field :thumbnail_medium, type: String
   field :thumbnail_large, type: String
+  field :url, type: String
   field :embed_url, type: String
   field :embed_code, type: String
   field :date, type: DateTime
   field :status, type: Integer, default: -1
   field :start_at, type: Integer, default: 0
   field :admin_only, type: Boolean, default: false
+  belongs_to :user
   validates_presence_of :video_id
   validates_presence_of :provider
   validates_presence_of :status
   validates_presence_of :duration
   validates_presence_of :start_at
-  belongs_to :user
 
   def to_param
     remote_id
@@ -40,6 +41,7 @@ class Remote
         self.thumbnail_small = video.thumbnail_small
         self.thumbnail_medium = video.thumbnail_medium
         self.thumbnail_large = video.thumbnail_large
+        self.url = video.url
         self.embed_url = video.embed_url
         self.embed_code = video.embed_code
         self.date = video.date

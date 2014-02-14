@@ -1,12 +1,16 @@
 #center_column
-	= form_for :remote, :url => { :controller => 'remotes', :action => 'create' } do |f|
-		= label_tag :video_label, "Video URL", :class => 'header_label'
-		.input-group
-			= text_field_tag :video_url, "", :class => 'form-control', placeholder: 'Paste video URL here...'
-			- if current_user
-				%span.input-group-addon
-					Restrict Control
-					\#{check_box_tag 'admin_only'}
-			%span.input-group-btn
-				= submit_tag "Create Remote", class: "btn btn-success"
+	.jumbotron
+		%h2 Make a remote to control videos for other users!
+		%p Just submit a YouTube/Vimeo link in the form below.
+		%p
+		= form_for :remote, :url => { :controller => 'remotes', :action => 'create' } do |f|
+			/ = label_tag :video_label, "Video URL", :class => 'header_label'
+			.input-group
+				= text_field_tag :video_url, "", :class => 'form-control', placeholder: 'Paste video URL here...'
+				- if current_user
+					%span.input-group-addon
+						Restrict Control
+						\#{check_box_tag 'admin_only'}
+				%span.input-group-btn
+					= submit_tag "Create Remote", class: "btn btn-success"
 				

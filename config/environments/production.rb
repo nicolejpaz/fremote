@@ -79,5 +79,6 @@ Fremote::Application.configure do
   config.log_formatter = ::Logger::Formatter.new
 
   config.assets.precompile += %w( .svg .eot .woff .ttf )
+  config.assets.precompile += %w( video-js.swf vjs.eot vjs.svg vjs.ttf vjs.woff )
 
 end

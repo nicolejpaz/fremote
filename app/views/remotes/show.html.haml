@@ -1,3 +1,33 @@
+#center_column
+	%video#player.video-js.vjs-default-skin{controls: "", "data-setup" => "{ \"techOrder\": [\"#{@remote.provider.downcase}\"], \"src\": \"#{@remote.url}\" }", height: "360", preload: "auto", src: "", width: "640"}
+
+	#owner_controls.panel.panel-default
+	.panel-heading
+		%h3.panel-title Remote Owner Controls
+	.panel-body
+		= form_for(@remote, remote: true, :html => {:id => "owner_controls_form"}) do |f|
+			.checkbox
+			%label
+				Owner-only Controls #{f.check_box :admin_only}
+
+
+
+	:javascript
+		videojs('player', { "techOrder": ["#{@remote.provider.downcase}"], "src": "#{@remote.url}" }).ready(function() {
+			this.one('ended', function() {
+					this.src('#{@remote.url}')
+			})
+
+			$('#owner_controls_form').on('click', function(){
+				$('#owner_controls_form').submit()
+			})
+
+		})
+
+
+
+
+
 %script{:type=>"text/javascript"}
 	:plain
 		var Remote = #{@remote.to_json}
@@ -16,34 +46,41 @@
 
 		var send = true
 
-		source.addEventListener(Remote.remote_id, function(event){
-			var data = JSON.parse(event.data)
-			console.log(data)
+		var player = videojs('player')
 
-				player.seekTo(data.start_at, true)
-				if (data.status == -1){
-					player.stopVideo()
-				} else if (data.status == 1){
-					player.playVideo()
-					document.getElementById("control_icon").className = ""
-					document.getElementById("control_icon").className = "glyphicon glyphicon-pause"
-				} else if (data.status == 2){
-					player.pauseVideo()
-					document.getElementById("control_icon").className = ""
-					document.getElementById("control_icon").className = "glyphicon glyphicon-play"
-				}
+		player.ready(function(){
+
+			player.on('play', function(){
+				Remote.status = 1
+				Remote.start_at = player.currentTime()
+				Remote.update()
+			})
+
+			player.on('pause', function(){
+				Remote.status = 2
+				Remote.start_at = player.currentTime()
+				Remote.update()
+			})
+
+			player.on('timeupdate', function(){
+				player.loadingSpinner.hide()
+			})
 
 		})
 
-#center_column
-	#player
+		source.addEventListener(Remote.remote_id, function(event){
+			var data = JSON.parse(event.data)
+			console.log(data)
+			console.log(data.sender == user)
+			if (data.sender != user){
+				player.currentTime(data.start_at)
+				if (data.status == -1){
+					player.pause()
+				} else if (data.status == 1){
+					player.play()
+				} else if (data.status == 2){
+					player.pause()
+				}
+			}
 
-	#remote
-		.input-group.input-group-sm
-			%span.input-group-btn
-				%button.btn.btn-default{type: "button", id: "play"}
-					%span#control_icon.glyphicon.glyphicon-play
-			%div.form-control{}
-				%input{ id: "slider", max: "10", min: "0", name: "points", type: "range", step: "1", value:"0", class: "", style:"height: 5px; width: 100%;"}/
-
-= javascript_include_tag "providers/youtube"
+		})

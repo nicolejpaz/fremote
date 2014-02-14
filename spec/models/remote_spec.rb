@@ -24,7 +24,7 @@ describe Remote do
 
 	it "should be given a status by default" do
 		@testvideo = Remote.new(@attr)
-		@testvideo.status.should eq("stopped")
+		@testvideo.status.should eq(-1)
 	end
 
 	it "have a video id attribute" do

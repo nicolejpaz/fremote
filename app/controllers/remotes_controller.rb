@@ -55,7 +55,15 @@ class RemotesController < ApplicationController
 
 		@remote = Remote.find_by({remote_id: params[:id]})
 
+		@remote_owner = @user if @user == @remote.user
+
 		@remote_json = @remote.to_json
+	end
+
+	def chat
+			@remote = Remote.find_by({remote_id: params[:id]})
+			ActiveSupport::Notifications.instrument("chat:#{@remote.remote_id}", {'message' => "hello world" }.to_json)
+			render nothing: true
 	end
 
 

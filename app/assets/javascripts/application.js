@@ -15,7 +15,8 @@
 //= require turbolinks
 //= require bootstrap
 //= require video
+// require video.dev
 //= require vjs.youtube
 //= require vjs.vimeo
-//= require remotes
+// require remotes
 // require_directory .

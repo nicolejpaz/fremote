@@ -3,6 +3,7 @@ Fremote::Application.routes.draw do
   root 'remotes#new'
   resources :remotes, only: [:create,:show,:update]
   get 'remotes/:id/stream' => 'streams#stream'
+  post 'remotes/:id/chat' => 'remotes#chat'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

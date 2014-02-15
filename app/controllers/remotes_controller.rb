@@ -29,17 +29,21 @@ class RemotesController < ApplicationController
 	end
 
 	def update
-    @remote_owner = @user if @user == Remote.find_by({remote_id: params[:id]}).user
+		@user = current_user if current_user
+		@remote = Remote.find_by({remote_id: params[:id]})
+    @remote_owner = @user if @user == @remote.user
+    @owner_only = false
 
-		if @remote_owner
-			@remote = @remote_owner.remotes.find_by({remote_id: params[:id]})
-		else
-			@remote = Remote.find_by({remote_id: params[:id]})
-		end
+    if params.has_key?("remote")
+    	if params["remote"].has_key?("admin_only")
+    		@owner_only = to_boolean(params["remote"]["admin_only"])
+    	end
+    end
+
 		if @remote.admin_only == false || @remote_owner
 			@remote.status = params["status"] if params["status"]
 			@remote.start_at = params["start_at"].to_i if params["start_at"]
-      @remote.admin_only = to_boolean(params["remote"]["admin_only"]) if params["admin_only"]
+      @remote.admin_only = @owner_only
 			@remote.save
 			ActiveSupport::Notifications.instrument(@remote.remote_id, {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.updated_at, 'sender' => params['sender'] }.to_json)
 		end

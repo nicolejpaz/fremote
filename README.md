@@ -12,7 +12,5 @@ fremote.herokuapp.com
 Issues
 ===============
 
-Owner-only permissions currently don't work properly.
-
 Needs more tests!
 

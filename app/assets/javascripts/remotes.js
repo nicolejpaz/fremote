@@ -36,7 +36,7 @@
 
     })
 
-    source.addEventListener(Remote.remote_id, function(event){
+    source.addEventListener("control:" + Remote.remote_id, function(event){
       var data = JSON.parse(event.data)
       console.log(data)
       console.log(data.sender == user)

@@ -1,17 +1,22 @@
 #center_column
 	%video#player.video-js.vjs-default-skin{controls: "", "data-setup" => "{ \"techOrder\": [\"#{@remote.provider.downcase}\"], \"src\": \"#{@remote.url}\" }", height: "360", preload: "auto", src: "", width: "640"}
 
-	- if current_user
-		#owner_controls.panel.panel-default
+	#owner_controls.panel.panel-default
 		.panel-heading
-			%h3.panel-title Remote Owner Controls
+			%h3.panel-title #{@remote.title}
 		.panel-body
-			= form_for(@remote, remote: true, :html => {:id => "owner_controls_form"}) do |f|
-				.checkbox
-				%label
-					Owner-only Controls #{f.check_box :admin_only}
+			%p
+				#{@remote.description}
 
-
+	- if current_user
+		#owner_controls.panel.panel-success
+			.panel-heading
+				%h3.panel-title Remote Owner Controls
+			.panel-body
+				= form_for(@remote, remote: true, :html => {:id => "owner_controls_form"}) do |f|
+					.checkbox
+						%label
+							Owner-only Controls #{f.check_box :admin_only}
 
 	:javascript
 		videojs('player', { "techOrder": ["#{@remote.provider.downcase}"], "src": "#{@remote.url}" }).ready(function() {
@@ -24,10 +29,6 @@
 			})
 
 		})
-
-
-
-
 
 %script{:type=>"text/javascript"}
 	:plain

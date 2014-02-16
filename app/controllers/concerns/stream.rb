@@ -1,5 +1,5 @@
 module Stream
-  def self.start(notifications, heartrate = 20, response)
+  def self.start(notifications, heartrate = 20, response, remote)
     response.headers['Content-Type'] = 'text/event-stream'
 
     queue = []
@@ -21,6 +21,10 @@ module Stream
           response.stream.write "event: heartbeat\n"
         end
     end
+
+    # Send the most recent remote information first.
+    ActiveSupport::Notifications.instrument("control:#{remote.remote_id}", {'start_at' => remote.start_at, 'status' => remote.status, 'updated_at' => remote.updated_at, 'sender_id' => 'fremote_server' }.to_json)
+
 
     # Loop until the heartbeat dies.
     while heartbeat.alive?

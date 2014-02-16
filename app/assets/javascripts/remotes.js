@@ -3,7 +3,7 @@
       $.ajax({
         type: 'POST',
         url: '/remotes/' + Remote.remote_id,
-        data: { _method:'PUT', status: Remote.status, start_at: Remote.start_at, sender: user },
+        data: { _method:'PUT', status: Remote.status, start_at: Remote.start_at, sender_id: user },
         dataType: 'JSON'
       })
     }
@@ -39,15 +39,15 @@
     source.addEventListener("control:" + Remote.remote_id, function(event){
       var data = JSON.parse(event.data)
       console.log(data)
-      console.log(data.sender == user)
+      console.log(data.sender_id == user)
       if (data.sender != user){
-        player.currentTime(data.start_at)
-        if (data.status == -1){
+        if (data.status == -1 || data.status == 2){
+          player.currentTime(data.start_at)
           player.pause()
         } else if (data.status == 1){
+          var offset = (Date.now() - Date.parse(data.updated_at)) / 1000
+          player.currentTime(data.start_at + offset)
           player.play()
-        } else if (data.status == 2){
-          player.pause()
         }
       }
 

@@ -45,7 +45,7 @@ class RemotesController < ApplicationController
 			@remote.start_at = params["start_at"].to_i if params["start_at"]
       @remote.admin_only = @owner_only
 			@remote.save
-			ActiveSupport::Notifications.instrument("control:#{@remote.remote_id}", {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.updated_at, 'sender' => params['sender'] }.to_json)
+			ActiveSupport::Notifications.instrument("control:#{@remote.remote_id}", {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.updated_at, 'sender_id' => params['sender_id'] }.to_json)
 		end
     render nothing: true
 	end

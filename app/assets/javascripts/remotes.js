@@ -10,7 +10,7 @@
 
     var source = new EventSource(Remote.remote_id + '/stream')
 
-    var user = Math.floor((Math.random()*10000)+1)
+    // var user = Math.floor((Math.random()*10000)+1)
 
     var send = true
 
@@ -53,7 +53,9 @@
 
     })
 
-    // source.addEventListener("chat:" + Remote.remote_id, function(event){
-    //   var data = JSON.parse(event.data)
-    //   console.log(data)
-    // })
+    source.addEventListener("chat:" + Remote.remote_id, function(event){
+      var data = JSON.parse(event.data)
+      console.log(data)
+      $('#chat_message').val('')
+      $('#chat_table_body').prepend('<tr>' + '<td>' + data.message + '</td>' + '<td class="grey-text">' + data.name + '</td>' + '</tr>')
+    })

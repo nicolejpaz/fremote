@@ -58,11 +58,24 @@ class RemotesController < ApplicationController
 		@remote_owner = @user if @user == @remote.user
 
 		@remote_json = @remote.to_json
+
+		@identifier = (Time.now.strftime('%Y%m%d%H%M%S%L%N') + rand(400).to_s).to_s
+
+		@temp_name = $funny_names["names"][rand($funny_names["names"].length - 1)] + $funny_names["surnames"][rand($funny_names["surnames"].length - 1)] + rand(99).to_s
+
+		if @user
+			@username = @user.name
+			@person_registered = true
+		else
+			@username = @temp_name
+			@person_registered = false
+		end
+
 	end
 
 	def chat
 			@remote = Remote.find_by({remote_id: params[:id]})
-			ActiveSupport::Notifications.instrument("chat:#{@remote.remote_id}", {'message' => "hello world" }.to_json)
+			ActiveSupport::Notifications.instrument("chat:#{@remote.remote_id}", {'message' => params["chat_message"], 'name' => params["username"] }.to_json)
 			render nothing: true
 	end
 

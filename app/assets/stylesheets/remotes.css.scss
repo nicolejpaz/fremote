@@ -6,3 +6,12 @@
 	width: 640px;
 	margin: 0 auto;
 }
+
+#chat_messages {
+  height: 250px;
+  overflow-y: scroll;
+}
+
+.grey-text {
+  color: grey;
+}

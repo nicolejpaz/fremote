@@ -39,8 +39,9 @@
     source.addEventListener("control:" + Remote.remote_id, function(event){
       var data = JSON.parse(event.data)
       console.log(data)
+      console.log(user)
       console.log(data.sender_id == user)
-      if (data.sender != user){
+      if (data.sender_id != user){
         if (data.status == -1 || data.status == 2){
           player.currentTime(data.start_at)
           player.pause()

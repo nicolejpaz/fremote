@@ -237,7 +237,6 @@ GEM
       multi_json
       nokogiri
       progressbar
-    videojs_rails (4.1.0)
     warden (1.2.3)
       rack (>= 1.0)
     xpath (2.0.0)
@@ -272,4 +271,3 @@ DEPENDENCIES
   uglifier (>= 1.3.0)
   viddl-rb
   video_info!
-  videojs_rails

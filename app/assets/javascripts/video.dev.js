@@ -4116,9 +4116,13 @@ vjs.PlayToggle.prototype.buildCSSClass = function(){
 // OnClick - Toggle between play and pause
 vjs.PlayToggle.prototype.onClick = function(){
   if (this.player_.paused()) {
-    this.player_.play();
+    // FREMOTE_EDIT
+    // this.player_.play();
+    $(document).trigger('userplay')
   } else {
-    this.player_.pause();
+    // FREMOTE_EDIT
+    // this.player_.pause();
+    $(document).trigger('userpause')
   }
 };
 
@@ -4400,7 +4404,9 @@ vjs.SeekBar.prototype.onMouseDown = function(event){
   this.player_.scrubbing = true;
 
   this.videoWasPlaying = !this.player_.paused();
-  this.player_.pause();
+  // FREMOTE EDIT
+  // this.player_.pause();
+  $(document).trigger('userpause')
 };
 
 vjs.SeekBar.prototype.onMouseMove = function(event){
@@ -4418,7 +4424,13 @@ vjs.SeekBar.prototype.onMouseUp = function(event){
 
   this.player_.scrubbing = false;
   if (this.videoWasPlaying) {
-    this.player_.play();
+    // FREMOTE EDIT
+    // this.player_.play();
+    $(document).trigger('userplay')
+  } else {
+    // FREMOTE EDIT
+    // this else clause was added to allow the remote player to update by triggering pause
+    $(document).trigger('userpause')
   }
 };
 
@@ -4872,7 +4884,9 @@ vjs.BigPlayButton.prototype.createEl = function(){
 };
 
 vjs.BigPlayButton.prototype.onClick = function(){
-  this.player_.play();
+  // FREMOTE EDIT
+  // this.player_.play();
+  $(document).trigger('userplay')
 };
 /**
  * @fileoverview Media Technology Controller - Base class for media playback

@@ -50,6 +50,12 @@ class RemotesController < ApplicationController
     render nothing: true
 	end
 
+	def ping
+		@remote = Remote.find_by({remote_id: params[:id]})
+		ActiveSupport::Notifications.instrument("control:#{@remote.remote_id}", {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.updated_at, 'sender_id' => 'fremote_server' }.to_json)
+		render nothing: true
+	end
+
 	def show
 		@user = current_user if current_user
 

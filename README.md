@@ -5,7 +5,6 @@ Fremote is a web app to remote-control YouTube & Vimeo videos.  A user can send 
 
 ## Features
 
-
 * Server-sent Events via ActionController::Live
 * Pub/Sub using ActiveSupport::Notifications
 * Video.js API
@@ -13,22 +12,18 @@ Fremote is a web app to remote-control YouTube & Vimeo videos.  A user can send 
 * Live chat
 * User registration with Devise
 
-Demo
-===============
+## Demo
 
 fremote.herokuapp.com
 
-To Contribute
-===============
+## To Contribute
 
 I'd love for someone to contribute!  If you'd like, simply fork the repo, make changes, and submit a pull request.
 
-Issues
-===============
+## Issues
 
 Needs more tests!
 
-Team
-===============
+## Team
 
 * Ben Titcomb [@Ravenstine](https://github.com/Ravenstine)

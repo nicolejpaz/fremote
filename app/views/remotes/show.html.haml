@@ -1,5 +1,6 @@
 #center_column
-	%video#player.video-js.vjs-default-skin{controls: "", "data-setup" => "{ \"techOrder\": [\"#{@remote.provider.downcase}\"], \"src\": \"#{@remote.url}\" }", height: "360", preload: "auto", src: "", width: "640"}
+	%video#player.video-js.vjs-default-skin{controls: "", "data-setup" => "{}", preload: "auto", height: "360", width: "640"}
+		%source{src: ViddlRb.get_urls("#{@remote.url}")[0], type: "video/mp4"}
 
 	#video_info.panel.panel-default
 		.panel-heading
@@ -37,15 +38,10 @@
 							Owner-only Controls #{f.check_box :admin_only}
 
 	:javascript
-		videojs('player', { "techOrder": ["#{@remote.provider.downcase}"], "src": "#{@remote.url}" }).ready(function() {
-			this.one('ended', function() {
-					this.src('#{@remote.url}')
-			})
 
 			$('#owner_controls_form').on('click', function(){
 				$('#owner_controls_form').submit()
 			})
 
-		})
 		var Remote = #{@remote.to_json}
 		var user = '#{@identifier}'

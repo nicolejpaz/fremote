@@ -20,7 +20,9 @@ fremote.herokuapp.com
 
 ## To Contribute
 
-I'd love for someone to contribute!  If you'd like, simply fork the repo, make changes, and submit a pull request.
+I'd love for someone to contribute!  Simply fork the repo, make changes, and submit a pull request.
+
+Right now I'm looking for adding more tests, the ability to scrape video information from more providers, playlist capability for remotes, and the ability to draw on top of videos.  Other ideas are also welcome.
 
 ## Issues
 

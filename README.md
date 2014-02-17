@@ -9,7 +9,9 @@ Fremote is a web app to remote-control YouTube & Vimeo videos.  A user can send 
 * Pub/Sub using ActiveSupport::Notifications
 * Video.js API
 * Streaming video links provided by Viddl
+* MongoDB with Mongoid
 * Live chat
+* HAML
 * User registration with Devise
 
 ## Demo

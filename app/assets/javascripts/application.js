@@ -19,4 +19,5 @@
 // require vjs.youtube
 // require vjs.vimeo
 // require remotes
+//= require ui
 // require_directory .

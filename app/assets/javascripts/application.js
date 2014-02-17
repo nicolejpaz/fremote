@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require bootstrap
+//= require EventSource
 // require video
 //= require video.dev
 // require vjs.youtube

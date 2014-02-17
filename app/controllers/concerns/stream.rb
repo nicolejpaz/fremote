@@ -2,6 +2,10 @@ module Stream
   def self.start(notifications, heartrate = 20, response, remote)
     response.headers['Content-Type'] = 'text/event-stream'
 
+    # Send 2kb of filler at beginning of request for EventSource polyfill compatibility with IE.
+    # response.write(":" + Array(2049).join(" ") + "\n")
+    response.stream.write ":#{' ' * 2049}\n"
+
     queue = []
 
     # Subscribe the current user to notifications.

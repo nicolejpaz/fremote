@@ -64,4 +64,5 @@ gem 'video_info', git: 'https://github.com/thibaudgg/video_info.git'
 gem 'guard-rails'
 # gem 'goliath'
 gem 'rails_12factor', group: :production
-gem 'videojs_rails'
+# gem 'videojs_rails'
+gem 'viddl-rb'

@@ -5,6 +5,7 @@ Fremote::Application.routes.draw do
   get 'remotes/:id/stream' => 'streams#stream'
   post 'remotes/:id/chat' => 'remotes#chat'
   get 'remotes/:id/ping' => 'remotes#ping'
+  get 'time' => 'remotes#time'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

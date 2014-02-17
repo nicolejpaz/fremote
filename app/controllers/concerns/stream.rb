@@ -27,7 +27,7 @@ module Stream
     end
 
     # Send the most recent remote information first.
-    ActiveSupport::Notifications.instrument("control:#{remote.remote_id}", {'start_at' => remote.start_at, 'status' => remote.status, 'updated_at' => remote.updated_at, 'sender_id' => 'fremote_server' }.to_json)
+    # ActiveSupport::Notifications.instrument("control:#{remote.remote_id}", {'start_at' => remote.start_at, 'status' => remote.status, 'updated_at' => remote.updated_at, 'sender_id' => 'fremote_server' }.to_json)
 
 
     # Loop until the heartbeat dies.

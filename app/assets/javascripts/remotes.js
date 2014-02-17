@@ -15,9 +15,16 @@
       })
     }
 
-
-
-    // var user = Math.floor((Math.random()*10000)+1)
+// Synchronize time with server.  Use this instead of Date.now().
+    $.ajax({
+      type: 'GET',
+      url: '/time',
+      async: false,
+      dataType: 'JSON'
+    }).done(function(response){
+      Remote.date = Date.parse(response.time)
+      setInterval(function(){Remote.date = Remote.date + 1},1000);
+    })
 
     var send = true
 
@@ -32,18 +39,17 @@
         console.log(data)
         console.log(user)
         console.log(data.sender_id == user)
-        if (0 == 0){
-          if (data.status == -1 || data.status == 2){
-            player.currentTime(data.start_at)
-            player.play() // to bypass the big button mode
-            player.pause()
-          } else if (data.status == 1){
-            var offset = (Date.now() - Date.parse(data.updated_at)) / 1000
-            player.currentTime(data.start_at + offset)
-            player.play()
-          }
+        if (data.status == -1 || data.status == 2){
+          player.currentTime(data.start_at)
+          player.play() // to bypass the big button mode
+          player.pause()
+        } else if (data.status == 1){
+          var offset = (Remote.date - Date.parse(data.updated_at)) / 1000
+          console.log(offset)
+          console.log("start_at " + data.start_at)
+          player.currentTime(Math.floor(data.start_at + offset))
+          player.play()
         }
-
       })
 
       source.addEventListener("chat:" + Remote.remote_id, function(event){
@@ -69,6 +75,10 @@
         player.loadingSpinner.hide()
       })
 
-      Remote.ping()
+
 
     })
+
+  player.on('loadedmetadata', function(){
+      Remote.ping()    
+  })

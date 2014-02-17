@@ -3,8 +3,8 @@ Fremote
 
 Fremote is a web app to remote-control YouTube & Vimeo videos.  A user can send a link to a friend(or friends) they are chatting with and they can watch the video/movie at the same time.  Whoever has control of the "remote" can start/pause/fast-forward/rewind the video and it will control the video for every viewer.
 
-Features
-==============
+## Features
+
 
 * Server-sent Events via ActionController::Live
 * Pub/Sub using ActiveSupport::Notifications

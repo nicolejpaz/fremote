@@ -8,11 +8,8 @@ class RemotesController < ApplicationController
 
 	def create
 		@user = current_user if current_user
-		if @user
-			@remote = @user.remotes.new
-		else
-			@remote = Remote.new
-		end
+
+		@remote = Remote.make(@user)
 
 		dispatch = @remote.populate(params[:video_url])
 		@remote.admin_only = params[:admin_only] || false

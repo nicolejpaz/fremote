@@ -55,4 +55,13 @@ class Remote
     end
   end
 
+  def self.make(user = nil)
+    if user
+      return user.remotes.new
+    else
+      return self.new
+    end
+  end
+
+
 end

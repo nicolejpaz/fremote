@@ -23,7 +23,7 @@
       dataType: 'JSON'
     }).done(function(response){
       Remote.date = Date.parse(response.time)
-      setInterval(function(){Remote.date.setSeconds(Remote.date.getSeconds() + 1)},1000);
+      setInterval(function(){Remote.date = Remote.date + 1000},1000);
     })
 
     var send = true

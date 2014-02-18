@@ -44,7 +44,7 @@
           player.play() // to bypass the big button mode
           player.pause()
         } else if (data.status == 1){
-          var offset = (Remote.date - Date.parse(data.updated_at)) / 1000
+          var offset = Math.max(0, (Remote.date - Date.parse(data.updated_at)) / 1000 )
           console.log(offset)
           console.log("start_at " + data.start_at)
           player.currentTime(Math.floor(data.start_at + offset))

@@ -40,9 +40,9 @@ class RemotesController < ApplicationController
 	end
 
 	def chat
-			@remote = Remote.find_by({remote_id: params[:id]})
-			ActiveSupport::Notifications.instrument("chat:#{@remote.remote_id}", {'message' => params["chat_message"], 'name' => params["username"] }.to_json)
-			render nothing: true
+		@remote = Remote.find_by({remote_id: params[:id]})
+		ActiveSupport::Notifications.instrument("chat:#{@remote.remote_id}", {'message' => params["chat_message"], 'name' => params["username"] }.to_json)
+		render nothing: true
 	end
 
 	def time

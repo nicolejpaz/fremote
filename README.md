@@ -26,7 +26,8 @@ Right now I'm looking for adding more tests, the ability to scrape video informa
 
 ## Issues
 
-Needs more tests!
+* Needs specs for server sent events.  More tests in general, too.
+* Latency-correction needs to be improved for playback.
 
 ## Team
 

@@ -50,8 +50,8 @@
           
           player.one('timeupdate', function(){
             setTimeout(function(){
-              offset = Math.max(0, (Remote.date - Date.parse(data.updated_at)) / 1000 )
-              player.currentTime(Math.floor(data.start_at + offset))
+              // offset = Math.max(0, (Remote.date - Date.parse(data.updated_at)) / 1000 )
+              // player.currentTime(Math.floor(data.start_at + offset))
               player.play()
             }, 3000)            
           })

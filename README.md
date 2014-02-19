@@ -16,7 +16,7 @@ Fremote is a web app to remote-control YouTube & Vimeo videos.  A user can send 
 
 ## Demo
 
-fremote.herokuapp.com
+[fremote.herokuapp.com](http://fremote.herokuapp.com/)
 
 ## To Contribute
 
@@ -26,7 +26,8 @@ Right now I'm looking for adding more tests, the ability to scrape video informa
 
 ## Issues
 
-Needs more tests!
+* Needs specs for server sent events.  More tests in general, too.
+* Latency-correction needs to be improved for playback.
 
 ## Team
 

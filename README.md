@@ -22,7 +22,14 @@ Fremote is a web app to remote-control YouTube & Vimeo videos.  A user can send 
 
 I'd love for someone to contribute!  Simply fork the repo, make changes, and submit a pull request.
 
-Right now I'm looking for adding more tests, the ability to scrape video information from more providers, playlist capability for remotes, and the ability to draw on top of videos.  Other ideas are also welcome.
+Right now I'm looking to do the following:
+
+* Playlist capability for remotes.  This may put into question how remotes are created.
+* "Fremote Lite", which would have the feature of embedding any video and relying on a timer and user intervention to sync up videos.
+* Scrape video information from more providers. 
+* The ability to draw on top of videos.  
+
+Other ideas are also welcome.
 
 ## Issues
 

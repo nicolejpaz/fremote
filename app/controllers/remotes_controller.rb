@@ -20,9 +20,7 @@ class RemotesController < ApplicationController
 		@user = current_user if current_user
 		@remote = Remote.find_by({remote_id: params[:id]})
     @remote_owner = @user if @user == @remote.user
-
     @remote.update(params, @remote_owner)
-
     render nothing: true
 	end
 
@@ -34,25 +32,11 @@ class RemotesController < ApplicationController
 
 	def show
 		@user = current_user if current_user
-
 		@remote = Remote.find_by({remote_id: params[:id]})
-
 		@remote_owner = @user if @user == @remote.user
-
 		@remote_json = @remote.to_json
-
 		@identifier = (Time.now.strftime('%Y%m%d%H%M%S%L%N') + rand(400).to_s).to_s
-
-		@temp_name = $funny_names["names"][rand($funny_names["names"].length - 1)] + $funny_names["surnames"][rand($funny_names["surnames"].length - 1)] + rand(99).to_s
-
-		if @user
-			@username = @user.name
-			@person_registered = true
-		else
-			@username = @temp_name
-			@person_registered = false
-		end
-
+		@username = Chat.guest_display_name
 	end
 
 	def chat

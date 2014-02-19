@@ -8,21 +8,12 @@ class RemotesController < ApplicationController
 
 	def create
 		@user = current_user if current_user
-
 		@remote = Remote.make(@user)
-
 		dispatch = @remote.populate(params[:video_url])
 		@remote.admin_only = params[:admin_only] || false
 		@remote.save
-
-		if dispatch[:status] == :success
-			flash[:notice] = dispatch[:message]
-			redirect_to remote_path(@remote.remote_id)
-		else
-			flash[:alert] = dispatch[:message]
-			redirect_to root_path
-		end
-
+		flash[dispatch[:status]] = dispatch[:message]
+		redirect_to dispatch[:path]
 	end
 
 	def update

@@ -66,3 +66,5 @@ gem 'guard-rails'
 gem 'rails_12factor', group: :production
 # gem 'videojs_rails'
 gem 'viddl-rb'
+
+gem 'debugger', group: :development

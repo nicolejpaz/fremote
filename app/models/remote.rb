@@ -1,4 +1,5 @@
 class Remote
+  include Rails.application.routes.url_helpers
   include Mongoid::Document
   include Mongoid::Timestamps
   field :video_id, type: String
@@ -46,12 +47,12 @@ class Remote
         self.embed_code = video.embed_code
         self.date = video.date
         self.remote_id = Digest::MD5.hexdigest(video_id + DateTime.now.to_s + DateTime.now.nsec.to_s).slice(0..9)
-        return { message: "Congratulations!  Use the controls below the video to remote control it.", status: :success }
+        return { message: "Congratulations!  Take control of your remote.", status: :notice, path: remote_path(self.remote_id)}
       rescue
-        return { message: "Invalid URL", status: :danger }
+        return { message: "Invalid URL", status: :alert, path: root_path }
       end
     else
-      return { message: "URL can't be blank", status: :danger }
+      return { message: "URL can't be blank", status: :alert, path: root_path }
     end
   end
 

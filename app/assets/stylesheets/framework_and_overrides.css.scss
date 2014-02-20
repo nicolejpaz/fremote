@@ -74,3 +74,41 @@ section {
 #error_explanation h2 {
   font-size: 16px;
 }
+
+body {
+  background-image: url('background.png');
+}
+
+main {
+  /*background-image: url('background.png');*/
+  background-color: transparent !important;
+}
+
+nav {
+  background-color: transparent;
+  border-color: transparent;
+  color: white;
+  -o-transition-duration: 0.8s;
+  -moz-transition-duration: 0.8s;
+  -ms-transition-duration: 0.8s;
+  -webkit-transition-duration: 0.8s;
+  transition-duration: 0.8s;
+}
+
+nav a {
+  color: white;
+}
+
+#footer {
+  background-color: white;
+}
+
+#nav_logo {
+  width: 20%;
+  padding: 0px !important;
+  margin-top: 3px;
+}
+
+.nav-scrolled {
+  background-color: #bcbcbc;
+}

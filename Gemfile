@@ -55,6 +55,7 @@ end
 gem "haml"
 gem 'devise'
 
+gem 'bootstrap-sass'
 
 gem 'rails_layout', git: 'https://github.com/RailsApps/rails_layout.git'
 gem 'bootstrap-sass'

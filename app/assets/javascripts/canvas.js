@@ -1,9 +1,7 @@
 $(document).ready(function() {
   var drawing_canvas = $('canvas')
 
-  // drawing_canvas.click(function(e) {
-    draw(drawing_canvas[0])
-  // })
+  draw(drawing_canvas[0])
 })
 
 function draw(drawing_canvas) {

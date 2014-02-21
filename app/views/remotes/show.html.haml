@@ -1,6 +1,6 @@
 #center_column
 	%video#player.video-js.vjs-default-skin{controls: "", "data-setup" => '{"techOrder": ["html5","flash"]}', preload: "auto", height: "360", width: "640"}
-		%source{src: ViddlRb.get_urls("#{@remote.url}")[0], type: "video/mp4"}
+		/ %source{src: ViddlRb.get_urls("#{@remote.playlist[@remote.selection]["url"]}")[0], type: "video/mp4"}
 
 	#video_info.panel.panel-default
 		.panel-heading
@@ -28,6 +28,20 @@
 					%tbody#chat_table_body
 						%tr
 							%td.small.grey-text Welcome to Fremote chat.  If you would like a dedicated username for the chat, sign up for an account!
+
+		%ul.list-group
+			%li.list-group-item
+				Playlist
+			%li.list-group-item
+				%table.table.well
+					%thead
+						%tr
+					%tbody#playlist_table
+						- @remote.playlist.each do |video|
+							%tr
+								%td.playlist_item= video["title"]
+								%td
+									#playlist-delete-button= button_tag "X", class: "playlist-delete btn btn-danger btn-xs"
 
 	- if current_user
 		#owner_controls.panel.panel-success

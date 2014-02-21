@@ -58,7 +58,6 @@ gem 'devise'
 gem 'bootstrap-sass'
 
 gem 'rails_layout', git: 'https://github.com/RailsApps/rails_layout.git'
-gem 'bootstrap-sass'
 gem "factory_girl_rails", :group => [:development, :test]
 gem "email_spec", :group => [:development, :test]
 gem 'video_info', git: 'https://github.com/thibaudgg/video_info.git'

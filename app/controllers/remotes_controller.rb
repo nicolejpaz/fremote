@@ -26,7 +26,7 @@ class RemotesController < ApplicationController
 
 	def ping
 		@remote = Remote.find_by({remote_id: params[:id]})
-		ActiveSupport::Notifications.instrument("control:#{@remote.remote_id}", {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.updated_at, 'dispatched_at' => Time.now, 'sender_id' => 'fremote_server' }.to_json)
+		ActiveSupport::Notifications.instrument("control:#{@remote.remote_id}", {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.updated_at, 'dispatched_at' => Time.now, 'sender_id' => 'fremote_server', 'selection' => @remote.selection, 'stream_url' => URI::encode(ViddlRb.get_urls(@remote.playlist[@remote.selection]["url"]).first) }.to_json)
 		render nothing: true
 	end
 

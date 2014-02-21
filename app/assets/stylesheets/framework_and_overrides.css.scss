@@ -76,11 +76,17 @@ section {
 }
 
 body {
-  background-image: url('background.png');
+  background: url('background.jpg') no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='.myBackground.jpg', sizingMethod='scale');
+  -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='myBackground.jpg', sizingMethod='scale')";
+  background-position: 0 0;
 }
 
 main {
-  /*background-image: url('background.png');*/
   background-color: transparent !important;
 }
 
@@ -100,7 +106,8 @@ nav a {
 }
 
 #footer {
-  background-color: white;
+  background-color: transparent;
+  color: white;
 }
 
 #nav_logo {
@@ -110,5 +117,6 @@ nav a {
 }
 
 .nav-scrolled {
-  background-color: #bcbcbc;
+  background: #bcbcbc;
+  background: rgba(188,188,188,0.8);
 }

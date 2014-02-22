@@ -49,4 +49,10 @@ class RemotesController < ApplicationController
 		render json: {time: Time.now}.to_json
 	end
 
+	def drawing
+		@remote = Remote.find_by({remote_id: params[:id]})
+		ActiveSupport::Notifications.instrument("drawing:#{@remote.remote_id}", {'coordinates' => params["coordinates"]}.to_json)
+		render nothing: true
+	end
+
 end

@@ -15,7 +15,7 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require bootstrap
-//= require EventSource
+//= require eventsource
 // require video
 //= require video.dev
 // require vjs.youtube
@@ -23,4 +23,5 @@
 // require remotes
 //= require ui
 //= require playlist
+//= require jquery.sortable
 // require_directory .

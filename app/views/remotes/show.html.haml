@@ -33,15 +33,11 @@
 			%li.list-group-item
 				Playlist
 			%li.list-group-item
-				%table.table.well
-					%thead
-						%tr
-					%tbody#playlist_table
-						- @remote.playlist.each do |video|
-							%tr
-								%td.playlist_item= video["title"]
-								%td
-									#playlist-delete-button= button_tag "X", class: "playlist-delete btn btn-danger btn-xs"
+				%ol#playlist.sortable.list
+					- @remote.playlist.each do |video|
+						%li.playlist_item.sortable{draggable: "true"}
+							= video["title"]
+							/ #playlist-delete-button= button_tag "X", class: "playlist-delete btn btn-danger btn-xs"
 
 	- if current_user
 		#owner_controls.panel.panel-success
@@ -53,11 +49,17 @@
 						%label
 							Owner-only Controls #{f.check_box :admin_only}
 
-	:javascript
+= javascript_include_tag "jquery.sortable", "data-turbolinks-track" => false
 
-			$('#owner_controls_form').on('click', function(){
-				$('#owner_controls_form').submit()
-			})
+:javascript
 
-		var Remote = #{@remote.to_json}
-		var user = '#{@identifier}'
+		$('#owner_controls_form').on('click', function(){
+			$('#owner_controls_form').submit()
+		})
+
+	var Remote = #{@remote.to_json}
+	var user = '#{@identifier}'
+	$('.sortable').sortable().bind('sortupdate', function(e) {
+		console.log(e)
+		console.log(this)
+	})

@@ -51,7 +51,7 @@ class RemotesController < ApplicationController
 
 	def drawing
 		@remote = Remote.find_by({remote_id: params[:id]})
-		ActiveSupport::Notifications.instrument("drawing:#{@remote.remote_id}", {'x_coordinate' => params["x_coordinate"], 'y_coordinate' => params["y_coordinate"] }.to_json)
+		ActiveSupport::Notifications.instrument("drawing:#{@remote.remote_id}", {'coordinates' => params["coordinates"]}.to_json)
 		render nothing: true
 	end
 

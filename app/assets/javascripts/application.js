@@ -23,3 +23,4 @@
 // require remotes
 //= require ui
 // require_directory .
+//= require canvas

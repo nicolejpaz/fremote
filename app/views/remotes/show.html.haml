@@ -2,6 +2,8 @@
 	%video#player.video-js.vjs-default-skin{controls: "", "data-setup" => '{"techOrder": ["html5","flash"]}', preload: "auto", height: "360", width: "640"}
 		%source{src: ViddlRb.get_urls("#{@remote.url}")[0], type: "video/mp4"}
 
+	%canvas#drawing-surface{height: "330", width: "640"}
+
 	#video_info.panel.panel-default
 		.panel-heading
 			%h3.panel-title #{@remote.title}

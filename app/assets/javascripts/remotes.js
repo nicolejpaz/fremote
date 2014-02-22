@@ -58,12 +58,16 @@ player.ready(function(){
 
   source.addEventListener("drawing:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)
-    console.log(data)
-    // console.log(source)
+    var previous_coordinates = []
 
-    var drawing_canvas = $('canvas')[0]
-    console.log('drawing on the other end')
-    // draw(drawing_canvas, data.x_coordinate, data.y_coordinate)
+    $.each(data['coordinates'], function(index, coordinate) {
+      if (previous_coordinates.length >= 1) {
+        remote_draw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate)
+      }
+
+      previous_coordinates.push(coordinate)
+    })
+    previous_coordinates = []
   })
 
   $(document).on('userplay', function(){

@@ -49,4 +49,7 @@ class RemotesController < ApplicationController
 		render json: {time: Time.now}.to_json
 	end
 
+	def drawing
+	end
+
 end

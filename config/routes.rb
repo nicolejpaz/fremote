@@ -1,7 +1,11 @@
 Fremote::Application.routes.draw do
   devise_for :users
   root 'remotes#new'
-  resources :remotes, only: [:create,:show,:update]
+  
+  resources :remotes, only: [:create,:show,:update] do
+    resources :drawings, only: [:update]
+  end
+
   get 'remotes/:id/stream' => 'streams#stream'
   post 'remotes/:id/chat' => 'remotes#chat'
   get 'remotes/:id/ping' => 'remotes#ping'

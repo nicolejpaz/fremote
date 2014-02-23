@@ -11,6 +11,17 @@ Remote.update = function(){
 Remote.ping = function(){
   $.ajax({
     type: 'GET',
+    url: '/remotes/' + Remote.remote_id + "/playlist"
+  }).done(function(response){
+    console.log(response)
+    $.each(response, function(index, item){
+      $('#playlist').append('<li class="playlist_item sortable" draggable="true">' + item.title + '</li>')
+    })
+      $('body .sortable').sortable()
+  })
+
+  $.ajax({
+    type: 'GET',
     url: '/remotes/' + Remote.remote_id + "/ping"
   })
 }
@@ -24,13 +35,13 @@ Remote.pause = function(start_at){
 Remote.play = function(start_at, updated_at){
   var offset = Math.max(0, (this.date - Date.parse(updated_at)) / 1000 )
   player.currentTime(Math.floor(start_at + offset))
-  player.play()     
+  player.play()
 }
 
 Remote.toggle = function(data){
   if (data.status == -1 || data.status == 2){
     this.pause(data.start_at)
-  } else if (data.status == 1){  
+  } else if (data.status == 1){
     this.play(data.start_at, data.updated_at)
   }
 }
@@ -61,8 +72,21 @@ player.ready(function(){
         Remote.toggle(data)
       })
     } else {
-      Remote.toggle(data)      
+      Remote.toggle(data)
     }
+  })
+
+  source.addEventListener("playlist_sort:" + Remote.remote_id, function(event){
+    var data = JSON.parse(event.data)
+    console.log(data)
+
+    $('#playlist').html('')
+
+    $.each(data.playlist, function(index, item){
+      $('#playlist').append('<li class="playlist_item sortable" draggable="true">' + item.title + '</li>')
+    })
+    $('body .sortable').sortable()
+
   })
 
   source.addEventListener("chat:" + Remote.remote_id, function(event){
@@ -95,5 +119,5 @@ player.ready(function(){
 })
 
 player.ready(function(){
-  Remote.ping()    
+  Remote.ping()
 })

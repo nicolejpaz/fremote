@@ -20,3 +20,4 @@
 //= require playlist
 //= require html.sortable.0.1.1
 // require_directory .
+//= require canvas

@@ -51,7 +51,12 @@ class RemotesController < ApplicationController
 
 	def drawing
 		@remote = Remote.find_by({remote_id: params[:id]})
-		ActiveSupport::Notifications.instrument("drawing:#{@remote.remote_id}", {'coordinates' => params["coordinates"]}.to_json)
+		@user = current_user if current_user
+
+		if @user == @remote.user || @remote.admin_only == false
+			ActiveSupport::Notifications.instrument("drawing:#{@remote.remote_id}", {'coordinates' => params["coordinates"]}.to_json)
+		end
+		
 		render nothing: true
 	end
 
@@ -62,7 +67,7 @@ class RemotesController < ApplicationController
 		if @user == @remote.user || @remote.admin_only == false
 			ActiveSupport::Notifications.instrument("clear:#{@remote.remote_id}")
 		end
-		
+
 		render nothing: true
 	end
 

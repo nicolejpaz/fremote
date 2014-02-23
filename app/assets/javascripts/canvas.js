@@ -2,7 +2,20 @@ $(document).ready(function() {
   var drawing_canvas = $('canvas')
 
   draw(drawing_canvas[0])
+
+  $('button#clear').on('click', function(e) {
+    clear()
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + Remote.remote_id + '/clear'
+    })
+  })
 })
+
+function clear() {
+  var drawing_canvas = $('canvas')[0]
+  drawing_canvas.width = drawing_canvas.width
+}
 
 function draw(drawing_canvas, x_coordinate, y_coordinate) {
   var context = drawing_canvas.getContext('2d')

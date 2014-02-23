@@ -34,7 +34,7 @@
 				Playlist
 			%li.list-group-item
 				%ol#playlist.sortable.list
-					- @remote.playlist.each do |video|
+					- @remote.playlist.list.each do |video|
 						%li.playlist_item.sortable{draggable: "true"}
 							= video["title"]
 							/ #playlist-delete-button= button_tag "X", class: "playlist-delete btn btn-danger btn-xs"

@@ -22,11 +22,11 @@ function draw(drawing_canvas, x_coordinate, y_coordinate) {
   draw_on_canvas(drawing_canvas, context, x_coordinate, y_coordinate)
 }
 
-function remote_draw(previous_coordinates, x_coordinate, y_coordinate) {
+function remote_draw(previous_coordinates, x_coordinate, y_coordinate, color) {
   var remote_canvas = $('canvas')[0]
   var context = remote_canvas.getContext('2d')
 
-  context.strokeStyle = '#0000ff'
+  context.strokeStyle = color
   context.lineWidth = 5
 
   if (x_coordinate != null) {
@@ -47,6 +47,11 @@ function remote_draw(previous_coordinates, x_coordinate, y_coordinate) {
 
 function draw_on_canvas(drawing_canvas, context, x_coordinate, y_coordinate) {
   var mousedown = false
+  var color = $('input#color').val()
+
+  $('input#color').on('change', function(e) {
+    color = $('input#color').val()
+  })
 
   drawing_canvas.onmousedown = function(e) {
     var pos = getMousePos(drawing_canvas, e)
@@ -62,7 +67,7 @@ function draw_on_canvas(drawing_canvas, context, x_coordinate, y_coordinate) {
     var pos = getMousePos(drawing_canvas, e)
 
     if (mousedown) {
-      current_coordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y})
+      current_coordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y, 'color': color})
 
       if (current_coordinates.length >= 10) {
         send_coordinates(current_coordinates)

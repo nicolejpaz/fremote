@@ -62,7 +62,7 @@ player.ready(function(){
 
     $.each(data['coordinates'], function(index, coordinate) {
       if (previous_coordinates.length >= 1) {
-        remote_draw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate)
+        remote_draw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color)
       }
 
       previous_coordinates.push(coordinate)

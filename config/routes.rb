@@ -1,10 +1,14 @@
 Fremote::Application.routes.draw do
   devise_for :users
   root 'remotes#new'
+
   resources :remotes, only: [:create,:show,:update]
+
   get 'remotes/:id/stream' => 'streams#stream'
   post 'remotes/:id/chat' => 'remotes#chat'
   get 'remotes/:id/ping' => 'remotes#ping'
+  post 'remotes/:id/drawing' => 'remotes#drawing'
+  post 'remotes/:id/clear' => 'remotes#clear'
   get 'time' => 'remotes#time'
 
   # The priority is based upon order of creation: first created -> highest priority.

@@ -10,9 +10,51 @@ Remote.update = function(){
 Remote.ping = function(){
   $.ajax({
     type: 'GET',
+    url: '/remotes/' + Remote.remote_id + "/playlist"
+  }).done(function(response){
+    console.log(response)
+    $.each(response, function(index, item){
+      $('#playlist').append('<li class="playlist_item sortable" draggable="true">' + item.title + '</li>')
+    })
+      $('body .sortable').sortable()
+  })
+
+  $.ajax({
+    type: 'GET',
     url: '/remotes/' + Remote.remote_id + "/ping"
+  }).done(function(data){
+    if (data.stream_url != undefined){
+      player.src(data.stream_url)
+      player.one('loadedmetadata', function(){
+        Remote.toggle(data)
+      })
+    } else {
+      Remote.toggle(data)
+    }
   })
 }
+
+
+Remote.pause = function(start_at){
+  player.currentTime(start_at)
+  player.play() // to bypass the big button mode
+  player.pause()
+}
+
+Remote.play = function(start_at, updated_at){
+  var offset = Math.max(0, (this.date - Date.parse(updated_at)) / 1000 )
+  player.currentTime(Math.floor(start_at + offset))
+  player.play()
+}
+
+Remote.toggle = function(data){
+  if (data.status == -1 || data.status == 2){
+    this.pause(data.start_at)
+  } else if (data.status == 1){
+    this.play(data.start_at, data.updated_at)
+  }
+}
+
 
 // Synchronize time with server.  Use this instead of Date.now().
 $.ajax({
@@ -25,8 +67,6 @@ $.ajax({
   setInterval(function(){Remote.date = Remote.date + 1000},1000);
 })
 
-var send = true
-
 var player = videojs('player')
 
 player.ready(function(){
@@ -36,18 +76,29 @@ player.ready(function(){
   source.addEventListener("control:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)
     console.log(data)
-    console.log(user)
-    console.log(data.sender_id == user)
-    if (data.status == -1 || data.status == 2){
-      player.currentTime(data.start_at)
-      player.play() // to bypass the big button mode
-      player.pause()
-    } else if (data.status == 1){
-      var offset = Math.max(0, (Remote.date - Date.parse(data.updated_at)) / 1000 )
-      player.currentTime(Math.floor(data.start_at + offset))
-      player.play()     
+    if (data.stream_url != undefined){
+      player.src(data.stream_url)
+      player.one('loadedmetadata', function(){
+        Remote.toggle(data)
+      })
+    } else {
+      Remote.toggle(data)
     }
   })
+
+  source.addEventListener("playlist_sort:" + Remote.remote_id, function(event){
+    var data = JSON.parse(event.data)
+    console.log(data)
+
+    $('#playlist').html('')
+
+    $.each(data.playlist, function(index, item){
+      $('#playlist').append('<li class="playlist_item sortable" draggable="true">' + item.title + '</li>')
+    })
+    $('body .sortable').sortable()
+
+  })
+
 
   source.addEventListener("chat:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)
@@ -86,11 +137,18 @@ player.ready(function(){
     Remote.update()
   })
 
+
+  player.on('ended', function(){
+    Remote.status = 0
+    Remote.update()
+  })
+
   player.on('timeupdate', function(){
     player.loadingSpinner.hide()
   })
+
 })
 
-player.on('loadedmetadata', function(){
-  Remote.ping()    
+player.ready(function(){
+  Remote.ping()
 })

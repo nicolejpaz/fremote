@@ -27,8 +27,8 @@ Right now I'm looking to add the following:
 * "Currently Viewing" list of users who are watching a video.
 * Playlist capability for remotes.  This may put into question how remotes are created, however.
 * "Fremote Lite", which would have the feature of embedding any video and relying on a timer and user intervention to sync up videos.
-* Scrape video information from more providers. 
-* The ability to draw on top of videos.  
+* Scrape video information from more providers.
+* The ability to draw on top of videos.
 
 Other ideas are also welcome.
 
@@ -40,3 +40,4 @@ Other ideas are also welcome.
 ## Team
 
 * Ben Titcomb [@Ravenstine](https://github.com/Ravenstine)
+* Nicole Paz [@nicolejpaz](https://github.com/nicolejpaz)

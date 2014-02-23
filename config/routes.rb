@@ -7,6 +7,10 @@ Fremote::Application.routes.draw do
   get 'remotes/:id/ping' => 'remotes#ping'
   get 'time' => 'remotes#time'
 
+  post 'remotes/:id/playlist' => 'playlist#update'
+  get 'remotes/:id/playlist' => 'playlist#show'
+
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

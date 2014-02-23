@@ -59,12 +59,11 @@ function draw_on_canvas(drawing_canvas, context, x_coordinate, y_coordinate) {
 
       current_coordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y})
 
-      if (current_coordinates.length >= 20) {
+      if (current_coordinates.length >= 10) {
         send_coordinates(current_coordinates)
 
-        var new_current = current_coordinates[current_coordinates.length-1]
-        current_coordinates = []
-        current_coordinates.push(new_current)
+        var new_current = [current_coordinates[current_coordinates.length-1]]
+        current_coordinates = new_current
       }
     }
   }

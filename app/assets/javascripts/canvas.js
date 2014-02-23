@@ -47,16 +47,11 @@ function remote_draw(previous_coordinates, x_coordinate, y_coordinate) {
 
 function draw_on_canvas(drawing_canvas, context, x_coordinate, y_coordinate) {
   var mousedown = false
-  context.strokeStyle = '#0000ff'
-  context.lineWidth = 5
 
   drawing_canvas.onmousedown = function(e) {
     var pos = getMousePos(drawing_canvas, e)
 
     mousedown = true
-    context.beginPath()
-    context.moveTo(pos.x, pos.y)
-
     return false
   }
 
@@ -67,9 +62,6 @@ function draw_on_canvas(drawing_canvas, context, x_coordinate, y_coordinate) {
     var pos = getMousePos(drawing_canvas, e)
 
     if (mousedown) {
-      context.lineTo(pos.x, pos.y)
-      context.stroke()
-
       current_coordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y})
 
       if (current_coordinates.length >= 10) {
@@ -85,7 +77,6 @@ function draw_on_canvas(drawing_canvas, context, x_coordinate, y_coordinate) {
     mousedown = false
     
     send_coordinates(current_coordinates)
-
     current_coordinates = []
   }
 }

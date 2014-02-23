@@ -1,6 +1,6 @@
 #center_column
 	%video#player.video-js.vjs-default-skin{controls: "", "data-setup" => '{"techOrder": ["html5","flash"]}', preload: "auto", height: "360", width: "640"}
-		%source{src: ViddlRb.get_urls("#{@remote.url}")[0], type: "video/mp4"}
+		/ %source{src: ViddlRb.get_urls("#{@remote.playlist[@remote.selection]["url"]}")[0], type: "video/mp4"}
 
 	%canvas#drawing-surface{height: "330", width: "640"}
 	- if @user || @remote.admin_only == false
@@ -9,13 +9,15 @@
 
 	#video_info.panel.panel-default
 		.panel-heading
-			%h3.panel-title #{@remote.title}
+			/ %h3.panel-title #{@remote.title}
+			%h3.panel-title Sample Video Title
 		.panel-body
 			%p
-				#{@remote.description}
+				/ #{@remote.description}
+				Sample Video Description
 			%p
 				%a{href: @remote.url}
-					Watch on #{@remote.provider}
+					Watch video on its own site.
 			- if @remote.admin_only == false || @remote_user
 				%span.label.label-success You are allowed to use this remote!
 		%ul#chat.list-group
@@ -32,6 +34,12 @@
 						%tr
 							%td.small.grey-text Welcome to Fremote chat.  If you would like a dedicated username for the chat, sign up for an account!
 
+		%ul.list-group
+			%li.list-group-item
+				Playlist
+			%li.list-group-item
+				%ol#playlist.sortable.list
+
 	- if current_user
 		#owner_controls.panel.panel-success
 			.panel-heading
@@ -42,11 +50,23 @@
 						%label
 							Owner-only Controls #{f.check_box :admin_only}
 
-	:javascript
+:javascript
 
-			$('#owner_controls_form').on('click', function(){
-				$('#owner_controls_form').submit()
-			})
+		$('#owner_controls_form').on('click', function(){
+			$('#owner_controls_form').submit()
+		})
 
-		var Remote = #{@remote.to_json}
-		var user = '#{@identifier}'
+	var Remote = #{@remote.to_json}
+	var user = '#{@identifier}'
+
+	$('body .sortable').sortable().bind('sortupdate', function(e, ui) {
+		console.log('sorted')
+		console.log(ui)
+		console.log(ui.item.index())
+		console.log(ui.oldindex)
+		$.ajax({
+			url: "/remotes/" + Remote.remote_id + "/playlist",
+			type: "POST",
+			data: {old_position: ui.oldindex, new_position: ui.item.index(), _method: "patch"}
+		})
+	})

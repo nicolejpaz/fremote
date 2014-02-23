@@ -57,7 +57,12 @@ class RemotesController < ApplicationController
 
 	def clear
 		@remote = Remote.find_by({remote_id: params[:id]})
-		ActiveSupport::Notifications.instrument("clear:#{@remote.remote_id}")
+		@user = current_user if current_user
+
+		if @user == @remote.user || @remote.admin_only == false
+			ActiveSupport::Notifications.instrument("clear:#{@remote.remote_id}")
+		end
+		
 		render nothing: true
 	end
 

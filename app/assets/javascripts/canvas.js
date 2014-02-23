@@ -59,19 +59,31 @@ function draw_on_canvas(drawing_canvas, context, x_coordinate, y_coordinate) {
 
       current_coordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y})
 
+      if (current_coordinates.length >= 20) {
+        send_coordinates(current_coordinates)
+
+        var new_current = current_coordinates[current_coordinates.length-1]
+        current_coordinates = []
+        current_coordinates.push(new_current)
+      }
     }
   }
 
   drawing_canvas.onmouseup = function(e) {
     mousedown = false
-    $.ajax({
-      type: 'POST',
-      url: '/remotes/' + Remote.remote_id + '/drawing',
-      data: {'coordinates': current_coordinates}
-    })
+    
+    send_coordinates(current_coordinates)
 
     current_coordinates = []
   }
+}
+
+function send_coordinates(current_coordinates) {
+  $.ajax({
+    type: 'POST',
+    url: '/remotes/' + Remote.remote_id + '/drawing',
+    data: {'coordinates': current_coordinates}
+  })
 }
 
 function getMousePos(drawing_canvas, e) {

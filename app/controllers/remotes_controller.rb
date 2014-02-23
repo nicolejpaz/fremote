@@ -26,15 +26,17 @@ class RemotesController < ApplicationController
 
 	def ping
 		@remote = Remote.find_by({remote_id: params[:id]})
-		ActiveSupport::Notifications.instrument("control:#{@remote.remote_id}", {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.updated_at, 'dispatched_at' => Time.now, 'sender_id' => 'fremote_server' }.to_json)
-		render nothing: true
+		@playlist = @remote.playlist
+		# ActiveSupport::Notifications.instrument("control:#{@remote.remote_id}", {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.updated_at, 'dispatched_at' => Time.now, 'sender_id' => 'fremote_server', 'selection' => @playlist.selection, 'stream_url' => URI::encode(ViddlRb.get_urls(@playlist.list[@playlist.selection]["url"]).first), 'playlist' => @playlist.list }.to_json)
+		# render nothing: true
+		render json: {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.updated_at, 'dispatched_at' => Time.now, 'sender_id' => 'fremote_server', 'selection' => @playlist.selection, 'stream_url' => URI::encode(ViddlRb.get_urls(@playlist.list[@playlist.selection]["url"]).first), 'playlist' => @playlist.list }.to_json
 	end
 
 	def show
 		@user = current_user if current_user
 		@remote = Remote.find_by({remote_id: params[:id]})
 		@remote_owner = @user if @user == @remote.user
-		@remote_json = @remote.to_json
+		@remote_json = @remote.json
 		@identifier = (Time.now.strftime('%Y%m%d%H%M%S%L%N') + rand(400).to_s).to_s
 		@username = Chat.guest_display_name
 	end
@@ -56,7 +58,7 @@ class RemotesController < ApplicationController
 		if @user == @remote.user || @remote.admin_only == false
 			ActiveSupport::Notifications.instrument("drawing:#{@remote.remote_id}", {'coordinates' => params["coordinates"]}.to_json)
 		end
-		
+
 		render nothing: true
 	end
 

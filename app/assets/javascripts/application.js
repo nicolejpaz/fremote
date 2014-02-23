@@ -10,17 +10,14 @@
 // Read Sprockets README (https://github.com/sstephenson/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-// require jquery
 //= require jquery-2.1.0
 //= require jquery_ujs
 //= require turbolinks
 //= require bootstrap
-//= require EventSource
-// require video
+//= require eventsource
 //= require video.dev
-// require vjs.youtube
-// require vjs.vimeo
-// require remotes
 //= require ui
+//= require playlist
+//= require html.sortable.0.1.1
 // require_directory .
 //= require canvas

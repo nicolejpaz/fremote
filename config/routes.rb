@@ -11,6 +11,11 @@ Fremote::Application.routes.draw do
   post 'remotes/:id/clear' => 'remotes#clear'
   get 'time' => 'remotes#time'
 
+  resources :remotes do
+    resource :playlist, only: [:update, :show]
+  end
+
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

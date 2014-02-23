@@ -4,11 +4,16 @@ $(document).ready(function() {
   draw(drawing_canvas[0])
 
   $('button#clear').on('click', function(e) {
-    clear(drawing_canvas[0])
+    clear()
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + Remote.remote_id + '/clear'
+    })
   })
 })
 
-function clear(drawing_canvas) {
+function clear() {
+  var drawing_canvas = $('canvas')[0]
   drawing_canvas.width = drawing_canvas.width
 }
 

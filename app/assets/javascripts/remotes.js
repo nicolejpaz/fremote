@@ -70,6 +70,10 @@ player.ready(function(){
     previous_coordinates = []
   })
 
+  source.addEventListener("clear:" + Remote.remote_id, function(event){
+    clear()
+  })
+
   $(document).on('userplay', function(){
     Remote.status = 1
     Remote.start_at = player.currentTime()

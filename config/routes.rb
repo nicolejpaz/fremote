@@ -8,6 +8,7 @@ Fremote::Application.routes.draw do
   post 'remotes/:id/chat' => 'remotes#chat'
   get 'remotes/:id/ping' => 'remotes#ping'
   post 'remotes/:id/drawing' => 'remotes#drawing'
+  post 'remotes/:id/clear' => 'remotes#clear'
   get 'time' => 'remotes#time'
 
   # The priority is based upon order of creation: first created -> highest priority.

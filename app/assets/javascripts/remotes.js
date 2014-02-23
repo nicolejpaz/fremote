@@ -1,4 +1,3 @@
-
 Remote.update = function(){
   $.ajax({
     type: 'POST',
@@ -26,6 +25,7 @@ Remote.ping = function(){
   })
 }
 
+
 Remote.pause = function(start_at){
   player.currentTime(start_at)
   player.play() // to bypass the big button mode
@@ -45,6 +45,7 @@ Remote.toggle = function(data){
     this.play(data.start_at, data.updated_at)
   }
 }
+
 
 // Synchronize time with server.  Use this instead of Date.now().
 $.ajax({
@@ -89,10 +90,30 @@ player.ready(function(){
 
   })
 
+
   source.addEventListener("chat:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)
+    console.log(data)
     $('#chat_message').val('')
     $('#chat_table_body').prepend('<tr>' + '<td>' + data.message + '</td>' + '<td class="grey-text">' + data.name + '</td>' + '</tr>')
+  })
+
+  source.addEventListener("drawing:" + Remote.remote_id, function(event){
+    var data = JSON.parse(event.data)
+    var previous_coordinates = []
+
+    $.each(data['coordinates'], function(index, coordinate) {
+      if (previous_coordinates.length >= 1) {
+        remote_draw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color)
+      }
+
+      previous_coordinates.push(coordinate)
+    })
+    previous_coordinates = []
+  })
+
+  source.addEventListener("clear:" + Remote.remote_id, function(event){
+    clear()
   })
 
   $(document).on('userplay', function(){
@@ -106,6 +127,7 @@ player.ready(function(){
     Remote.start_at = player.currentTime()
     Remote.update()
   })
+
 
   player.on('ended', function(){
     Remote.status = 0

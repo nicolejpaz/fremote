@@ -22,6 +22,15 @@ Remote.ping = function(){
   $.ajax({
     type: 'GET',
     url: '/remotes/' + Remote.remote_id + "/ping"
+  }).done(function(data){
+    if (data.stream_url != undefined){
+      player.src(data.stream_url)
+      player.one('loadedmetadata', function(){
+        Remote.toggle(data)
+      })
+    } else {
+      Remote.toggle(data)
+    }
   })
 }
 

@@ -55,4 +55,10 @@ class RemotesController < ApplicationController
 		render nothing: true
 	end
 
+	def clear
+		@remote = Remote.find_by({remote_id: params[:id]})
+		ActiveSupport::Notifications.instrument("clear:#{@remote.remote_id}")
+		render nothing: true
+	end
+
 end

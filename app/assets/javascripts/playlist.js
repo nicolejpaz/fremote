@@ -11,3 +11,12 @@ $(document).on('ready', function(){
       console.log('playlist_item_clicked')
 	})
 })
+
+var Playlist = {
+  selectedListItem: 0
+}
+
+$('#playlist li').on('mousedown', function(){
+  Playlist.slectedListItem = $('#playlist li').index(self)
+})
+

@@ -49,7 +49,7 @@
 						%label
 							Owner-only Controls #{f.check_box :admin_only}
 
-= javascript_include_tag "jquery.sortable", "data-turbolinks-track" => false
+/ = javascript_include_tag "jquery.sortable", "data-turbolinks-track" => false
 
 :javascript
 
@@ -59,7 +59,9 @@
 
 	var Remote = #{@remote.to_json}
 	var user = '#{@identifier}'
-	$('.sortable').sortable().bind('sortupdate', function(e) {
-		console.log(e)
-		console.log(this)
+	$('.sortable').sortable().bind('sortupdate', function(e, ui) {
+		console.log('sorted')
+		console.log(ui)
+		console.log(ui.item.index())
+		console.log(ui.oldindex)
 	})

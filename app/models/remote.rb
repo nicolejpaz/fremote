@@ -2,6 +2,7 @@ class Remote
   include Rails.application.routes.url_helpers
   include Mongoid::Document
   include Mongoid::Timestamps
+  include RemotesHelper
   after_initialize :spawn_playlist
   field :remote_id, type: String
   field :url, type: String
@@ -37,6 +38,7 @@ class Remote
         new_video["title"] = ViddlRb.get_names(url).first
         self.playlist.list << new_video
         self.remote_id = Digest::MD5.hexdigest(url + DateTime.now.to_s + DateTime.now.nsec.to_s).slice(0..9)
+        self.save
         return { message: "Congratulations!  Take control of your remote.", status: :notice, path: remote_path(self.remote_id)}
       else
         return { message: "Invalid URL", status: :alert, path: root_path }
@@ -59,7 +61,9 @@ class Remote
 
       self.status = params["status"] if params["status"]
       self.start_at = params["start_at"].to_i if params["start_at"]
-      self.admin_only = to_boolean(params["remote"]["admin_only"]) if params.has_key?("remote") && params["remote"].has_key?("admin_only")
+      if remote_owner == self.user && params.has_key?("remote") && params["remote"].has_key?("admin_only")
+        self.admin_only = to_boolean(params["remote"]["admin_only"])
+      end
 
       if params.has_key?("selection")
         self.playlist.selection = params["selection"].to_i

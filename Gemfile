@@ -68,3 +68,5 @@ gem 'rails_12factor', group: :production
 gem 'viddl-rb'
 
 gem 'debugger', group: :development
+
+gem 'simplecov', :require => false, :group => :test

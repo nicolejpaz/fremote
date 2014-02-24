@@ -1,8 +1,8 @@
 module RemotesHelper
   def to_boolean(str)
-    if str.downcase == "true" || str == "1" || str == 1
+    if str.to_s.downcase == "true" || str.to_s.downcase == "1"
       true
-    elsif str.downcase == "false" || str == "0" || str == 0
+    elsif str.to_s.downcase == "false" || str.to_s.downcase == "0"
       false
     else
       nil

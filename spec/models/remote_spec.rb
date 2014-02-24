@@ -4,18 +4,10 @@ describe Remote do
 
 	before(:each) do
 		@attr = {
-			video_id: "mZqGqE0D0n4", 
-			provider: "YouTube", 
-			title: "Cherry Bloom - King Of The Knife",
-			description: "The first video from the upcoming album Secret Sounds, to download in-stores April 14. Checkout http://www.cherrybloom.net",
-			duration: 175,
-			date: "Sat Apr 12 22:25:35 UTC 2008",
-			thumbnail_small: "http://i.ytimg.com/vi/mZqGqE0D0n4/default.jpg",
-			thumbnail_medium: "http://i.ytimg.com/vi/mZqGqE0D0n4/mqdefault.jpg",
-			thumbnail_large: "http://i.ytimg.com/vi/mZqGqE0D0n4/hqdefault.jpg",
-			embed_url: "http://www.youtube.com/embed/mZqGqE0D0n4",
-			embed_code: '<iframe src="http://www.youtube.com/embed/mZqGqE0D0n4" frameborder="0" allowfullscreen="allowfullscreen"></iframe>'
+			url: "http://www.youtube.com/embed/mZqGqE0D0n4",
 		}
+		 @sample_user = User.create name: "john", email: "john@john.com", password: "password"
+		 @sample_video = "http://www.youtube.com/embed/mZqGqE0D0n4"
 	end
 
 	it "should create a new instance given a valid attribute" do
@@ -27,14 +19,34 @@ describe Remote do
 		@testvideo.status.should eq(-1)
 	end
 
-	it "have a video id attribute" do
-		Remote.new(@attr.merge(:video_id => ""))
-		should_not be_valid
+	it "have a remote id attribute" do
+		@test_remote = Remote.create(@attr)
+		@test_remote.populate(@sample_video)
+		@test_remote.remote_id.should_not eq(nil)
 	end
 
 	it "have a start at attribute that equals zero by default" do
 		@testvideo = Remote.new(@attr)
 		@testvideo.start_at.should equal(0)
+	end
+
+	it "should have an owner if created by a user" do
+    @sample_remote = Remote.make(@sample_user)
+    @sample_remote.populate(@sample_video)
+    @sample_remote.save
+    @sample_remote.user.should equal(@sample_user)
+	end
+
+	it "should not have an owner if not created by a user" do
+    @sample_remote = Remote.make(nil)
+    @sample_remote.populate(@sample_video)
+    @sample_remote.save
+    @sample_remote.user.should equal(nil)
+	end
+
+	it "should have a playlist embedded on initialize" do
+		@sample_remote = Remote.new
+		@sample_remote.playlist.is_a?(Playlist).should equal(true)
 	end
 
 end

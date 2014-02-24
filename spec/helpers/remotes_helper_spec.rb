@@ -11,5 +11,29 @@ require 'spec_helper'
 #   end
 # end
 describe RemotesHelper do
-  pending "add some examples to (or delete) #{__FILE__}"
+
+    it "should convert true string to true boolean" do
+      to_boolean("true").should equal(true)
+    end
+
+    it "should convert false string to false boolean" do
+      to_boolean("false").should equal(false)
+    end
+
+    it "should convert zero string to false boolean" do
+      to_boolean("0").should equal(false)
+    end
+
+    it "should convert zero integer to false boolean" do
+      to_boolean(0).should equal(false)
+    end
+
+    it "should convert one string to true boolean" do
+      to_boolean("1").should equal(true)
+    end
+
+    it "should convert one integer to true boolean" do
+      to_boolean(1).should equal(true)
+    end
+
 end

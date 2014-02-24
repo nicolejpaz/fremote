@@ -13,14 +13,19 @@ describe RemotesController do
   end
 
   describe 'POST drawing' do
-
-    it 'returns a response that includes the selected color' do
+    before(:each) do
       post :drawing, id: @sample_remote.remote_id, coordinates: @sample_coordinates
 
-      drawing_response = response.dup
+      @drawing_response = response.dup
       response.close
+    end
 
-      expect(drawing_response.as_json.to_s).to include 'FF0000'
+    it 'returns an OK response' do
+      expect(@drawing_response.status).to eq 200
+    end
+    
+    it 'returns a response that includes the selected color' do
+      expect(@drawing_response.as_json.to_s).to include 'FF0000'
     end
   end
 

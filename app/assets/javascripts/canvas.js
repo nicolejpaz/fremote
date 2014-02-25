@@ -5,13 +5,12 @@ $(document).ready(function() {
 
   canvas.draw()
 
-  // $('button#clear').on('click', function(e) {
-  //   clear()
-  //   $.ajax({
-  //     type: 'POST',
-  //     url: '/remotes/' + Remote.remote_id + '/clear'
-  //   })
-  // })
+  $('button#clear').on('click', function(e) {
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + Remote.remote_id + '/clear'
+    })
+  })
 })
 
 var Canvas = function(canvas) {
@@ -80,10 +79,10 @@ Canvas.prototype.draw = function() {
   onMouseUp(targetCanvas)
 }
 
-// function clear() {
-//   var drawing_canvas = $('canvas')[0]
-//   drawing_canvas.width = drawing_canvas.width
-// }
+Canvas.prototype.clear = function() {
+  var canvas = this.canvas[0]
+  canvas.width = canvas.width
+}
 
 Canvas.prototype.remoteDraw = function(previous_coordinates, x_coordinate, y_coordinate, color) {
   var remote_canvas = $('canvas')[0]

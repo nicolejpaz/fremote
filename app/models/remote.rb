@@ -33,16 +33,7 @@ class Remote
   def populate(url)
     new_video = {}
     unless url == ""
-      if url[/(youtube.com|vimeo.com)/] != nil
-        new_video["url"] = url
-        new_video["title"] = ViddlRb.get_names(url).first
-        self.playlist.list << new_video
-        self.remote_id = Digest::MD5.hexdigest(url + DateTime.now.to_s + DateTime.now.nsec.to_s).slice(0..9)
-        self.save
-        return { message: "Congratulations!  Take control of your remote.", status: :notice, path: remote_path(self.remote_id)}
-      else
-        return { message: "Invalid URL", status: :alert, path: root_path }
-      end
+      check_validity_of_link(url, new_video)
     else
       return { message: "URL can't be blank", status: :alert, path: root_path }
     end
@@ -89,6 +80,19 @@ class Remote
   private
   def spawn_playlist
     self.playlist = Playlist.new if self.playlist == nil
+  end
+
+  def check_validity_of_link(url, new_video)
+    if url[/(youtube.com|vimeo.com)/] != nil
+      new_video["url"] = url
+      new_video["title"] = ViddlRb.get_names(url).first
+      self.playlist.list << new_video
+      self.remote_id = Digest::MD5.hexdigest(url + DateTime.now.to_s + DateTime.now.nsec.to_s).slice(0..9)
+      self.save
+      return { message: "Congratulations!  Take control of your remote.", status: :notice, path: remote_path(self.remote_id)}
+    else
+      return { message: "Invalid URL", status: :alert, path: root_path }
+    end
   end
 
 end

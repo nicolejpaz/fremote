@@ -14,8 +14,6 @@ class Playlist
     self.list = list
     self.save
     self.remote.save
-    p "$" * 50
-    p self.list
     ActiveSupport::Notifications.instrument("playlist_sort:#{self.remote.remote_id}", {'playlist' => self.list }.to_json)
   end
 

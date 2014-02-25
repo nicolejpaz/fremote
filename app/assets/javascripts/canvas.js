@@ -28,7 +28,7 @@ Canvas.prototype.color = function() {
 }
 
 Canvas.prototype.line = function() {
-  var line = 5
+  var line = $('input#line').val()
   return line
 }
 
@@ -95,7 +95,6 @@ Canvas.prototype.remoteDraw = function(previous_coordinates, x_coordinate, y_coo
   var context = remote_canvas.getContext('2d')
 
   context.strokeStyle = color
-  console.log(line)
   context.lineWidth = line
 
   if (x_coordinate != null) {

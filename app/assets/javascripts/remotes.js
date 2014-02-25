@@ -72,6 +72,8 @@ var player = videojs('player')
 player.ready(function(){
 
   var source = new EventSource(Remote.remote_id + '/stream')
+  var RemoteCanvas = $('canvas')
+  var canvas = new Canvas(RemoteCanvas)
 
   source.addEventListener("control:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)
@@ -113,7 +115,7 @@ player.ready(function(){
 
     $.each(data['coordinates'], function(index, coordinate) {
       if (previous_coordinates.length >= 1) {
-        remote_draw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color)
+        canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color)
       }
 
       previous_coordinates.push(coordinate)
@@ -122,7 +124,7 @@ player.ready(function(){
   })
 
   source.addEventListener("clear:" + Remote.remote_id, function(event){
-    clear()
+    canvas.clear()
   })
 
   $(document).on('userplay', function(){

@@ -115,7 +115,7 @@ player.ready(function(){
 
     $.each(data['coordinates'], function(index, coordinate) {
       if (previous_coordinates.length >= 1) {
-        canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color)
+        canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
       }
 
       previous_coordinates.push(coordinate)

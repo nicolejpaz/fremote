@@ -21,10 +21,12 @@ var Canvas = function(canvas) {
 Canvas.prototype.color = function() {
   var color = $('input#color').val()
 
-  $('input#color').on('change', function(e) {
-    color = $('input#color').val()
-  })
   return color
+}
+
+Canvas.prototype.line = function() {
+  var line = $('input#line').val()
+  return line
 }
 
 var mousedown = false
@@ -38,13 +40,19 @@ function onMouseDown(targetCanvas) {
   }
 }
 
-function onMouseMove(targetCanvas, color) {
+function onMouseMove(targetCanvas, color, line) {
   targetCanvas.onmousemove = function(e) {
     e.preventDefault()
     var pos = getMousePos(targetCanvas, e)
 
+    $('input#color').on('change', function(e) {
+      color = $('input#color').val()
+    })
+    $('input#line').on('change', function(e) {
+      line = $('input#line').val()
+    })
     if (mousedown) {
-      currentCoordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y, 'color': color})
+      currentCoordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y, 'color': color, 'line': line})
 
       sendCoordinatesIfCorrectLength()
     }
@@ -71,11 +79,11 @@ function onMouseUp(targetCanvas) {
 
 Canvas.prototype.draw = function() {
   var color = this.color()
-
+  var line = this.line()
   var targetCanvas = this.canvas
 
   onMouseDown(targetCanvas)
-  onMouseMove(targetCanvas, color)
+  onMouseMove(targetCanvas, color, line)
   onMouseUp(targetCanvas)
 }
 
@@ -84,19 +92,19 @@ Canvas.prototype.clear = function() {
   canvas.width = canvas.width
 }
 
-Canvas.prototype.remoteDraw = function(previous_coordinates, x_coordinate, y_coordinate, color) {
+Canvas.prototype.remoteDraw = function(previous_coordinates, x_coordinate, y_coordinate, color, line) {
   var remote_canvas = this.canvas
   var context = remote_canvas.getContext('2d')
 
   context.strokeStyle = color
-  context.lineWidth = 5
+  context.lineWidth = line
 
   if (x_coordinate != null) {
-    drawOnRemoteCanvas(previous_coordinates, x_coordinate, y_coordinate, context, color)
+    drawOnRemoteCanvas(previous_coordinates, x_coordinate, y_coordinate, context, color, line)
   }
 }
 
-function drawOnRemoteCanvas(previous_coordinates, x_coordinate, y_coordinate, context, color) {
+function drawOnRemoteCanvas(previous_coordinates, x_coordinate, y_coordinate, context, color, line) {
   var length = previous_coordinates.length - 1,
       prev_x = parseInt(previous_coordinates[length]['x_coordinate']),
       prev_y = parseInt(previous_coordinates[length]['y_coordinate']),

@@ -29,6 +29,7 @@ Canvas.prototype.color = function() {
 }
 
 var mousedown = false
+var currentCoordinates = []
 
 function onMouseDown(targetCanvas) {
   targetCanvas.onmousedown = function(e) {
@@ -38,15 +39,7 @@ function onMouseDown(targetCanvas) {
   }
 }
 
-Canvas.prototype.draw = function() {
-  var color = this.color()
-
-  var targetCanvas = this.canvas[0]
-
-  onMouseDown(targetCanvas)
-
-  var currentCoordinates = []
-
+function onMouseMove(targetCanvas, color) {
   targetCanvas.onmousemove = function(e) {
     e.preventDefault()
     var pos = getMousePos(targetCanvas, e)
@@ -54,15 +47,21 @@ Canvas.prototype.draw = function() {
     if (mousedown) {
       currentCoordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y, 'color': color})
 
-      if (currentCoordinates.length >= 10) {
-        sendCoordinates(currentCoordinates)
-
-        var new_current = [currentCoordinates[currentCoordinates.length-1]]
-        currentCoordinates = new_current
-      }
+      sendCoordinatesIfCorrectLength()
     }
   }
+}
 
+function sendCoordinatesIfCorrectLength() {
+  if (currentCoordinates.length >= 10) {
+    sendCoordinates(currentCoordinates)
+
+    var newCurrent = [currentCoordinates[currentCoordinates.length-1]]
+    currentCoordinates = newCurrent
+  }
+}
+
+function onMouseUp(targetCanvas) {
   targetCanvas.onmouseup = function(e) {
     mousedown = false
     
@@ -71,12 +70,22 @@ Canvas.prototype.draw = function() {
   }
 }
 
+Canvas.prototype.draw = function() {
+  var color = this.color()
+
+  var targetCanvas = this.canvas[0]
+
+  onMouseDown(targetCanvas)
+  onMouseMove(targetCanvas, color)
+  onMouseUp(targetCanvas)
+}
+
 // function clear() {
 //   var drawing_canvas = $('canvas')[0]
 //   drawing_canvas.width = drawing_canvas.width
 // }
 
-function remote_draw(previous_coordinates, x_coordinate, y_coordinate, color) {
+function remoteDraw(previous_coordinates, x_coordinate, y_coordinate, color) {
   var remote_canvas = $('canvas')[0]
   var context = remote_canvas.getContext('2d')
 
@@ -84,19 +93,21 @@ function remote_draw(previous_coordinates, x_coordinate, y_coordinate, color) {
   context.lineWidth = 5
 
   if (x_coordinate != null) {
-
-    var length = previous_coordinates.length - 1
-    var prev_x = parseInt(previous_coordinates[length]['x_coordinate'])
-    var prev_y = parseInt(previous_coordinates[length]['y_coordinate'])
-
-    var x = parseInt(x_coordinate)
-    var y = parseInt(y_coordinate)
-
-    context.beginPath()
-    context.moveTo(prev_x, prev_y)
-    context.lineTo(x, y)
-    context.stroke()
+    drawOnRemoteCanvas(previous_coordinates, x_coordinate, y_coordinate, context, color)
   }
+}
+
+function drawOnRemoteCanvas(previous_coordinates, x_coordinate, y_coordinate, context, color) {
+  var length = previous_coordinates.length - 1,
+      prev_x = parseInt(previous_coordinates[length]['x_coordinate']),
+      prev_y = parseInt(previous_coordinates[length]['y_coordinate']),
+      x = parseInt(x_coordinate),
+      y = parseInt(y_coordinate)
+
+  context.beginPath()
+  context.moveTo(prev_x, prev_y)
+  context.lineTo(x, y)
+  context.stroke()
 }
 
 function sendCoordinates(currentCoordinates) {

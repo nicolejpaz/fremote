@@ -14,8 +14,8 @@ $(document).ready(function() {
 })
 
 var Canvas = function(canvas) {
-  this.canvas = canvas
-  this.context = canvas[0].getContext('2d')
+  this.canvas = canvas[0]
+  this.context = this.canvas.getContext('2d')
 }
 
 Canvas.prototype.color = function() {
@@ -72,7 +72,7 @@ function onMouseUp(targetCanvas) {
 Canvas.prototype.draw = function() {
   var color = this.color()
 
-  var targetCanvas = this.canvas[0]
+  var targetCanvas = this.canvas
 
   onMouseDown(targetCanvas)
   onMouseMove(targetCanvas, color)
@@ -80,12 +80,12 @@ Canvas.prototype.draw = function() {
 }
 
 Canvas.prototype.clear = function() {
-  var canvas = this.canvas[0]
+  var canvas = this.canvas
   canvas.width = canvas.width
 }
 
 Canvas.prototype.remoteDraw = function(previous_coordinates, x_coordinate, y_coordinate, color) {
-  var remote_canvas = $('canvas')[0]
+  var remote_canvas = this.canvas
   var context = remote_canvas.getContext('2d')
 
   context.strokeStyle = color

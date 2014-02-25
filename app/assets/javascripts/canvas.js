@@ -85,7 +85,7 @@ Canvas.prototype.draw = function() {
 //   drawing_canvas.width = drawing_canvas.width
 // }
 
-function remoteDraw(previous_coordinates, x_coordinate, y_coordinate, color) {
+Canvas.prototype.remoteDraw = function(previous_coordinates, x_coordinate, y_coordinate, color) {
   var remote_canvas = $('canvas')[0]
   var context = remote_canvas.getContext('2d')
 

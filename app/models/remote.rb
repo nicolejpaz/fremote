@@ -56,24 +56,7 @@ class Remote
         self.admin_only = to_boolean(params["remote"]["admin_only"])
       end
 
-      if params.has_key?("selection")
-        self.playlist.selection = params["selection"].to_i
-        self.start_at = 0
-        self.status = 1
-        self.save
-        ActiveSupport::Notifications.instrument("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'sender_id' => params['sender_id'], 'stream_url' => URI::encode(ViddlRb.get_urls(self.playlist.list[self.playlist.selection]["url"]).first) }.to_json)
-      elsif params["status"] == 0 || params["status"] == "0"
-        self.playlist.selection = (self.playlist.selection + 1) unless ((self.playlist.selection + 1) > (self.playlist.list.count - 1))
-        self.start_at = 0
-        self.status = 1
-        self.save
-        ActiveSupport::Notifications.instrument("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'sender_id' => params['sender_id'], 'stream_url' => URI::encode(ViddlRb.get_urls(self.playlist.list[self.playlist.selection]["url"]).first)  }.to_json)
-      else
-        self.save
-        ActiveSupport::Notifications.instrument("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'sender_id' => params['sender_id']}.to_json)
-      end
-
-
+      check_if_params_has_selection(params)
     end
   end
 
@@ -93,6 +76,27 @@ class Remote
     else
       return { message: "Invalid URL", status: :alert, path: root_path }
     end
+  end
+
+  def check_if_params_has_selection(params)
+    if params.has_key?("selection")
+      self.playlist.selection = params["selection"].to_i
+      set_start_at_status_and_save
+      ActiveSupport::Notifications.instrument("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'sender_id' => params['sender_id'], 'stream_url' => URI::encode(ViddlRb.get_urls(self.playlist.list[self.playlist.selection]["url"]).first) }.to_json)
+    elsif params["status"] == 0 || params["status"] == "0"
+      self.playlist.selection = (self.playlist.selection + 1) unless ((self.playlist.selection + 1) > (self.playlist.list.count - 1))
+      set_start_at_status_and_save
+      ActiveSupport::Notifications.instrument("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'sender_id' => params['sender_id'], 'stream_url' => URI::encode(ViddlRb.get_urls(self.playlist.list[self.playlist.selection]["url"]).first)  }.to_json)
+    else
+      self.save
+      ActiveSupport::Notifications.instrument("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'sender_id' => params['sender_id']}.to_json)
+    end
+  end
+
+  def set_start_at_status_and_save
+    self.start_at = 0
+    self.status = 1
+    self.save
   end
 
 end

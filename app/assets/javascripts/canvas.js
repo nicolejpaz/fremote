@@ -21,9 +21,6 @@ var Canvas = function(canvas) {
 Canvas.prototype.color = function() {
   var color = $('input#color').val()
 
-  $('input#color').on('change', function(e) {
-    color = $('input#color').val()
-  })
   return color
 }
 
@@ -48,6 +45,12 @@ function onMouseMove(targetCanvas, color, line) {
     e.preventDefault()
     var pos = getMousePos(targetCanvas, e)
 
+    $('input#color').on('change', function(e) {
+      color = $('input#color').val()
+    })
+    $('input#line').on('change', function(e) {
+      line = $('input#line').val()
+    })
     if (mousedown) {
       currentCoordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y, 'color': color, 'line': line})
 
@@ -77,7 +80,6 @@ function onMouseUp(targetCanvas) {
 Canvas.prototype.draw = function() {
   var color = this.color()
   var line = this.line()
-
   var targetCanvas = this.canvas
 
   onMouseDown(targetCanvas)

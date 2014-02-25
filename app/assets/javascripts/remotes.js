@@ -124,7 +124,7 @@ player.ready(function(){
   })
 
   source.addEventListener("clear:" + Remote.remote_id, function(event){
-    // clear()
+    canvas.clear()
   })
 
   $(document).on('userplay', function(){

@@ -5,6 +5,7 @@
 	- if @user || @remote.admin_only == false
 		%button#clear Clear Screen
 		%input#color{name: "linecolor", type: "color"}/
+		%input#line{max: "10", min: "1", name: "points", type: "range"}/
 
 	#video_info.panel.panel-default
 		.panel-heading

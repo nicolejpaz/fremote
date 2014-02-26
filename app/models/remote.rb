@@ -3,7 +3,7 @@ class Remote
   include Mongoid::Document
   include Mongoid::Timestamps
   include RemotesHelper
-  after_initialize :spawn_playlist
+  after_initialize :spawn_embeds
   field :remote_id, type: String
   field :url, type: String
   field :status, type: Integer, default: -1
@@ -11,6 +11,7 @@ class Remote
   field :admin_only, type: Boolean, default: false
   belongs_to :user
   embeds_one :playlist
+  embeds_one :drawing
   validates_presence_of :status
   validates_presence_of :start_at
 
@@ -60,8 +61,9 @@ class Remote
   end
 
   private
-  def spawn_playlist
+  def spawn_embeds
     self.playlist = Playlist.new if self.playlist == nil
+    self.drawing = Drawing.new if self.drawing == nil
   end
 
   def push_link_to_playlist(url)

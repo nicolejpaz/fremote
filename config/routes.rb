@@ -12,7 +12,7 @@ Fremote::Application.routes.draw do
   get 'time' => 'remotes#time'
 
   resources :remotes do
-    resource :playlist, only: [:update, :show]
+    resource :playlist, only: [:update, :show, :create]
   end
 
 

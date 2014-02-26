@@ -3,18 +3,19 @@ Fremote::Application.routes.draw do
   root 'remotes#new'
 
   resources :remotes, only: [:create,:show,:update]
+  resources :bogus, only: [:index]
+
 
   get 'remotes/:id/stream' => 'streams#stream'
   post 'remotes/:id/chat' => 'remotes#chat'
   get 'remotes/:id/ping' => 'remotes#ping'
-  post 'remotes/:id/drawing' => 'remotes#drawing'
-  post 'remotes/:id/clear' => 'remotes#clear'
+  post 'remotes/:id/clear' => 'drawings#clear'
+  post 'remotes/:id/drawings' => 'drawings#create'
   get 'time' => 'remotes#time'
 
   resources :remotes do
-    resource :playlist, only: [:update, :show]
+    resource :playlist, only: [:update, :show, :create]
   end
-
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

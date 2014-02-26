@@ -120,7 +120,7 @@ function drawOnRemoteCanvas(previous_coordinates, x_coordinate, y_coordinate, co
 function sendCoordinates(currentCoordinates) {
   $.ajax({
     type: 'POST',
-    url: '/remotes/' + Remote.remote_id + '/drawing',
+    url: '/remotes/' + Remote.remote_id + '/drawings',
     data: {'coordinates': currentCoordinates}
   })
 }

@@ -20,7 +20,6 @@ class PlaylistsController < ApplicationController
     @playlist = @remote.playlist
     new_media = Media.new(params[:url])
     @playlist.list << new_media if new_media
-    Notify.new("playlist_add:#{@remote.remote_id}", {'media' => new_media })
     render nothing: true
   end
 

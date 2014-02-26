@@ -17,4 +17,9 @@ class Playlist
     ActiveSupport::Notifications.instrument("playlist_sort:#{self.remote.remote_id}", {'playlist' => self.list }.to_json)
   end
 
+  def add_list_item(new_item, user = nil)
+    self.list << new_item
+    Notify.new("playlist_add:#{self.remote.remote_id}", new_item.to_json)
+  end
+
 end

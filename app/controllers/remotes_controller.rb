@@ -36,6 +36,7 @@ class RemotesController < ApplicationController
 		@remote_json = @remote.json
 		@identifier = (Time.now.strftime('%Y%m%d%H%M%S%L%N') + rand(400).to_s).to_s
 		@username = Chat.guest_display_name
+		@playlist = Playlist.new
 	end
 
 	def chat

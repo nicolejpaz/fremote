@@ -38,6 +38,14 @@
 			%li.list-group-item
 				Playlist
 			%li.list-group-item
+				= form_for :playlist, url: remote_playlist_path(@remote.remote_id), remote: true do |f|
+					.input-group.input-group-sm
+						= hidden_field_tag :username, @username
+						= text_field_tag :url, "", :class => 'form-control', placeholder: 'add a url to the playlist here...', html: {:autocomplete => "off"}
+						%span.input-group-btn
+							= submit_tag "Add", class: "btn btn-success"
+
+			%li.list-group-item
 				%ol#playlist.sortable.list
 
 	- if current_user

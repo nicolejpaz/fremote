@@ -80,16 +80,16 @@ class Remote
 
   def check_if_params_has_selection(params)
     if params.has_key?("selection")
-      change_playlist_selection_if_selection_key_exists
+      change_playlist_selection_if_selection_key_exists(params)
     elsif params["status"] == 0 || params["status"] == "0"
-      change_status_if_status_is_zero
+      change_status_if_status_is_zero(params)
     else
       self.save
       Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now })
     end
   end
 
-  def change_playlist_selection_if_selection_key_exists
+  def change_playlist_selection_if_selection_key_exists(params)
     self.playlist.selection = params["selection"].to_i
     self.start_at = 0
     self.status = 1
@@ -97,7 +97,7 @@ class Remote
     Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(ViddlRb.get_urls(self.playlist.list[self.playlist.selection]["url"]).first) })
   end
 
-  def change_status_if_status_is_zero
+  def change_status_if_status_is_zero(params)
     self.playlist.selection = (self.playlist.selection + 1) unless ((self.playlist.selection + 1) > (self.playlist.list.count - 1))
     self.start_at = 0
     self.status = 1

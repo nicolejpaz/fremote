@@ -19,7 +19,7 @@ class PlaylistsController < ApplicationController
     @remote = Remote.find_by({remote_id: params[:remote_id]})
     @playlist = @remote.playlist
     new_media = Media.new(params[:url])
-    @playlist.list << new_media if new_media
+    @playlist.add_list_item(new_media)
     render nothing: true
   end
 

@@ -26,8 +26,6 @@ class RemotesController < ApplicationController
 	def ping
 		@remote = Remote.find_by({remote_id: params[:id]})
 		@playlist = @remote.playlist
-		# ActiveSupport::Notifications.instrument("control:#{@remote.remote_id}", {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.updated_at, 'dispatched_at' => Time.now, 'sender_id' => 'fremote_server', 'selection' => @playlist.selection, 'stream_url' => URI::encode(ViddlRb.get_urls(@playlist.list[@playlist.selection]["url"]).first), 'playlist' => @playlist.list }.to_json)
-		# render nothing: true
 		render json: {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.updated_at, 'dispatched_at' => Time.now, 'sender_id' => 'fremote_server', 'selection' => @playlist.selection, 'stream_url' => URI::encode(ViddlRb.get_urls(@playlist.list[@playlist.selection]["url"]).first), 'playlist' => @playlist.list }.to_json
 	end
 
@@ -42,7 +40,7 @@ class RemotesController < ApplicationController
 
 	def chat
 		@remote = Remote.find_by({remote_id: params[:id]})
-		ActiveSupport::Notifications.instrument("chat:#{@remote.remote_id}", {'message' => params["chat_message"], 'name' => params["username"] }.to_json)
+		Notify.new("chat:#{@remote.remote_id}", {'message' => params["chat_message"], 'name' => params["username"] })
 		render nothing: true
 	end
 
@@ -55,7 +53,7 @@ class RemotesController < ApplicationController
 		@user = current_user if current_user
 
 		if @user == @remote.user || @remote.admin_only == false
-			ActiveSupport::Notifications.instrument("drawing:#{@remote.remote_id}", {'coordinates' => params["coordinates"]}.to_json)
+			Notify.new("drawing:#{@remote.remote_id}", {'coordinates' => params["coordinates"]})
 		end
 
 		render nothing: true
@@ -66,7 +64,7 @@ class RemotesController < ApplicationController
 		@user = current_user if current_user
 
 		if @user == @remote.user || @remote.admin_only == false
-			ActiveSupport::Notifications.instrument("clear:#{@remote.remote_id}")
+			Notify.new("clear:#{@remote.remote_id}")
 		end
 
 		render nothing: true

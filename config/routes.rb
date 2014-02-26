@@ -9,7 +9,7 @@ Fremote::Application.routes.draw do
   get 'remotes/:id/stream' => 'streams#stream'
   post 'remotes/:id/chat' => 'remotes#chat'
   get 'remotes/:id/ping' => 'remotes#ping'
-  post 'remotes/:id/clear' => 'remotes#clear'
+  post 'remotes/:id/clear' => 'drawings#clear'
   post 'remotes/:id/drawings' => 'drawings#create'
   get 'time' => 'remotes#time'
 

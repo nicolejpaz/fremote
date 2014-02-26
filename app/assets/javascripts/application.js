@@ -16,8 +16,8 @@
 //= require bootstrap
 //= require eventsource
 //= require video.dev
-//= require ui
 //= require playlist
 //= require html.sortable.0.1.1
+//= require ui
 // require_directory .
 //= require canvas

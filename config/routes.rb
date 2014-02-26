@@ -14,7 +14,7 @@ Fremote::Application.routes.draw do
   get 'time' => 'remotes#time'
 
   resources :remotes do
-    resource :playlist, only: [:update, :show]
+    resource :playlist, only: [:update, :show, :create]
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

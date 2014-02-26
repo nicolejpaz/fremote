@@ -10,7 +10,7 @@ module Stream
 
     # Subscribe the current user to notifications.
     notifications.each do |notification|
-      ActiveSupport::Notifications.subscribe(notification) do |name, start, finish, id, payload|
+      ActiveSupport::Notifications.subscribe("#{notification}:#{remote.remote_id}") do |name, start, finish, id, payload|
           queue << {name: name, payload: payload}
       end
     end
@@ -34,6 +34,7 @@ module Stream
     while heartbeat.alive?
       sleep 0.1.seconds
       response.stream.write "event: #{queue.first[:name]}\ndata: #{queue.first[:payload]} \n\n" unless queue.count == 0
+      p "$$$$$$$ Something happened." unless queue.count == 0
       queue.shift
     end
 
@@ -41,7 +42,7 @@ module Stream
     rescue IOError
     ensure
       notifications.each do |notification|
-        ActiveSupport::Notifications.unsubscribe(notification)
+        ActiveSupport::Notifications.unsubscribe("#{notification}:#{remote.id}")
       end
       response.stream.close
       p "stream closed"

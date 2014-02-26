@@ -31,9 +31,8 @@ class Remote
   end
 
   def populate(url)
-    new_video = {}
     unless url == ""
-      check_validity_of_link(url, new_video)
+      push_link_to_playlist(url)
     else
       return { message: "URL can't be blank", status: :alert, path: root_path }
     end
@@ -65,11 +64,10 @@ class Remote
     self.playlist = Playlist.new if self.playlist == nil
   end
 
-  def check_validity_of_link(url, new_video)
-    if url[/(youtube.com|vimeo.com)/] != nil
-      new_video["url"] = url
-      new_video["title"] = ViddlRb.get_names(url).first
-      self.playlist.list << new_video
+  def push_link_to_playlist(url)
+    new_media = Media.new(url)
+    if new_media != nil
+      self.playlist.list << new_media
       self.remote_id = Digest::MD5.hexdigest(url + DateTime.now.to_s + DateTime.now.nsec.to_s).slice(0..9)
       self.save
       return { message: "Congratulations!  Take control of your remote.", status: :notice, path: remote_path(self.remote_id)}
@@ -85,7 +83,7 @@ class Remote
       change_status_if_status_is_zero
     else
       self.save
-      ActiveSupport::Notifications.instrument("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'sender_id' => params['sender_id']}.to_json)
+      Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now })
     end
   end
 
@@ -94,7 +92,7 @@ class Remote
     self.start_at = 0
     self.status = 1
     self.save
-    ActiveSupport::Notifications.instrument("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'sender_id' => params['sender_id'], 'stream_url' => URI::encode(ViddlRb.get_urls(self.playlist.list[self.playlist.selection]["url"]).first) }.to_json)
+    Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(ViddlRb.get_urls(self.playlist.list[self.playlist.selection]["url"]).first) })
   end
 
   def change_status_if_status_is_zero
@@ -102,7 +100,7 @@ class Remote
     self.start_at = 0
     self.status = 1
     self.save
-    ActiveSupport::Notifications.instrument("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'sender_id' => params['sender_id'], 'stream_url' => URI::encode(ViddlRb.get_urls(self.playlist.list[self.playlist.selection]["url"]).first)  }.to_json)
+    Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(ViddlRb.get_urls(self.playlist.list[self.playlist.selection]["url"]).first)  })
   end
 
 end

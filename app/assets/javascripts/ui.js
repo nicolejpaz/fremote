@@ -17,10 +17,10 @@ $('#owner_controls_form').on('click', function(){
 })
 
 $('body .sortable').sortable().bind('sortupdate', function(e, ui) {
-	console.log('sorted')
-	console.log(ui)
-	console.log(ui.item.index())
-	console.log(ui.oldindex)
+	// console.log('sorted')
+	// console.log(ui)
+	// console.log(ui.item.index())
+	// console.log(ui.oldindex)
 	$.ajax({
 		url: "/remotes/" + Remote.remote_id + "/playlist",
 		type: "POST",

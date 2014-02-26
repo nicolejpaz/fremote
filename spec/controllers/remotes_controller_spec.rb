@@ -3,7 +3,7 @@ require 'spec_helper'
 describe RemotesController do
   before(:each) do
     @sample_remote = Remote.make
-    @sample_remote.populate('http://www.youtube.com/watch?v=4tzhyfWHdLo')
+    @sample_remote.populate('http://www.youtube.com/watch?v=NX_23r7vYak')
     @sample_remote.save
     @sample_coordinates = []
     10.times do |number|
@@ -22,9 +22,9 @@ describe RemotesController do
   describe "POST create" do
     before(:each) do
       @sample_user = User.create name: "john", email: "john@john.com", password: "password"
-      @sample_video = "http://www.youtube.com/embed/mZqGqE0D0n4"
+      @sample_video = "http://www.youtube.com/watch?v=NX_23r7vYak"
       @sample_remote = Remote.make
-      @sample_remote.populate("http://www.youtube.com/watch?v=4tzhyfWHdLo")
+      @sample_remote.populate("http://www.youtube.com/watch?v=NX_23r7vYak")
       @sample_remote.save
     end
 
@@ -52,9 +52,9 @@ describe RemotesController do
   describe "GET show" do
     before(:each) do
       @sample_user = User.create name: "john", email: "john@john.com", password: "password"
-      @sample_video = "http://www.youtube.com/embed/mZqGqE0D0n4"
+      @sample_video = "http://www.youtube.com/watch?v=NX_23r7vYak"
       @sample_remote = Remote.make
-      @sample_remote.populate("http://www.youtube.com/watch?v=4tzhyfWHdLo")
+      @sample_remote.populate("http://www.youtube.com/watch?v=NX_23r7vYak")
       @sample_remote.save
     end
 
@@ -79,9 +79,9 @@ describe RemotesController do
   describe "GET ping" do
     before(:each) do
       @sample_user = User.create name: "john", email: "john@john.com", password: "password"
-      @sample_video = "http://www.youtube.com/embed/mZqGqE0D0n4"
+      @sample_video = "http://www.youtube.com/watch?v=NX_23r7vYak"
       @sample_remote = Remote.make
-      @sample_remote.populate("http://www.youtube.com/watch?v=4tzhyfWHdLo")
+      @sample_remote.populate("http://www.youtube.com/watch?v=NX_23r7vYak")
       @sample_remote.save
     end
 
@@ -105,12 +105,12 @@ describe RemotesController do
   describe "PATCH update" do
     before(:each) do
       @sample_user = User.create name: "john", email: "john@john.com", password: "password"
-      @sample_video = "http://www.youtube.com/embed/mZqGqE0D0n4"
+      @sample_video = "http://www.youtube.com/watch?v=NX_23r7vYak"
       @sample_remote = Remote.make
-      @sample_remote.populate("http://www.youtube.com/watch?v=4tzhyfWHdLo")
+      @sample_remote.populate("http://www.youtube.com/watch?v=NX_23r7vYak")
       @sample_remote.save
       @sample_owned_remote = @sample_user.remotes.make
-      @sample_owned_remote.populate("http://www.youtube.com/watch?v=4tzhyfWHdLo")
+      @sample_owned_remote.populate("http://www.youtube.com/watch?v=NX_23r7vYak")
       @sample_owned_remote.save
       @another_user = User.create name: "bob", email: "bob@bob.com", password: "password"
     end
@@ -150,9 +150,9 @@ describe RemotesController do
   describe "POST chat" do
     before(:each) do
       @sample_user = User.create name: "john", email: "john@john.com", password: "password"
-      @sample_video = "http://www.youtube.com/embed/mZqGqE0D0n4"
+      @sample_video = "http://www.youtube.com/watch?v=NX_23r7vYak"
       @sample_remote = Remote.make
-      @sample_remote.populate("http://www.youtube.com/watch?v=4tzhyfWHdLo")
+      @sample_remote.populate("http://www.youtube.com/watch?v=NX_23r7vYak")
       @sample_remote.save
     end
 
@@ -186,9 +186,9 @@ describe RemotesController do
   describe "POST drawing" do
     before(:each) do
       @sample_user = User.create name: "john", email: "john@john.com", password: "password"
-      @sample_video = "http://www.youtube.com/embed/mZqGqE0D0n4"
+      @sample_video = "http://www.youtube.com/watch?v=NX_23r7vYak"
       @sample_remote = Remote.make
-      @sample_remote.populate("http://www.youtube.com/watch?v=4tzhyfWHdLo")
+      @sample_remote.populate("http://www.youtube.com/watch?v=NX_23r7vYak")
       @sample_remote.save
     end
 

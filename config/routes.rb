@@ -10,6 +10,7 @@ Fremote::Application.routes.draw do
   post 'remotes/:id/chat' => 'remotes#chat'
   get 'remotes/:id/ping' => 'remotes#ping'
   post 'remotes/:id/clear' => 'drawings#clear'
+  post 'remotes/:id/write' => 'drawings#write'
   put 'remotes/:id/drawings' => 'drawings#update'
   get 'time' => 'remotes#time'
 

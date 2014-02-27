@@ -23,4 +23,9 @@ class Playlist
     Notify.new("playlist_add:#{self.remote.remote_id}", new_media.to_json)
   end
 
+  def delete_list_item(index, user = nil)
+    self.list.delete_at(index)
+    Notify.new('playlist_delete:#{self.remote.remote_id}', {index: index}.to_json)
+  end
+
 end

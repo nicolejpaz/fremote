@@ -21,6 +21,16 @@ $(document).on('ready', function(){
     })
   })
 
+  $('#playlist').on('click', "playlist-delete", function(e){
+    e.preventDefault()
+    var index = this.parent.index()
+    $.ajax({
+      url: "/remotes/" + Remote.remote_id + "/playlist",
+      type: "POST",
+      data: {index: index, _method: "delete"}
+    })
+  })
+
 })
 
 $('#owner_controls_form').on('click', function(){

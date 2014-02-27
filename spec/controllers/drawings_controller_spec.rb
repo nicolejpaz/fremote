@@ -42,22 +42,19 @@ describe DrawingsController do
   end
 
   describe 'GET read' do
-    it 'receives an OK response' do
+    before(:each) do
       post :write, id: @sample_remote.remote_id, coordinates: @sample_coordinates
       get :read, id: @sample_remote.remote_id
       
       @read_response = response.dup
       response.close
+    end
+
+    it 'receives an OK response' do
       expect(@read_response.status).to eq 200
     end
 
     it 'retrieves the coordinates on load' do
-      post :write, id: @sample_remote.remote_id, coordinates: @sample_coordinates
-      response.close
-
-      get :read, id: @sample_remote.remote_id
-      @read_response = response.dup
-      response.close
       expect(@read_response.as_json.to_s).to include 'FF0000'
     end
   end
@@ -105,11 +102,19 @@ describe DrawingsController do
   end
 
   describe 'POST clear' do
-    it 'returns an OK response' do
+    before(:each) do
+      post :write, id: @sample_remote.remote_id, coordinates: @sample_coordinates
       post :clear, id: @sample_remote.remote_id
-      clear_response = response.dup
+      @clear_response = response.dup
       response.close
-      expect(clear_response.status).to eq 200
+    end
+
+    it 'returns an OK response' do
+      expect(@clear_response.status).to eq 200
+    end
+
+    it 'sets drawing coordinates to an empty array' do
+      expect(Remote.last.drawing.coordinates.length).to eq 0
     end
   end
 

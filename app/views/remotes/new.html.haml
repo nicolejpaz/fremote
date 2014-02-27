@@ -8,6 +8,9 @@
 					= link_to "Tell me more!", "#learn_more", :class => "btn btn-primary", "data-toggle" => "tab"
 			= form_for :remote, :url => { :controller => 'remotes', :action => 'create' }, :html => {:id => "new_remote"} do |f|
 				/ = label_tag :video_label, "Video URL", :class => 'header_label'
+				.input-group.full-width
+					= text_field_tag :name, '', :class => 'form-control', placeholder: 'Name your remote here...'
+					= text_area_tag :description, '', :class => 'form-control', placeholder: 'Describe your remote here...'
 				.input-group
 					= text_field_tag :video_url, "", :class => 'form-control', placeholder: 'Paste video URL here...'
 					- if current_user

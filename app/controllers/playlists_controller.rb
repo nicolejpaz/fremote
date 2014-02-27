@@ -23,6 +23,13 @@ class PlaylistsController < ApplicationController
     render nothing: true
   end
 
+  def destroy
+    @user = current_user if current_user
+    @remote = Remote.find_by({remote_id: params[:remote_id]})
+    @playlist = @remote.playlist
+    @playlist.delete_list_item(params[:index])
+  end
+
   private
 
   def push_link_to_playlist(url, new_video)

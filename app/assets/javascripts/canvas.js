@@ -3,21 +3,6 @@ $(document).ready(function() {
 
   var canvas = new Canvas(localCanvas)
 
-  $.ajax({
-    type: 'GET',
-    url: '/remotes/' + Remote.remote_id + '/read'
-  }).done(function(data){
-    var previous_coordinates = []
-
-    $.each(data, function(index, coordinate) {
-      if (previous_coordinates.length >= 1) {
-        canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
-      }
-
-      previous_coordinates.push(coordinate)
-    })
-  })
-
   canvas.draw()
 
   $('button#clear').on('click', function(e) {
@@ -105,11 +90,32 @@ function onMouseUp(targetCanvas) {
   }
 }
 
+function drawOnLoad(canvas) {
+  $.ajax({
+    type: 'GET',
+    url: '/remotes/' + Remote.remote_id + '/read'
+  }).done(function(data){
+    var previous_coordinates = []
+
+    if (data.length > 1) {
+      $.each(data, function(index, coordinate) {
+        if (previous_coordinates.length >= 1) {
+          canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
+        }
+
+        previous_coordinates.push(coordinate)
+      })
+    }
+  })
+}
+
 Canvas.prototype.draw = function() {
   var color = this.color()
   var line = this.line()
   var targetCanvas = this.canvas
+  console.log(this)
 
+  drawOnLoad(this)
   onMouseDown(targetCanvas)
   onMouseMove(targetCanvas, color, line)
   onMouseUp(targetCanvas)

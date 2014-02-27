@@ -17,9 +17,10 @@ class Playlist
     ActiveSupport::Notifications.instrument("playlist_sort:#{self.remote.remote_id}", {'playlist' => self.list }.to_json)
   end
 
-  def add_list_item(new_item, user = nil)
-    self.list << new_item
-    Notify.new("playlist_add:#{self.remote.remote_id}", new_item.to_json)
+  def add_list_item(new_media, user = nil)
+    self.list << new_media unless new_media == nil
+    self.save; self.remote.save
+    Notify.new("playlist_add:#{self.remote.remote_id}", new_media.to_json)
   end
 
 end

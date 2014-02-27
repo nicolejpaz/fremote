@@ -21,6 +21,17 @@ class DrawingsController < ApplicationController
 
     render nothing: true
   end
+
+  def read
+    @remote = Remote.find_by({remote_id: params[:id]})
+    @coordinates = @remote.drawing.coordinates
+
+    if @coordinates.length > 0
+      render json: @coordinates.to_json
+    else
+      render nothing: true
+    end
+  end
   
   def clear
     @remote = Remote.find_by({remote_id: params[:id]})

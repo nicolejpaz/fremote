@@ -41,6 +41,27 @@ describe DrawingsController do
     end
   end
 
+  describe 'GET read' do
+    it 'receives an OK response' do
+      post :write, id: @sample_remote.remote_id, coordinates: @sample_coordinates
+      get :read, id: @sample_remote.remote_id
+      
+      @read_response = response.dup
+      response.close
+      expect(@read_response.status).to eq 200
+    end
+
+    it 'retrieves the coordinates on load' do
+      post :write, id: @sample_remote.remote_id, coordinates: @sample_coordinates
+      response.close
+
+      get :read, id: @sample_remote.remote_id
+      @read_response = response.dup
+      response.close
+      expect(@read_response.as_json.to_s).to include 'FF0000'
+    end
+  end
+
   describe "POST update" do
 
     it "retrieves @remote from remote_id" do

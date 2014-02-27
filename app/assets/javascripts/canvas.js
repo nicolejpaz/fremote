@@ -3,8 +3,22 @@ $(document).ready(function() {
 
   var canvas = new Canvas(localCanvas)
 
+  $.ajax({
+    type: 'GET',
+    url: '/remotes/' + Remote.remote_id + '/read'
+  }).done(function(data){
+    var previous_coordinates = []
+
+    $.each(data, function(index, coordinate) {
+      if (previous_coordinates.length >= 1) {
+        canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
+      }
+
+      previous_coordinates.push(coordinate)
+    })
+  })
+
   canvas.draw()
-  // canvas.canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
 
   $('button#clear').on('click', function(e) {
     $.ajax({

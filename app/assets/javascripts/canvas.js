@@ -117,7 +117,6 @@ Canvas.prototype.draw = function() {
   var color = this.color()
   var line = this.line()
   var targetCanvas = this.canvas
-  console.log(this)
 
   drawOnLoad(this)
   onMouseDown(targetCanvas)

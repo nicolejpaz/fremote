@@ -105,9 +105,7 @@ source.addEventListener("playlist_add:" + Remote.remote_id, function(event){
   var data = JSON.parse(event.data)
   console.log(data)
 
-  $('#playlist').html('')
-
-  $('#playlist').append('<li class="playlist_item sortable" draggable="true">' + data.title + '</li>')
+  $('#playlist').append('<li class="playlist_item sortable" draggable="true">' + JSON.parse(data).title + '</li>')
 
   $('body .sortable').sortable()
 

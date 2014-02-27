@@ -34,7 +34,6 @@ module Stream
     while heartbeat.alive?
       sleep 0.1.seconds
       response.stream.write "event: #{queue.first[:name]}\ndata: #{queue.first[:payload]} \n\n" unless queue.count == 0
-      p "$$$$$$$ Something happened." unless queue.count == 0
       queue.shift
     end
 

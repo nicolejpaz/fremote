@@ -7,8 +7,7 @@ $(document).on('ready', function(){
         data: { _method:'PUT', status: 0, start_at: Remote.start_at, sender_id: user, selection: $('#playlist li').index(self)},
         dataType: 'JSON'
       })
-      console.log(self.closest('li').parent()[0].sectionRowIndex)
-      console.log('playlist_item_clicked')
+      // console.log(self.closest('li').parent()[0].sectionRowIndex)
 	})
 })
 
@@ -17,7 +16,5 @@ var Playlist = {
 }
 
 $('#playlist li').on('mousedown', function(){
-  Playlist.slectedListItem = $('#playlist li').index(self)
+  Playlist.selectedListItem = $('#playlist li').index(self)
 })
-
-

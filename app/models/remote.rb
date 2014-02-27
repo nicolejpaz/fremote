@@ -5,6 +5,8 @@ class Remote
   include RemotesHelper
   after_initialize :spawn_embeds
   field :remote_id, type: String
+  field :name, type: String
+  field :description, type: String
   field :url, type: String
   field :status, type: Integer, default: -1
   field :start_at, type: Integer, default: 0

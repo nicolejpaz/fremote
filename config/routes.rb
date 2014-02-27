@@ -12,6 +12,7 @@ Fremote::Application.routes.draw do
   post 'remotes/:id/clear' => 'drawings#clear'
   post 'remotes/:id/write' => 'drawings#write'
   put 'remotes/:id/drawings' => 'drawings#update'
+  get 'remotes/:id/read' => 'drawings#read'
   get 'time' => 'remotes#time'
 
   resources :remotes do

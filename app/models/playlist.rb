@@ -18,7 +18,7 @@ class Playlist
   end
 
   def add_list_item(new_media, user = nil)
-    self.list << new_media
+    self.list << new_media unless new_media == nil
     self.save; self.remote.save
     Notify.new("playlist_add:#{self.remote.remote_id}", new_media.to_json)
   end

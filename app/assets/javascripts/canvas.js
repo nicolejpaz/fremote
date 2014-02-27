@@ -31,6 +31,7 @@ Canvas.prototype.line = function() {
 
 var mousedown = false
 var currentCoordinates = []
+var saveCoordinates = []
 
 function onMouseDown(targetCanvas) {
   targetCanvas.onmousedown = function(e) {
@@ -53,6 +54,7 @@ function onMouseMove(targetCanvas, color, line) {
     })
     if (mousedown) {
       currentCoordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y, 'color': color, 'line': line})
+      saveCoordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y, 'color': color, 'line': line})
 
       sendCoordinatesIfCorrectLength()
     }
@@ -68,12 +70,46 @@ function sendCoordinatesIfCorrectLength() {
   }
 }
 
+function saveCoordinatesIfCorrectLength() {
+  if (saveCoordinates.length >= 100) {
+    sendToSaveCoordinates(saveCoordinates)
+
+    var newCurrent = [saveCoordinates[saveCoordinates.length-1]]
+    saveCoordinates = newCurrent
+  }
+}
+
 function onMouseUp(targetCanvas) {
   targetCanvas.onmouseup = function(e) {
     mousedown = false
     
     sendCoordinates(currentCoordinates)
+    sendToSaveCoordinates(saveCoordinates)
+    
     currentCoordinates = []
+  }
+}
+
+function drawOnLoad(canvas) {
+  $.ajax({
+    type: 'GET',
+    url: '/remotes/' + Remote.remote_id + '/read'
+  }).done(function(data){
+    parseDrawingData(data, canvas)
+  })
+}
+
+function parseDrawingData(data, canvas) {
+  var previous_coordinates = []
+
+  if (data.length > 1) {
+    $.each(data, function(index, coordinate) {
+      if (previous_coordinates.length >= 1) {
+        canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
+      }
+
+      previous_coordinates.push(coordinate)
+    })
   }
 }
 
@@ -81,7 +117,9 @@ Canvas.prototype.draw = function() {
   var color = this.color()
   var line = this.line()
   var targetCanvas = this.canvas
+  console.log(this)
 
+  drawOnLoad(this)
   onMouseDown(targetCanvas)
   onMouseMove(targetCanvas, color, line)
   onMouseUp(targetCanvas)
@@ -121,7 +159,15 @@ function sendCoordinates(currentCoordinates) {
   $.ajax({
     type: 'POST',
     url: '/remotes/' + Remote.remote_id + '/drawings',
-    data: {'coordinates': currentCoordinates}
+    data: {_method: 'PUT', 'coordinates': currentCoordinates}
+  })
+}
+
+function sendToSaveCoordinates(saveCoordinates) {
+  $.ajax({
+    type: 'POST',
+    url: '/remotes/' + Remote.remote_id + '/write',
+    data: {'coordinates': saveCoordinates}
   })
 }
 

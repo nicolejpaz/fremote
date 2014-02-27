@@ -25,8 +25,11 @@ class DrawingsController < ApplicationController
   def clear
     @remote = Remote.find_by({remote_id: params[:id]})
     @user = current_user if current_user
+    @drawing = @remote.drawing
 
     if @user == @remote.user || @remote.admin_only == false
+      @drawing.coordinates = []
+      @drawing.save
       Notify.new("clear:#{@remote.remote_id}")
     end
 

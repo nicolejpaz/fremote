@@ -95,18 +95,22 @@ function drawOnLoad(canvas) {
     type: 'GET',
     url: '/remotes/' + Remote.remote_id + '/read'
   }).done(function(data){
-    var previous_coordinates = []
-
-    if (data.length > 1) {
-      $.each(data, function(index, coordinate) {
-        if (previous_coordinates.length >= 1) {
-          canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
-        }
-
-        previous_coordinates.push(coordinate)
-      })
-    }
+    parseDrawingData(data, canvas)
   })
+}
+
+function parseDrawingData(data, canvas) {
+  var previous_coordinates = []
+
+  if (data.length > 1) {
+    $.each(data, function(index, coordinate) {
+      if (previous_coordinates.length >= 1) {
+        canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
+      }
+
+      previous_coordinates.push(coordinate)
+    })
+  }
 }
 
 Canvas.prototype.draw = function() {

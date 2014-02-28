@@ -1,5 +1,5 @@
-var playlistItemHead = '<li class="playlist_item sortable" draggable="true"><span class="playlist-title">'
-var playlistItemFoot = '</span><button style="float: right;" class="btn btn-xfs btn-danger playlist-delete">X</button></li>'
+var playlistItemHead = '<li class="playlist_item sortable" draggable="true"><a class="playlist-title">'
+var playlistItemFoot = '</a><button style="float: right;" class="btn btn-xfs btn-danger playlist-delete">X</button></li>'
 
 
 Remote.update = function(){
@@ -20,7 +20,7 @@ Remote.ping = function(){
     $.each(response, function(index, item){
       $('#playlist').append(playlistItemHead + item.title + playlistItemFoot)
     })
-      $('#playlist ol.sortable').sortable()
+      $('#playlist').sortable()
   })
 
   $.ajax({
@@ -101,7 +101,7 @@ player.ready(function(){
     $.each(data.playlist, function(index, item){
       $('#playlist').append(playlistItemHead + item.title + playlistItemFoot)
     })
-    $('body .sortable').sortable()
+    $('#playlist').sortable()
 
   })
 
@@ -111,16 +111,16 @@ source.addEventListener("playlist_add:" + Remote.remote_id, function(event){
 
   $('#playlist').append(playlistItemHead + JSON.parse(data).title + playlistItemFoot)
 
-  $('body .sortable').sortable()
-
+  $('#playlist').sortable()
 
 })
 
 source.addEventListener("playlist_delete:" + Remote.remote_id, function(event){
   var data = JSON.parse(event.data)
   console.log(data)
+  var index = parseInt(JSON.parse(data).index)
 
-  var list_item = $('#playlist .playlist_item')[data.index]
+  var list_item = $('#playlist .playlist_item')[index]
   $(list_item).remove()
 
 })

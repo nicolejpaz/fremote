@@ -70,4 +70,22 @@ describe Remote do
     @sample_remote.description.should eq "No description."
   end
 
+  it "should have a custom name if given" do
+    @sample_remote = Remote.make
+    @sample_remote.populate(@sample_video)
+    @sample_remote.name = @attr[:name]
+    @sample_remote.save
+
+    @sample_remote.name.should eq "Test name"
+  end
+
+  it "should have a custom description if given" do
+    @sample_remote = Remote.make
+    @sample_remote.populate(@sample_video)
+    @sample_remote.description = @attr[:description]
+    @sample_remote.save
+
+    @sample_remote.description.should eq "Test description"
+  end
+
 end

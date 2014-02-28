@@ -91,16 +91,18 @@ function drawOnLoad(canvas) {
 function parseDrawingData(data, canvas) {
   var previous_coordinates = []
 
-  $.each(data, function(index, setOfCoordinates) {
-    $.each(setOfCoordinates, function(index, coordinate) {
-      if (previous_coordinates.length >= 1) {
-        canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
-      }
+  if (data.length > 1) {
+    $.each(data, function(index, setOfCoordinates) {
+      $.each(setOfCoordinates, function(index, coordinate) {
+        if (previous_coordinates.length >= 1) {
+          canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
+        }
 
-      previous_coordinates.push(coordinate)
+        previous_coordinates.push(coordinate)
+      })
+      previous_coordinates = []
     })
-    previous_coordinates = []
-  })
+  }
 }
 
 Canvas.prototype.draw = function() {

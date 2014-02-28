@@ -8,4 +8,14 @@ module RemotesHelper
       nil
     end
   end
+
+  def is_authorized?(remote, user = nil)
+    if remote.admin_only == false
+      return true
+    elsif user == remote.user
+      return true
+    end
+    return false
+  end
+
 end

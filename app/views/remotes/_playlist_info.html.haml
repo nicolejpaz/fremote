@@ -1,0 +1,13 @@
+#video_info.panel.panel-default
+  .panel-heading
+    / %h3.panel-title #{@remote.title}
+    %h3.panel-title Sample Video Title
+  .panel-body
+    %p
+      / #{@remote.description}
+      Sample Video Description
+    %p
+      %a{href: remote.url}
+        Watch video on its own site.
+    - if remote.admin_only == false || remote_user
+      %span.label.label-success You are allowed to use this remote!

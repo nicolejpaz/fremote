@@ -26,7 +26,8 @@ class Playlist
   def delete_list_item(index, user = nil)
     self.list.delete_at(index.to_i)
     self.save
-    Notify.new('playlist_delete:#{self.remote.remote_id}', {index: index}.to_json)
+    p self.remote.remote_id
+    Notify.new("playlist_delete:#{self.remote.remote_id}", {'index' => index}.to_json)
   end
 
 end

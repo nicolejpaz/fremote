@@ -21,9 +21,9 @@ $(document).on('ready', function(){
     })
   })
 
-  $('#playlist').on('click', "playlist-delete", function(e){
+  $('#playlist').on('click', ".playlist-delete", function(e){
     e.preventDefault()
-    var index = this.parent.index()
+    var index = $(this).parent().index()
     $.ajax({
       url: "/remotes/" + Remote.remote_id + "/playlist",
       type: "POST",

@@ -13,6 +13,9 @@ class RemotesController < ApplicationController
 		@remote.admin_only = params[:admin_only] || false
 		flash[dispatch[:status]] = dispatch[:message]
 		redirect_to dispatch[:path]
+		@remote.name = params[:name]
+		@remote.description = params[:description]
+		@remote.save
 	end
 
 	def update

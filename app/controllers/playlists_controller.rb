@@ -28,6 +28,7 @@ class PlaylistsController < ApplicationController
     @remote = Remote.find_by({remote_id: params[:remote_id]})
     @playlist = @remote.playlist
     @playlist.delete_list_item(params[:index])
+    render nothing: true
   end
 
   private

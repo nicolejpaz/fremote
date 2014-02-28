@@ -4,7 +4,7 @@ $(document).on('ready', function(){
       $.ajax({
         type: 'POST',
         url: '/remotes/' + Remote.remote_id,
-        data: { _method:'PUT', status: 0, start_at: Remote.start_at, sender_id: user, selection: $('#playlist li').index(self)},
+        data: { _method:'PUT', status: 0, start_at: Remote.start_at, sender_id: user, selection: $('#playlist li').index(self.parent())},
         dataType: 'JSON'
       })
 	})

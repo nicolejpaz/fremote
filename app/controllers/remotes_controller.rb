@@ -10,7 +10,8 @@ class RemotesController < ApplicationController
 		@user = current_user if current_user
 		@remote = Remote.make(@user)
 		dispatch = @remote.populate(params[:video_url])
-		@remote.admin_only = params[:admin_only] || false
+		@remote.admin_only = to_boolean(params[:admin_only]) || false
+		@remote.save
 		flash[dispatch[:status]] = dispatch[:message]
 		redirect_to dispatch[:path]
 	end

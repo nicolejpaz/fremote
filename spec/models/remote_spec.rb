@@ -5,28 +5,30 @@ describe Remote do
 	before(:each) do
 		@attr = {
 			url: "http://www.youtube.com/embed/mZqGqE0D0n4",
+      name: "Test name",
+      description: "Test description"
 		}
-		 @sample_user = User.create name: "john", email: "john@john.com", password: "password"
+		 @sample_user = create(:user)
 		 @sample_video = "http://www.youtube.com/embed/mZqGqE0D0n4"
 	end
 
 	it "should create a new instance given a valid attribute" do
-		Remote.create(@attr)
+    build(:remote).should be_valid
 	end
 
 	it "should be given a status by default" do
-		@testvideo = Remote.new(@attr)
+		@testvideo = build(:remote)
 		@testvideo.status.should eq(-1)
 	end
 
 	it "have a remote id attribute" do
-		@test_remote = Remote.create(@attr)
+		@test_remote = create(:remote)
 		@test_remote.populate(@sample_video)
 		@test_remote.remote_id.should_not eq(nil)
 	end
 
 	it "have a start at attribute that equals zero by default" do
-		@testvideo = Remote.new(@attr)
+		@testvideo = build(:remote)
 		@testvideo.start_at.should equal(0)
 	end
 
@@ -48,5 +50,24 @@ describe Remote do
 		@sample_remote = Remote.new
 		@sample_remote.playlist.is_a?(Playlist).should equal(true)
 	end
+
+  it "should have a drawing embedded on initialize" do
+    @sample_remote = Remote.new
+    @sample_remote.drawing.is_a?(Drawing).should eq true
+  end
+
+  it "should have a default name if no name given" do
+    @sample_remote = Remote.make
+    @sample_remote.populate(@sample_video)
+    @sample_remote.save
+    @sample_remote.name.should eq "Unnamed video"
+  end
+
+  it "should have a default description if no name given" do
+    @sample_remote = Remote.make
+    @sample_remote.populate(@sample_video)
+    @sample_remote.save
+    @sample_remote.description.should eq "No description."
+  end
 
 end

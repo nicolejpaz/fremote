@@ -1,5 +1,5 @@
 $(document).on('ready', function(){
-	$('#playlist').on('click', '.playlist_item', function(){
+	$('#playlist').on('click', '.playlist-title', function(){
 		var self = $(this)
       $.ajax({
         type: 'POST',

@@ -6,12 +6,9 @@ class Drawing
   embedded_in :remote
 
   def save_to_database(coordinates)
-    new_drawing_coordinates = self.coordinates
     coordinates.each do |coordinate|
-      new_drawing_coordinates << coordinate[1]
+      self.coordinates << coordinate[1]
     end
-
-    self.coordinates = new_drawing_coordinates
     self.save
   end
 end

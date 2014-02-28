@@ -54,8 +54,6 @@ function onMouseMove(targetCanvas, color, line) {
     })
     if (mousedown) {
       currentCoordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y, 'color': color, 'line': line})
-      saveCoordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y, 'color': color, 'line': line})
-
       sendCoordinatesIfCorrectLength()
     }
   }
@@ -67,15 +65,6 @@ function sendCoordinatesIfCorrectLength() {
 
     var newCurrent = [currentCoordinates[currentCoordinates.length-1]]
     currentCoordinates = newCurrent
-  }
-}
-
-function saveCoordinatesIfCorrectLength() {
-  if (saveCoordinates.length >= 100) {
-    sendToSaveCoordinates(saveCoordinates)
-
-    var newCurrent = [saveCoordinates[saveCoordinates.length-1]]
-    saveCoordinates = newCurrent
   }
 }
 
@@ -102,15 +91,16 @@ function drawOnLoad(canvas) {
 function parseDrawingData(data, canvas) {
   var previous_coordinates = []
 
-  if (data.length > 1) {
-    $.each(data, function(index, coordinate) {
+  $.each(data, function(index, setOfCoordinates) {
+    $.each(setOfCoordinates, function(index, coordinate) {
       if (previous_coordinates.length >= 1) {
         canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
       }
 
       previous_coordinates.push(coordinate)
     })
-  }
+    previous_coordinates = []
+  })
 }
 
 Canvas.prototype.draw = function() {
@@ -155,6 +145,7 @@ function drawOnRemoteCanvas(previous_coordinates, x_coordinate, y_coordinate, co
 }
 
 function sendCoordinates(currentCoordinates) {
+  saveCoordinates.push(currentCoordinates)
   $.ajax({
     type: 'POST',
     url: '/remotes/' + Remote.remote_id + '/drawings',

@@ -5,7 +5,7 @@ class Remote
   include RemotesHelper
   after_initialize :spawn_embeds
   field :remote_id, type: String
-  field :name, type: String, default: "Unnamed video"
+  field :name, type: String, default: "Unnamed Remote"
   field :description, type: String, default: "No description."
   field :url, type: String
   field :status, type: Integer, default: -1

@@ -105,6 +105,16 @@ player.ready(function(){
 
   })
 
+  source.addEventListener("playlist_block:" + Remote.remote_id, function(event){
+    var data = JSON.parse(event.data)
+    data = JSON.parse(data)
+    if(data.block == true){
+      $('#playlist_group').block()
+    } else {
+      $('#playlist_group').unblock()
+    }
+  })
+
 source.addEventListener("playlist_add:" + Remote.remote_id, function(event){
   var data = JSON.parse(event.data)
   console.log(data)

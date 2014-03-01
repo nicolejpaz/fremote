@@ -66,7 +66,7 @@ feature 'Remote Owner Controls' do
     it 'can display control to restrict remote control' do
       sample_user = User.create name: "john", email: "john@john.com", password: "password"
       visit user_session_path
-      fill_in 'user_email',   with: "john@john.com"
+      fill_in 'user_login',   with: "john@john.com"
       fill_in 'user_password', with: "password"
       click_button "Log in"
       node = page.find('body')

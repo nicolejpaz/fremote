@@ -38,7 +38,6 @@ Remote.ping = function(){
   })
 }
 
-
 Remote.pause = function(start_at){
   player.currentTime(start_at)
   player.play() // to bypass the big button mode
@@ -125,14 +124,22 @@ player.ready(function(){
 
   })
 
+  source.addEventListener("playlist_block:" + Remote.remote_id, function(event){
+    var data = JSON.parse(event.data)
+    data = JSON.parse(data)
+    if(data.block == true){
+      $('#playlist_group').block()
+    } else {
+      $('#playlist_group').unblock()
+    }
+  })
+
   source.addEventListener("playlist_add:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)
     console.log(data)
 
     $('#playlist').append(playlistItemHead + JSON.parse(data).title + playlistItemFoot)
-
     $('#playlist').sortable()
-
   })
 
   source.addEventListener("playlist_delete:" + Remote.remote_id, function(event){

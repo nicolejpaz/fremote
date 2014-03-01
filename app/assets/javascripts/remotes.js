@@ -38,7 +38,6 @@ Remote.ping = function(){
   })
 }
 
-
 Remote.pause = function(start_at){
   player.currentTime(start_at)
   player.play() // to bypass the big button mode
@@ -78,6 +77,26 @@ player.ready(function(){
   var source = new EventSource(Remote.remote_id + '/stream')
   var RemoteCanvas = $('canvas')
   var canvas = new Canvas(RemoteCanvas)
+  var alertConnecting = $('div.alert-success')
+  var alertClosed = $('div.alert-danger')
+
+  if (source.readyState === 0) {
+    // Connecting
+    alertClosed.hide()
+    alertConnecting.show()
+  }
+
+  source.onopen = function() {
+    // Connected
+    alertConnecting.hide()
+    alertClosed.hide()
+  }
+
+  source.onerror = function() {
+    // Disconnected
+    alertConnecting.hide()
+    alertClosed.show()
+  }
 
   source.addEventListener("control:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)
@@ -115,25 +134,23 @@ player.ready(function(){
     }
   })
 
-source.addEventListener("playlist_add:" + Remote.remote_id, function(event){
-  var data = JSON.parse(event.data)
-  console.log(data)
+  source.addEventListener("playlist_add:" + Remote.remote_id, function(event){
+    var data = JSON.parse(event.data)
+    console.log(data)
 
-  $('#playlist').append(playlistItemHead + JSON.parse(data).title + playlistItemFoot)
+    $('#playlist').append(playlistItemHead + JSON.parse(data).title + playlistItemFoot)
+    $('#playlist').sortable()
+  })
 
-  $('#playlist').sortable()
+  source.addEventListener("playlist_delete:" + Remote.remote_id, function(event){
+    var data = JSON.parse(event.data)
+    console.log(data)
+    var index = parseInt(JSON.parse(data).index)
 
-})
+    var list_item = $('#playlist .playlist_item')[index]
+    $(list_item).remove()
 
-source.addEventListener("playlist_delete:" + Remote.remote_id, function(event){
-  var data = JSON.parse(event.data)
-  console.log(data)
-  var index = parseInt(JSON.parse(data).index)
-
-  var list_item = $('#playlist .playlist_item')[index]
-  $(list_item).remove()
-
-})
+  })
 
 
   source.addEventListener("chat:" + Remote.remote_id, function(event){

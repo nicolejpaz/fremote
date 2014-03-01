@@ -3,8 +3,7 @@ Fremote::Application.routes.draw do
   root 'remotes#new'
 
   resources :remotes, only: [:create,:show,:update]
-  resources :bogus, only: [:index]
-
+  resources :users, only: [:show]
 
   get 'remotes/:id/stream' => 'streams#stream'
   post 'remotes/:id/chat' => 'remotes#chat'

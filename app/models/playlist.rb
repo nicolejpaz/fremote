@@ -36,9 +36,10 @@ class Playlist
         self.remote.start_at = 0
         self.remote.status = 1
         self.save
+        self.remote.save
         Notify.new("control:#{self.remote.remote_id}", {'start_at' => self.remote.start_at, 'status' => self.remote.status, 'updated_at' => self.remote.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(ViddlRb.get_urls(self.list[self.selection]["url"]).first)  })
       end
-
+      self.remote.save
       self.save
       Notify.new("playlist_delete:#{self.remote.remote_id}", {'index' => index}.to_json)
       

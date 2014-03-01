@@ -1,11 +1,9 @@
 #video_info.panel.panel-default
   .panel-heading
-    / %h3.panel-title #{@remote.title}
-    %h3.panel-title Sample Video Title
+    %h3.panel-title= @remote_name
   .panel-body
     %p
-      / #{@remote.description}
-      Sample Video Description
+      = @remote_description
     %p
       %a{href: remote.url}
         Watch video on its own site.

@@ -60,7 +60,7 @@ describe Remote do
     @sample_remote = Remote.make
     @sample_remote.populate(@sample_video)
     @sample_remote.save
-    @sample_remote.name.should eq "Unnamed video"
+    @sample_remote.name.should eq "Unnamed Remote"
   end
 
   it "should have a default description if no name given" do

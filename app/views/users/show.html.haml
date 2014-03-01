@@ -2,4 +2,5 @@
   List of #{@user_viewed.name}'s' remotes:
 - @remotes.each do |remote|
   %ul
-    %li #{remote.name}
+    %li
+      = link_to "#{remote.name}", remote_path(remote.remote_id)

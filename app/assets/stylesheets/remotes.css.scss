@@ -26,10 +26,17 @@
 }
 
 canvas#drawing-surface {
-  top: 50px;
   position: absolute;
+  z-index: 2147483630;
+}
+
+.connect-alert {
+  z-index: 2147483647;
 }
 
 .full-width {
   width: 100%;
+}
+.connect-alert {
+  display: none;
 }

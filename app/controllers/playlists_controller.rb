@@ -10,7 +10,9 @@ class PlaylistsController < ApplicationController
     @user = current_user if current_user
     @remote = Remote.find_by({remote_id: params[:remote_id]})
     @playlist = @remote.playlist
+    Notify.new("playlist_block:#{@remote.remote_id}", {"block" => true}.to_json)
     @playlist.sort_list_item(params[:old_position].to_i, params[:new_position].to_i, @user)
+    Notify.new("playlist_block:#{@remote.remote_id}", {"block" => false}.to_json)
     render nothing: true
   end
 

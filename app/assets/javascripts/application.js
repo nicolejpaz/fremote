@@ -12,6 +12,7 @@
 //
 //= require jquery-2.1.0
 //= require jquery_ujs
+//= require jquery.blockUI
 //= require bootstrap
 //= require eventsource
 //= require video.dev

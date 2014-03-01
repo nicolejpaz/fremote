@@ -10,6 +10,8 @@ class RemotesController < ApplicationController
 		@user = current_user if current_user
 		@remote = Remote.make(@user)
 		dispatch = @remote.populate(params[:video_url])
+		@remote.name = params[:name] unless params[:name] == ''
+		@remote.description = params[:description] unless params[:description] == ''
 		@remote.admin_only = to_boolean(params[:admin_only]) || false
 		@remote.save
 		flash[dispatch[:status]] = dispatch[:message]
@@ -38,6 +40,8 @@ class RemotesController < ApplicationController
 		@identifier = (Time.now.strftime('%Y%m%d%H%M%S%L%N') + rand(400).to_s).to_s
 		@username = Chat.guest_display_name
 		@playlist = Playlist.new
+		@remote_name = @remote.name
+		@remote_description = @remote.description
 	end
 
 	def chat

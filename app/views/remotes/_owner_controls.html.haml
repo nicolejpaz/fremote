@@ -1,0 +1,9 @@
+- if current_user
+  #owner_controls.panel.panel-success
+    .panel-heading
+      %h3.panel-title Remote Owner Controls
+    .panel-body
+      = form_for(remote, remote: true, :html => {:id => "owner_controls_form"}) do |f|
+        .checkbox
+          %label
+            Owner-only Controls #{f.check_box :admin_only}

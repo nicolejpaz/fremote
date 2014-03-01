@@ -1,0 +1,5 @@
+%canvas#drawing-surface{height: "330", width: "640"}
+- if user || remote.admin_only == false
+  %button#clear Clear Screen
+  %input#color{name: "linecolor", type: "color", value: "#FF0000"}/
+  %input#line{max: "10", min: "1", name: "points", type: "range", value: "5"}/

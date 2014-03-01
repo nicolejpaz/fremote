@@ -1,0 +1,13 @@
+%ul#chat.list-group
+  %li#chat_title.list-group-item
+    = form_for :remote, :url => { :controller => 'remotes', :action => 'chat' }, remote: true do |f|
+      .input-group.input-group-sm
+        = hidden_field_tag :username, username
+        = text_field_tag :chat_message, "", :class => 'form-control', placeholder: 'enter a chat message here...', html: {:autocomplete => "off"}
+        %span.input-group-btn
+          = submit_tag "Send", class: "btn btn-success"
+  %li#chat_messages.list-group-item
+    %table#chat_table.table
+      %tbody#chat_table_body
+        %tr
+          %td.small.grey-text Welcome to Fremote chat.  If you would like a dedicated username for the chat, sign up for an account!

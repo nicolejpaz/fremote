@@ -1,63 +1,11 @@
 #center_column
-	%video#player.video-js.vjs-default-skin{controls: "", "data-setup" => '{"techOrder": ["html5","flash"]}', preload: "auto", height: "360", width: "640"}
+  = render :partial => 'video', :locals => { :remote => @remote, :remote_user => @remote_user }
+  = render :partial => 'canvas', :locals => { :remote => @remote, :user => @user }
+  = render :partial => 'playlist_info', :locals => { :remote => @remote, :remote_user => @remote_user }
+  = render :partial => 'chat', :locals => { :username => @username }
+  = render :partial => 'playlist', :locals => { :remote => @remote, :username => @username }
+  = render :partial => 'owner_controls', :locals => { :remote => @remote, :current_user => current_user }
 
-	%canvas#drawing-surface{height: "330", width: "640"}
-	- if @user || @remote.admin_only == false
-		%button#clear Clear Screen
-		%input#color{name: "linecolor", type: "color", value: "#FF0000"}/
-		%input#line{max: "10", min: "1", name: "points", type: "range", value: "5"}/
-
-	#video_info.panel.panel-default
-		.panel-heading
-			/ %h3.panel-title #{@remote.title}
-			%h3.panel-title Sample Video Title
-		.panel-body
-			%p
-				/ #{@remote.description}
-				Sample Video Description
-			%p
-				%a{href: @remote.url}
-					Watch video on its own site.
-			- if @remote.admin_only == false || @remote_user
-				%span.label.label-success You are allowed to use this remote!
-		%ul#chat.list-group
-			%li#chat_title.list-group-item
-				= form_for :remote, :url => { :controller => 'remotes', :action => 'chat' }, remote: true do |f|
-					.input-group.input-group-sm
-						= hidden_field_tag :username, @username
-						= text_field_tag :chat_message, "", :class => 'form-control', placeholder: 'enter a chat message here...', html: {:autocomplete => "off"}
-						%span.input-group-btn
-							= submit_tag "Send", class: "btn btn-success"
-			%li#chat_messages.list-group-item
-				%table#chat_table.table
-					%tbody#chat_table_body
-						%tr
-							%td.small.grey-text Welcome to Fremote chat.  If you would like a dedicated username for the chat, sign up for an account!
-
-		%ul.list-group
-			%li.list-group-item
-				Playlist
-			%li.list-group-item
-				= form_for :playlist, url: remote_playlist_path(@remote.remote_id), remote: true do |f|
-					.input-group.input-group-sm
-						= hidden_field_tag :username, @username
-						= text_field_tag :url, "", :class => 'form-control', placeholder: 'add a url to the playlist here...', html: {:autocomplete => "off"}
-						%span.input-group-btn
-							= submit_tag "Add", class: "btn btn-success"
-
-			%li.list-group-item
-				%ol#playlist.sortable.list
-
-	- if current_user
-		#owner_controls.panel.panel-success
-			.panel-heading
-				%h3.panel-title Remote Owner Controls
-			.panel-body
-				= form_for(@remote, remote: true, :html => {:id => "owner_controls_form"}) do |f|
-					.checkbox
-						%label
-							Owner-only Controls #{f.check_box :admin_only}
-
-:javascript
-	var Remote = #{@remote.to_json}
-	var user = '#{@identifier}'
+  :javascript
+    var Remote = #{@remote.to_json}
+    var user = '#{@identifier}'

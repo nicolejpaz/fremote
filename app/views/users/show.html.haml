@@ -1,6 +1,12 @@
-%h3
-  List of #{@user_viewed.name}'s' remotes:
-- @remotes.each do |remote|
-  %ul
-    %li
-      = link_to "#{remote.name}", remote_path(remote.remote_id)
+#center_column
+  .panel.panel-default
+    .panel-heading
+      %h3.panel-title
+        List of #{@user_viewed.name}'s' remotes:
+    .panel-body
+      - @remotes.each do |remote|
+        %ul.list-unstyled
+          %li
+            = link_to "#{remote.name}", remote_path(remote.remote_id)
+            %ul
+              %li #{remote.description}

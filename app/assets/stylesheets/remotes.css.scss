@@ -32,7 +32,15 @@ canvas#drawing-surface {
 
 .connect-alert {
   z-index: 2147483647;
+  position: fixed;
 }
+
+/*.alert-success.connect-alert {
+  top: 200;
+}
+.alert-danger.connect-alert {
+  top: 250;
+}*/
 
 .full-width {
   width: 100%;

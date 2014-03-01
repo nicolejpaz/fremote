@@ -8,6 +8,9 @@ $(document).on('ready', function(){
         dataType: 'JSON'
       })
 	})
+  $('#playlist_group form').on('ajax:success', function(){
+    $('#playlist_url_field').val('')
+  })
 })
 
 var Playlist = {
@@ -17,3 +20,4 @@ var Playlist = {
 $('#playlist li').on('mousedown', function(){
   Playlist.selectedListItem = $('#playlist li').index(self)
 })
+

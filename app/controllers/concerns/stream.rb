@@ -1,5 +1,5 @@
 module Stream
-  def self.start(notifications, heartrate = 20, response, remote)
+  def self.start(notifications, heartrate = 20, response, remote, username)
     response.headers['Content-Type'] = 'text/event-stream'
 
     # Send 2kb of filler at beginning of request for EventSource polyfill compatibility with IE.
@@ -19,11 +19,23 @@ module Stream
     # Separate thread creates a heartbeat to "ping" the user every few seconds.  When a user closes
     # their window and the thread tries to send it a heartbeat event, the loop will error out and
     # cause the thread to die.
+    # This thread also notifies the server and clients whether or not a person is viewing a remote.
     heartbeat = Thread.new do
+      begin
+        unless remote.watchers.include?(username)
+          remote.watchers << username
+          remote.save
+          ActiveSupport::Notifications.instrument("watch:#{remote.remote_id}", {username: username}.to_json)
+        end
         loop do
           sleep heartrate.seconds
           response.stream.write "event: heartbeat\n"
         end
+        ensure
+          ActiveSupport::Notifications.instrument("unwatch:#{remote.remote_id}", {username: username}.to_json)
+          remote.watchers.delete(username)
+          remote.save
+      end
     end
 
     # Send the most recent remote information first.

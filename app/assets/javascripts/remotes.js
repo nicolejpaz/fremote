@@ -35,6 +35,9 @@ Remote.ping = function(){
     } else {
       Remote.toggle(data)
     }
+    $.each(data.watchers, function(index, watcher){
+      $('#watchers').append('<li id="' + watcher.toLowerCase() + '">' + watcher + '</li>')
+    })
   })
 }
 
@@ -97,6 +100,16 @@ player.ready(function(){
     alertConnecting.hide()
     alertClosed.show()
   }
+
+  source.addEventListener("watch:" + Remote.remote_id, function(event){
+    var data = JSON.parse(event.data)
+    $('#watchers').append('<li id="' + data.username.toLowerCase() + '">' + data.username + '</li>')
+  })
+
+  source.addEventListener("unwatch:" + Remote.remote_id, function(event){
+    var data = JSON.parse(event.data)
+    $('li#' + data.username.toLowerCase()).remove()
+  })
 
   source.addEventListener("control:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)

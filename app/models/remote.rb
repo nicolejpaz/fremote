@@ -11,6 +11,7 @@ class Remote
   field :status, type: Integer, default: -1
   field :start_at, type: Integer, default: 0
   field :admin_only, type: Boolean, default: false
+  field :watchers, type: Array, default: []
   belongs_to :user
   embeds_one :playlist
   embeds_one :drawing

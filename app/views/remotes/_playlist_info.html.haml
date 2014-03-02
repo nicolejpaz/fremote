@@ -1,9 +1,13 @@
 #video_info.panel.panel-default
   .panel-heading
-    %h3.panel-title= @remote_name
+    %h3.panel-title= @remote.name
   .panel-body
     %p
-      = @remote_description
+      = @remote.description
+    - if current_user == @remote.user
+      %p
+        = link_to edit_remote_path(@remote.remote_id) do
+          = button_tag "Edit Remote"
     %p
       %a{href: remote.url}
         Watch video on its own site.

@@ -39,4 +39,14 @@ class User
   # field :unlock_token,    :type => String # Only if unlock strategy is :email or :both
   # field :locked_at,       :type => Time
   has_many :remotes
+  attr_accessor :login
+
+  def self.find_first_by_auth_conditions(warden_conditions)
+    conditions = warden_conditions.dup
+    if login = conditions.delete(:login)
+      self.any_of({ :name => /^#{Regexp.escape(login)}$/i }, { :email => /^#{Regexp.escape(login)}$/i }).first
+    else
+      super
+    end
+  end
 end

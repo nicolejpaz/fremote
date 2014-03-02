@@ -3,7 +3,8 @@ class StreamsController < ApplicationController
 
   def stream
     @remote = Remote.find_by({remote_id: params[:id]})
-    Stream.start(["control", "chat", "drawing", "clear", "playlist_add", "playlist_sort", "playlist_delete", "playlist_block"], 10, response, @remote)
+    @username = Chat.guest_display_name
+    Stream.start(["control", "chat", "drawing", "clear", "playlist_add", "playlist_sort", "playlist_delete", "playlist_block", "watch", "unwatch"], 10, response, @remote, @username)
   end
 
 end

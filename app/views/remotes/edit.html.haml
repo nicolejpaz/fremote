@@ -1,0 +1,17 @@
+#center_column
+  .panel.panel-default
+    .panel-heading
+      %h3.panel-title
+        Edit #{@remote.name}:
+    .panel-body
+      - if current_user == @remote.user
+        #update_form
+          = form_tag remote_path(id: "#{@remote.remote_id}"), method: :patch
+          = text_field_tag :name, "#{@remote.name}"
+          %br/
+          = text_area_tag :description, "#{@remote.description}"
+          %br/
+          %span.input-group-btn
+            = submit_tag "Update Remote"
+      - else
+        %p You are not allowed to edit this remote

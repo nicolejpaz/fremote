@@ -18,4 +18,8 @@ module RemotesHelper
     return false
   end
 
+  def sanitized_name(user)
+    return user.name.sub(' ', '_')
+  end
+
 end

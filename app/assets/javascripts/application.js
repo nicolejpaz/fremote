@@ -22,3 +22,4 @@
 // require_directory .
 //= require canvas
 //= require chat
+//= require update.remote

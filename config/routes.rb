@@ -12,6 +12,7 @@ Fremote::Application.routes.draw do
   put 'remotes/:id/drawings' => 'drawings#update'
   get 'remotes/:id/read' => 'drawings#read'
   get 'time' => 'remotes#time'
+  put 'remotes/:id/control' => 'remotes#control'
 
   resources :remotes do
     resource :playlist, only: [:update, :show, :create, :destroy]

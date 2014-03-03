@@ -18,11 +18,27 @@ class RemotesController < ApplicationController
 		redirect_to dispatch[:path]
 	end
 
+	def edit
+		@user = current_user if current_user
+		@remote = Remote.find_by({remote_id: params[:id]})
+		@remote_owner = @user if @user == @remote.user
+	end
+
 	def update
 		@user = current_user if current_user
 		@remote = Remote.find_by({remote_id: params[:id]})
     @remote_owner = @user if @user == @remote.user
-    @remote.update(params, @remote_owner)
+    if @remote_owner
+    	@remote.update(params)
+    end
+    render json: {'remote' => @remote}.to_json
+	end
+
+	def control
+		@user = current_user if current_user
+		@remote = Remote.find_by({remote_id: params[:id]})
+    @remote_owner = @user if @user == @remote.user
+    @remote.control_update(params, @remote_owner)
     render nothing: true
 	end
 

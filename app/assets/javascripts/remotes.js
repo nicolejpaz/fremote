@@ -17,10 +17,10 @@ Remote.ping = function(){
     url: '/remotes/' + Remote.remote_id + "/playlist"
   }).done(function(response){
     console.log(response)
-    // $.each(response, function(index, item){
-    //   $('#playlist').append(playlistItemHead + item.title + playlistItemFoot)
-    // })
-    //   $('#playlist').sortable()
+    $.each(response, function(index, item){
+      $('#playlist').append(playlistItemHead + item.title + playlistItemFoot)
+    })
+      $('#playlist').sortable()
   })
 
   $.ajax({

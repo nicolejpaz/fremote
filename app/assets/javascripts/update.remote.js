@@ -9,7 +9,7 @@ $(document).ready(function() {
 })
 
 function getDescriptionForm(self) {
-  $(self).replaceWith('<form id="edit_remote_description" action="' + Remote.remote_id + '" method="PATCH"><textarea>' + self.innerHTML + '</textarea><button type="submit">Edit</button></form>')
+  $(self).replaceWith('<form id="edit_remote_description" action="' + Remote.remote_id + '" method="PATCH"><div class="input-group input-group-sm"><textarea class="form-control">' + self.innerHTML + '</textarea><span class="input-group-btn"><button class="btn btn-success" type="submit">Edit</button></span></div></form>')
 
   $('#remote_description form').on('submit', function(e) {
     updateDescription(e, this)
@@ -17,7 +17,7 @@ function getDescriptionForm(self) {
 }
 
 function getNameForm(self) {
-  $(self).replaceWith('<form id="edit_remote_name" action="' + Remote.remote_id + '" method="PATCH"><input value="' + self.innerHTML + '"><button type="submit">Edit</button></form>')
+  $(self).replaceWith('<form id="edit_remote_name" action="' + Remote.remote_id + '" method="PATCH"><div class="input-group input-group-sm"><input class="form-control" type="text" value="' + self.innerHTML + '"><span class="input-group-btn"><button class="btn btn-success" type="submit">Edit</button></span></div></form>')
 
   $('#remote_name form').on('submit', function(e) {
     updateName(e, this)

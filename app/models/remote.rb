@@ -50,7 +50,19 @@ class Remote
     end
   end
 
-  def update(params, remote_owner = nil)
+  def update(params)
+    if params[:type] == 'name' && params[:name] != ''
+      self.update_attribute(:name, params[:name])
+    end
+
+    if params[:type] == 'description' && params[:description] != ''
+      self.update_attribute(:description, params[:description])
+    end
+
+    self.save
+  end
+
+  def control_update(params, remote_owner = nil)
     if self.admin_only == false || remote_owner
 
       self.status = params["status"] if params["status"]

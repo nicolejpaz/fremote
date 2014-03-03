@@ -1,5 +1,5 @@
 module Stream
-  def self.start(notifications, heartrate = 20, response, remote, username)
+  def self.start(notifications, heartrate = 20, response, remote, username, user_kind)
     response.headers['Content-Type'] = 'text/event-stream'
 
     # Send 2kb of filler at beginning of request for EventSource polyfill compatibility with IE.
@@ -23,7 +23,7 @@ module Stream
     heartbeat = Thread.new do
       begin
           remote = remote.reload
-          remote.watchers << username
+          remote.watchers << {username: username, user_kind: user_kind}
           remote.watchers = remote.watchers.uniq
           remote.save
           ActiveSupport::Notifications.instrument("watch:#{remote.remote_id}", {watchers: remote.watchers, username: username}.to_json)
@@ -33,7 +33,10 @@ module Stream
         end
         ensure
           remote = remote.reload
-          remote.watchers.delete(username)
+          puts "$" * 50
+          puts "something should be deleted"
+          puts remote.watchers.select{ |i| i[/\A#{username}\z/] }.first
+          remote.watchers.delete(remote.watchers.select{ |i| i["username"] == username}.first)
           remote.save
           ActiveSupport::Notifications.instrument("unwatch:#{remote.remote_id}", {watchers: remote.watchers, username: username}.to_json)
       end

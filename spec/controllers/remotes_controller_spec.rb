@@ -117,14 +117,6 @@ describe RemotesController do
   end
 
   describe "POST chat" do
-    before(:each) do
-      @sample_user = User.create name: "john", email: "john@john.com", password: "password"
-      @sample_video = "http://www.youtube.com/watch?v=NX_23r7vYak"
-      @sample_remote = Remote.make
-      @sample_remote.populate("http://www.youtube.com/watch?v=NX_23r7vYak")
-      @sample_remote.save
-    end
-
     it "retrieves @remote from remote_id" do
       post :chat, id: @sample_remote.remote_id
       expect(assigns(:remote)).to eq(@sample_remote)
@@ -142,7 +134,6 @@ describe RemotesController do
       ActiveSupport::Notifications.unsubscribe("chat:#{@sample_remote.remote_id}")
       expect(JSON.parse(message)["message"]).to eq("dummy message")
     end
-
   end
 
   describe "GET time" do

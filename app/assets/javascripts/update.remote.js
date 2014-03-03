@@ -1,23 +1,24 @@
 $(document).ready(function() {
+  var endOfFormString = '<span class="input-group-btn"><button class="btn btn-success" type="submit">Edit</button></span></div></form>'
   $('#remote_name h3').on('click', function() {
-    getNameForm(this)
+    getNameForm(this, endOfFormString)
   })
 
   $('#remote_description p').on('click', function() {
-    getDescriptionForm(this)
+    getDescriptionForm(this, endOfFormString)
   })
 })
 
-function getDescriptionForm(self) {
-  $(self).replaceWith('<form id="edit_remote_description" action="' + Remote.remote_id + '" method="PATCH"><div class="input-group input-group-sm"><textarea class="form-control">' + self.innerHTML + '</textarea><span class="input-group-btn"><button class="btn btn-success" type="submit">Edit</button></span></div></form>')
+function getDescriptionForm(self, endOfFormString) {
+  $(self).replaceWith('<form id="edit_remote_description" action="' + Remote.remote_id + '" method="PATCH"><div class="input-group input-group-sm"><textarea class="form-control">' + self.innerHTML + '</textarea>' + endOfFormString)
 
   $('#remote_description form').on('submit', function(e) {
     updateDescription(e, this)
   })
 }
 
-function getNameForm(self) {
-  $(self).replaceWith('<form id="edit_remote_name" action="' + Remote.remote_id + '" method="PATCH"><div class="input-group input-group-sm"><input class="form-control" type="text" value="' + self.innerHTML + '"><span class="input-group-btn"><button class="btn btn-success" type="submit">Edit</button></span></div></form>')
+function getNameForm(self, endOfFormString) {
+  $(self).replaceWith('<form id="edit_remote_name" action="' + Remote.remote_id + '" method="PATCH"><div class="input-group input-group-sm"><input class="form-control" type="text" value="' + self.innerHTML + '">' + endOfFormString)
 
   $('#remote_name form').on('submit', function(e) {
     updateName(e, this)

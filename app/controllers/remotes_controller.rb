@@ -38,16 +38,13 @@ class RemotesController < ApplicationController
 		@remote_owner = @user if @user == @remote.user
 		@remote_json = @remote.json
 		@identifier = (Time.now.strftime('%Y%m%d%H%M%S%L%N') + rand(400).to_s).to_s
-		@username = Chat.guest_display_name
+		@username = Chat.guest_display_name(@user, params[:guest_name])
+		cookies[:username] = @username
 		@playlist = Playlist.new
 		@remote_name = @remote.name
 		@remote_description = @remote.description
-	end
-
-	def chat
-		@remote = Remote.find_by({remote_id: params[:id]})
-		Notify.new("chat:#{@remote.remote_id}", {'message' => params["chat_message"], 'name' => params["username"] })
-		render nothing: true
+    @guest_name = Object.new
+		render Remotes.what_to_render(@user, params[:guest_name])
 	end
 
 	def time

@@ -22,19 +22,20 @@ module Stream
     # This thread also notifies the server and clients whether or not a person is viewing a remote.
     heartbeat = Thread.new do
       begin
-        unless remote.watchers.include?(username)
+          remote = remote.reload
           remote.watchers << username
+          remote.watchers = remote.watchers.uniq
           remote.save
-          ActiveSupport::Notifications.instrument("watch:#{remote.remote_id}", {username: username}.to_json)
-        end
+          ActiveSupport::Notifications.instrument("watch:#{remote.remote_id}", {watchers: remote.watchers, username: username}.to_json)
         loop do
           sleep heartrate.seconds
           response.stream.write "event: heartbeat\n"
         end
         ensure
-          ActiveSupport::Notifications.instrument("unwatch:#{remote.remote_id}", {username: username}.to_json)
+          remote = remote.reload
           remote.watchers.delete(username)
           remote.save
+          ActiveSupport::Notifications.instrument("unwatch:#{remote.remote_id}", {watchers: remote.watchers, username: username}.to_json)
       end
     end
 
@@ -43,7 +44,7 @@ module Stream
 
 
     # Loop until the heartbeat dies.
-    while heartbeat.alive?
+    while heartbeat.alive? && response.stream.closed? == false
       sleep 0.1.seconds
       response.stream.write "event: #{queue.first[:name]}\ndata: #{queue.first[:payload]} \n\n" unless queue.count == 0
       queue.shift
@@ -57,5 +58,18 @@ module Stream
       end
       response.stream.close
       p "stream closed"
+  end
+
+  def watch(remote, username)
+    remote.watchers << username
+    remote.watchers = remote.watchers.uniq
+    remote.save
+    ActiveSupport::Notifications.instrument("watch:#{remote.remote_id}", {watchers: remote.watchers, username: username}.to_json)
+  end
+
+  def unwatch(remote, username)
+    remote.watchers.delete(username)
+    remote.save
+    ActiveSupport::Notifications.instrument("unwatch:#{remote.remote_id}", {watchers: remote.watchers, username: username}.to_json)
   end
 end

@@ -80,11 +80,6 @@ describe RemotesController do
 
   describe "PUT control" do
     before(:each) do
-      @sample_user = User.create name: "john", email: "john@john.com", password: "password"
-      @sample_video = "http://www.youtube.com/watch?v=NX_23r7vYak"
-      @sample_remote = Remote.make
-      @sample_remote.populate("http://www.youtube.com/watch?v=NX_23r7vYak")
-      @sample_remote.save
       @sample_owned_remote = @sample_user.remotes.make
       @sample_owned_remote.populate("http://www.youtube.com/watch?v=NX_23r7vYak")
       @sample_owned_remote.save
@@ -119,7 +114,6 @@ describe RemotesController do
       put :control, remote: { :admin_only => "true" }, id: @sample_owned_remote.remote_id
       expect(assigns(:remote).admin_only).to eq(false)
     end
-
   end
 
   describe "POST chat" do

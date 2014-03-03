@@ -15,7 +15,7 @@ class DrawingsController < ApplicationController
     @remote = Remote.find_by({remote_id: params[:id]})
     @drawing = @remote.drawing
 
-    if @user == @remote.user || @remote.admin_only == false
+    if is_authorized?(@remote, @user)
       @drawing.save_to_database(params[:coordinates])
     end
 
@@ -38,7 +38,7 @@ class DrawingsController < ApplicationController
     @user = current_user if current_user
     @drawing = @remote.drawing
 
-    if @user == @remote.user || @remote.admin_only == false
+    if is_authorized?(@remote, @user)
       @drawing.coordinates = []
       @drawing.save
       Notify.new("clear:#{@remote.remote_id}")

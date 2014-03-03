@@ -1,6 +1,6 @@
 %ul#chat.list-group
   %li#chat_title.list-group-item
-    = form_for :remote, :url => { :controller => 'remotes', :action => 'chat' }, remote: true do |f|
+    = form_for :remote, :url => remote_chat_path(remote), remote: true do |f|
       .input-group.input-group-sm
         = hidden_field_tag :username, username
         = text_field_tag :chat_message, "", :class => 'form-control', placeholder: 'enter a chat message here...', html: {:autocomplete => "off"}

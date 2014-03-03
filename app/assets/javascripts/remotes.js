@@ -17,10 +17,10 @@ Remote.ping = function(){
     url: '/remotes/' + Remote.remote_id + "/playlist"
   }).done(function(response){
     console.log(response)
-    $.each(response, function(index, item){
-      $('#playlist').append(playlistItemHead + item.title + playlistItemFoot)
-    })
-      $('#playlist').sortable()
+    // $.each(response, function(index, item){
+    //   $('#playlist').append(playlistItemHead + item.title + playlistItemFoot)
+    // })
+    //   $('#playlist').sortable()
   })
 
   $.ajax({
@@ -35,9 +35,9 @@ Remote.ping = function(){
     } else {
       Remote.toggle(data)
     }
-    $.each(data.watchers, function(index, watcher){
-      $('#watchers').append('<li id="' + watcher.toLowerCase() + '">' + watcher + '</li>')
-    })
+    // $.each(data.watchers, function(index, watcher){
+    //   $('#watchers').append('<li id="' + watcher.toLowerCase() + '">' + watcher + '</li>')
+    // })
   })
 }
 
@@ -103,12 +103,22 @@ player.ready(function(){
 
   source.addEventListener("watch:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)
-    $('#watchers').append('<li id="' + data.username.toLowerCase() + '">' + data.username + '</li>')
+    console.log(data)
+    $('#watchers').html('')
+    $.each(data.watchers, function(index, watcher){
+      $('#watchers').append('<li id="' + watcher.toLowerCase() + '">' + watcher + '</li>')
+    })
+    $('#playlist').sortable()
   })
 
   source.addEventListener("unwatch:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)
-    $('li#' + data.username.toLowerCase()).remove()
+    $('#watchers').html('')
+    $.each(data.watchers, function(index, watcher){
+      $('#watchers').append('<li id="' + watcher.toLowerCase() + '">' + watcher + '</li>')
+    })
+    $('#playlist').sortable()
+    // $('li#' + data.username.toLowerCase()).remove()
   })
 
   source.addEventListener("control:" + Remote.remote_id, function(event){
@@ -190,6 +200,10 @@ player.ready(function(){
   source.addEventListener("clear:" + Remote.remote_id, function(event){
     canvas.clear()
   })
+
+  window.onunload = function() {
+    source.close()
+  }
 
   $(document).on('userplay', function(){
     Remote.status = 1

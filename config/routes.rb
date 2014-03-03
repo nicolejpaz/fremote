@@ -6,7 +6,6 @@ Fremote::Application.routes.draw do
   resources :users, only: [:show]
 
   get 'remotes/:id/stream' => 'streams#stream'
-  post 'remotes/:id/chat' => 'remotes#chat'
   get 'remotes/:id/ping' => 'remotes#ping'
   post 'remotes/:id/clear' => 'drawings#clear'
   post 'remotes/:id/write' => 'drawings#write'
@@ -17,6 +16,7 @@ Fremote::Application.routes.draw do
 
   resources :remotes do
     resource :playlist, only: [:update, :show, :create, :destroy]
+    resource :chat, controller: 'chat', only: [:create, :update]
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

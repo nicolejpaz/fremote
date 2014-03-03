@@ -142,4 +142,24 @@ describe RemotesController do
       expect(Time.parse(JSON.parse(response.body)["time"]).is_a?(Time)).to eq(true)
     end
   end
+
+  describe 'PATCH update' do
+    before(:each) do
+      @sample_owned_remote = @sample_user.remotes.make
+      @sample_owned_remote.populate("http://www.youtube.com/watch?v=NX_23r7vYak")
+      @sample_owned_remote.save
+      @another_user = User.create name: "bob", email: "bob@bob.com", password: "password"
+    end
+
+    it "gets the current user if there is one" do
+      controller.stub(:current_user){@sample_user}
+      patch :update, id: @sample_remote.remote_id
+      expect(assigns(:user)).to eq(@sample_user)
+    end
+
+    it "retrieves @remote from remote_id" do
+      patch :update, id: @sample_remote.remote_id
+      expect(assigns(:remote)).to eq(@sample_remote)
+    end
+  end
 end

@@ -1,9 +1,13 @@
 #video_info.panel.panel-default
   .panel-heading
-    %h3.panel-title= @remote_name
+    - if current_user == @remote.user && current_user
+      #remote_name
+        %h3.panel-title= @remote.name
+    - else
+      %h3.panel-title= @remote.name
   .panel-body
-    %p
-      = @remote_description
+    #remote_description
+      %p= @remote.description
     %p
       %a{href: remote.url}
         Watch video on its own site.

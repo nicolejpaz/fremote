@@ -75,6 +75,17 @@ class Remote
     end
   end
 
+  def kind_of_user(user = nil)
+    return "guest" if user == nil
+
+    if user == self.user
+      return "owner"
+    else
+      return "user"
+    end
+
+  end
+
   private
   def spawn_embeds
     self.playlist = Playlist.new if self.playlist == nil

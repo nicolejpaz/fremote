@@ -106,7 +106,7 @@ player.ready(function(){
     console.log(data)
     $('#watchers').html('')
     $.each(data.watchers, function(index, watcher){
-      $('#watchers').append('<li id="' + watcher.toLowerCase() + '">' + watcher + '</li>')
+      $('#watchers').append('<li id="' + watcher.username.toLowerCase() + '" class="' + watcher.user_kind + '">' + watcher.username + '</li>')
     })
     $('#playlist').sortable()
   })
@@ -115,7 +115,7 @@ player.ready(function(){
     var data = JSON.parse(event.data)
     $('#watchers').html('')
     $.each(data.watchers, function(index, watcher){
-      $('#watchers').append('<li id="' + watcher.toLowerCase() + '">' + watcher + '</li>')
+      $('#watchers').append('<li id="' + watcher.username.toLowerCase() + '" class="' + watcher.user_kind + '">' + watcher.username + '</li>')
     })
     $('#playlist').sortable()
     // $('li#' + data.username.toLowerCase()).remove()

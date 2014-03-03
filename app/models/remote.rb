@@ -51,8 +51,14 @@ class Remote
   end
 
   def update(params)
-    self.update_attribute(:name, params[:name])
-    self.update_attribute(:description, params[:description])
+    if params[:type] == 'name' && params[:name] != ''
+      self.update_attribute(:name, params[:name])
+    end
+
+    if params[:type] == 'description' && params[:description] != ''
+      self.update_attribute(:description, params[:description])
+    end
+
     self.save
   end
 

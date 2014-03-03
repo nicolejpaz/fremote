@@ -31,7 +31,7 @@ class RemotesController < ApplicationController
     if @remote_owner
     	@remote.update(params)
     end
-    render :show
+    render json: {'remote' => @remote}.to_json
 	end
 
 	def control

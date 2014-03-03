@@ -3,7 +3,7 @@ class DrawingsController < ApplicationController
     @remote = Remote.find_by({remote_id: params[:id]})
     @user = current_user if current_user
 
-    if @user == @remote.user || @remote.admin_only == false
+    if is_authorized?(@remote, @user)
       Notify.new("drawing:#{@remote.remote_id}", {'coordinates' => params['coordinates']})
     end
 
@@ -45,5 +45,14 @@ class DrawingsController < ApplicationController
     end
 
     render nothing: true
+  end
+
+  private 
+  def is_authorized?(remote, user = nil)
+    if user == remote.user || remote.admin_only == false
+      return true
+    else
+      return false
+    end
   end
 end

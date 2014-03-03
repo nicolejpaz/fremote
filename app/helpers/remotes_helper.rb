@@ -10,12 +10,11 @@ module RemotesHelper
   end
 
   def is_authorized?(remote, user = nil)
-    if remote.admin_only == false
+    if user == remote.user || remote.admin_only == false
       return true
-    elsif user == remote.user
-      return true
+    else
+      return false
     end
-    return false
   end
 
   def sanitized_name(user)

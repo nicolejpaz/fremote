@@ -2,8 +2,15 @@ require 'spec_helper'
 
 describe RemotesController do
   before(:each) do
+    @sample_user = User.create name: "john", email: "john@john.com", password: "password"
+    @sample_video = "http://www.youtube.com/watch?v=NX_23r7vYak"
+    @sample_video_name = "Test name"
+    @sample_video_description = "Test description"
+
     @sample_remote = Remote.make
     @sample_remote.populate('http://www.youtube.com/watch?v=NX_23r7vYak')
+    @sample_remote.name = "Test name"
+    @sample_remote.description = "Test description"
     @sample_remote.save
   end
 
@@ -15,18 +22,6 @@ describe RemotesController do
   end
 
   describe "POST create" do
-    before(:each) do
-      @sample_user = User.create name: "john", email: "john@john.com", password: "password"
-      @sample_video = "http://www.youtube.com/watch?v=NX_23r7vYak"
-      @sample_video_name = "Test name"
-      @sample_video_description = "Test description"
-      @sample_remote = Remote.make
-      @sample_remote.populate("http://www.youtube.com/watch?v=NX_23r7vYak")
-      @sample_remote.name = "Test name"
-      @sample_remote.description = "Test description"
-      @sample_remote.save
-    end
-
     it "gets the current user if there is one" do
       controller.stub(:current_user){@sample_user}
       post :create, video_url: @sample_video, name: @sample_video_name, description: @sample_video_description
@@ -49,16 +44,6 @@ describe RemotesController do
 
 
   describe "GET show" do
-    before(:each) do
-      @sample_user = User.create name: "john", email: "john@john.com", password: "password"
-      @sample_video = "http://www.youtube.com/watch?v=NX_23r7vYak"
-      @sample_remote = Remote.make
-      @sample_remote.populate("http://www.youtube.com/watch?v=NX_23r7vYak")
-      @sample_remote.name = "Test name"
-      @sample_remote.description = "Test description"
-      @sample_remote.save
-    end
-
     it "retrieves @remote from remote_id" do
       get :show, id: @sample_remote.remote_id
       expect(assigns(:remote)).to eq(@sample_remote)
@@ -74,7 +59,6 @@ describe RemotesController do
       get :show, id: @sample_remote.remote_id
       expect(assigns(:username).is_a?(String)).to eq(true)
     end
-
   end
 
   describe "GET ping" do
@@ -101,7 +85,6 @@ describe RemotesController do
       response.body.include?("stream_url").should eq(true)
     end
   end
-
 
   describe "PUT control" do
     before(:each) do

@@ -103,7 +103,7 @@ describe RemotesController do
   end
 
 
-  describe "PATCH update" do
+  describe "PUT control" do
     before(:each) do
       @sample_user = User.create name: "john", email: "john@john.com", password: "password"
       @sample_video = "http://www.youtube.com/watch?v=NX_23r7vYak"
@@ -117,19 +117,19 @@ describe RemotesController do
     end
 
     it "retrieves @remote from remote_id" do
-      patch :update, id: @sample_remote.remote_id
+      put :control, id: @sample_remote.remote_id
       expect(assigns(:remote)).to eq(@sample_remote)
     end
 
     it "gets the current user if there is one" do
       controller.stub(:current_user){@sample_user}
-      patch :update, id: @sample_remote.remote_id
+      put :control, id: @sample_remote.remote_id
       expect(assigns(:user)).to eq(@sample_user)
     end
 
     it "updates the remote if owner is logged in" do
       controller.stub(:current_user){@sample_user}
-      patch :update, remote: { :admin_only => "true" }, id: @sample_owned_remote.remote_id
+      put :control, remote: { :admin_only => "true" }, id: @sample_owned_remote.remote_id
       expect(assigns(:remote).admin_only).to eq(true)
     end
 
@@ -141,7 +141,7 @@ describe RemotesController do
       # sign_in @another_user
       controller.stub(:current_user) { @another_user }
       # controller.stub(:current_user){@another_user}
-      patch :update, remote: { :admin_only => "true" }, id: @sample_owned_remote.remote_id
+      put :control, remote: { :admin_only => "true" }, id: @sample_owned_remote.remote_id
       expect(assigns(:remote).admin_only).to eq(false)
     end
 

@@ -55,3 +55,25 @@ canvas#drawing-surface {
 .error {
   color: #a94442;
 }
+
+li.user, li.member, li.owner {
+  font-weight: bold;
+}
+
+li.guest .member, li.user .member, li.owner .member {
+  display: none;
+}
+
+li.member .member {
+  color: gold;
+  display: inline;
+}
+
+li.guest .owner, li.user .owner, li.member .owner {
+  display: none;
+}
+
+li.owner .owner {
+  color: tomato;
+  display: inline;
+}

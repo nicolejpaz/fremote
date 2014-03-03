@@ -62,7 +62,7 @@ class Remote
     self.save
   end
 
-  def control_update(params, remote_owner = nil)
+  def control(params, remote_owner = nil)
     if self.admin_only == false || remote_owner
 
       self.status = params["status"] if params["status"]

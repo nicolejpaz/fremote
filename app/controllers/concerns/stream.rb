@@ -33,9 +33,6 @@ module Stream
         end
         ensure
           remote = remote.reload
-          puts "$" * 50
-          puts "something should be deleted"
-          puts remote.watchers.select{ |i| i[/\A#{username}\z/] }.first
           remote.watchers.delete(remote.watchers.select{ |i| i["username"] == username}.first)
           remote.save
           ActiveSupport::Notifications.instrument("unwatch:#{remote.remote_id}", {watchers: remote.watchers, username: username}.to_json)
@@ -63,15 +60,15 @@ module Stream
       p "stream closed"
   end
 
-  def watch(remote, username)
-    remote.watchers << username
+  def watch(remote, username, user_kind)
+    remote.watchers << {username: username, user_kind: user_kind}
     remote.watchers = remote.watchers.uniq
     remote.save
     ActiveSupport::Notifications.instrument("watch:#{remote.remote_id}", {watchers: remote.watchers, username: username}.to_json)
   end
 
   def unwatch(remote, username)
-    remote.watchers.delete(username)
+    remote.watchers.delete(remote.watchers.select{ |i| i["username"] == username}.first)
     remote.save
     ActiveSupport::Notifications.instrument("unwatch:#{remote.remote_id}", {watchers: remote.watchers, username: username}.to_json)
   end

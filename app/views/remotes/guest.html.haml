@@ -1,0 +1,7 @@
+%ul.list-group
+  %li.list-group-item
+    = form_for :guest_name, :url => remote_path(@remote), method: "get" do |f|
+      .input-group.input-group-sm
+        = text_field_tag :guest_name, "", :class => 'form-control', placeholder: 'enter a temporary guest name here...', html: {:autocomplete => "off"}
+        %span.input-group-btn
+          = submit_tag "Send", class: "btn btn-success"

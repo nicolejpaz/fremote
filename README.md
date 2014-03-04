@@ -21,7 +21,10 @@ Fremote is a web app to remote-control YouTube & Vimeo videos.  A user can send 
 * Blip.tv
 * Veoh
 * Soundcloud
-* VideoWeed
+* Metacafe
+
+## Unofficially Supported Media Providers
+* VideoWeed (if the user's referrer info is disabled. lol)
 
 ## Demo
 

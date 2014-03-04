@@ -120,7 +120,7 @@ class Remote
     self.start_at = 0
     self.status = 1
     self.save
-    Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(ViddlRb.get_urls(self.playlist.list[self.playlist.selection]["url"]).first) })
+    Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.selection]["url"])) })
   end
 
   def change_status_if_status_is_zero(params)
@@ -128,7 +128,7 @@ class Remote
     self.start_at = 0
     self.status = 1
     self.save
-    Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(ViddlRb.get_urls(self.playlist.list[self.playlist.selection]["url"]).first)  })
+    Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.selection]["url"]))  })
   end
 
 end

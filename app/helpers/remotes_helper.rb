@@ -18,7 +18,8 @@ module RemotesHelper
   end
 
   def sanitized_name(user)
-    return user.name.sub(' ', '_')
+    user_name = user.name.split(' ')
+    return user_name.join('_')
   end
 
 end

@@ -1,12 +1,15 @@
 #video_info.panel.panel-default
   .panel-heading
-    - if current_user == @remote.user && current_user
+    - if is_authorized?(@remote, current_user)
       #remote_name
         %h3.panel-title= @remote.name
     - else
       %h3.panel-title= @remote.name
   .panel-body
-    #remote_description
+    - if is_authorized?(@remote, current_user)
+      #remote_description
+        %p= @remote.description
+    - else
       %p= @remote.description
     %p
       %a{href: remote.url}

@@ -26,6 +26,28 @@ describe RemotesController do
     end
   end
 
+  describe "GET new" do
+    context "when there is a current user" do
+      it "assigns the current user to @user" do
+        controller.stub(:current_user){@sample_user}
+        get :new
+        expect(assigns(:user)).to eq @sample_user
+      end
+    end
+
+    context "when there is no current user" do
+      it "does not assign any user to @user" do
+        get :new
+        expect(assigns(:user)).to be_nil
+      end
+    end
+
+    it "assigns @remote to a new remote" do
+      get :new
+      expect(assigns(:remote).is_a?(Remote)).to eq true
+    end
+  end
+
   describe "POST create" do
     it "creates a remote with a valid url" do
       count = Remote.all.count

@@ -8,28 +8,33 @@ Fremote is a web app to remote-control YouTube & Vimeo videos.  A user can send 
 * Server-sent Events via ActionController::Live
 * Pub/Sub using ActiveSupport::Notifications
 * Video.js API
-* Streaming video links provided by Viddl
+* Streaming video scraped from multiple providrs
 * MongoDB with Mongoid
-* Live chat
+* Live chat & playlist
 * HAML
 * User registration with Devise
+
+## Supported Media Providers
+
+* YouTube
+* Vimeo
+* Blip.tv
+* Veoh
+* Soundcloud
+* Metacafe
+
+## Unofficially Supported Media Providers
+* VideoWeed (if the user's referrer info is disabled. lol)
 
 ## Demo
 
 [fremote.herokuapp.com](http://fremote.herokuapp.com/)
 
+Keep in mind that the demo is currently out of date.  We are working on bringing the rest of the features missing in the demo to the future home of Fremote when we deploy it to prime-time.
+
 ## To Contribute
 
-We'd love for someone to contribute!  Simply fork the repo, make changes, and submit a pull request.
-
-Right now I'm looking to add the following:
-
-* "Currently Viewing" list of users who are watching a video.
-* Playlist capability for remotes.  This may put into question how remotes are created, however. [in progress]
-* ~~"Fremote Lite", which would have the feature of embedding any video and relying on a timer and user intervention to sync up videos.~~
-* Scrape video information from more providers. [in progress]
-
-Other ideas are also welcome.
+We'd love to have people contribute!  Simply fork the repo, make changes, and submit a pull request.
 
 ## Issues
 

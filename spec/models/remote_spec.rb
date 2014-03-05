@@ -7,7 +7,8 @@ describe Remote do
       name: "Test name",
       description: "Test description"
 		}
-		 @sample_user = create(:user)
+     @sample_user = create(:user)
+		 @another_user = create(:user, name: 'Another name', email: 'test2@test.com')
 		 @sample_video = "http://www.youtube.com/embed/mZqGqE0D0n4"
 	end
 
@@ -105,5 +106,37 @@ describe Remote do
     @sample_remote.update(@params)
 
     expect(@sample_remote.description).to eq @params[:description]
+  end
+
+  context "when checking the user type" do
+    it "should return 'guest' if a guest created the remote" do
+      @sample_remote = Remote.make
+      @sample_remote.populate(@sample_video)
+      @sample_remote.save 
+
+      guest = @sample_remote.kind_of_user
+
+      expect(guest).to eq "guest"
+    end
+
+    it "should return 'owner' if the remote's owner is also logged in" do
+      @sample_remote = Remote.make(@sample_user)
+      @sample_remote.populate(@sample_video)
+      @sample_remote.save 
+
+      owner = @sample_remote.kind_of_user(@sample_user)
+
+      expect(owner).to eq "owner"
+    end
+
+    it "should return 'user' if there is a user but they are not the remote's owner" do
+      @sample_remote = Remote.make(@sample_user)
+      @sample_remote.populate(@sample_video)
+      @sample_remote.save 
+
+      user = @sample_remote.kind_of_user(@another_user)
+
+      expect(user).to eq "user"
+    end
   end
 end

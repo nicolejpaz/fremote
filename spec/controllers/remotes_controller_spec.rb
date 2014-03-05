@@ -21,7 +21,7 @@ describe RemotesController do
 
   describe "GET index" do
     it "assigns @remote to a new remote" do
-      get :new
+      get :index
       expect(assigns(:remote).is_a?(Remote)).to eq(true)
     end
   end

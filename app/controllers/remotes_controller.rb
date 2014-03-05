@@ -2,7 +2,7 @@ class RemotesController < ApplicationController
 
   include RemotesHelper
 
-	def new
+	def index
 		@remote = Remote.new
 	end
 

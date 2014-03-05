@@ -65,7 +65,7 @@ gem 'guard-rails'
 # gem 'goliath'
 gem 'rails_12factor', group: :production
 # gem 'videojs_rails'
-gem 'viddl-rb'
+gem 'viddl-rb', git: 'https://github.com/Ravenstine/viddl-rb.git'
 
 gem 'debugger', group: :development
 

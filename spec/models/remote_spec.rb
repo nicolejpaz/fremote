@@ -3,8 +3,7 @@ require 'spec_helper'
 describe Remote do
 
 	before(:each) do
-		@attr = {
-			url: "http://www.youtube.com/embed/mZqGqE0D0n4",
+		@params = {
       name: "Test name",
       description: "Test description"
 		}
@@ -73,7 +72,7 @@ describe Remote do
   it "should have a custom name if given" do
     @sample_remote = Remote.make
     @sample_remote.populate(@sample_video)
-    @sample_remote.name = @attr[:name]
+    @sample_remote.name = @params[:name]
     @sample_remote.save
 
     @sample_remote.name.should eq "Test name"
@@ -82,10 +81,29 @@ describe Remote do
   it "should have a custom description if given" do
     @sample_remote = Remote.make
     @sample_remote.populate(@sample_video)
-    @sample_remote.description = @attr[:description]
+    @sample_remote.description = @params[:description]
     @sample_remote.save
 
     @sample_remote.description.should eq "Test description"
   end
 
+  it "should rename a remote if the parameters include a :name key" do
+    @sample_remote = Remote.make
+    @sample_remote.populate(@sample_video)
+    @sample_remote.save
+    @params[:description] = ''
+    @sample_remote.update(@params)
+
+    expect(@sample_remote.name).to eq @params[:name]
+  end
+
+  it "should change a remote description if the parameters include a :description key" do
+    @sample_remote = Remote.make
+    @sample_remote.populate(@sample_video)
+    @sample_remote.save
+    @params[:name] = ''
+    @sample_remote.update(@params)
+
+    expect(@sample_remote.description).to eq @params[:description]
+  end
 end

@@ -80,24 +80,20 @@ player.ready(function(){
   var source = new EventSource(Remote.remote_id + '/stream')
   var RemoteCanvas = $('canvas')
   var canvas = new Canvas(RemoteCanvas)
-  var alertConnecting = $('div.alert-success')
   var alertClosed = $('div.alert-danger')
 
   if (source.readyState === 0) {
     // Connecting
     alertClosed.hide()
-    alertConnecting.show()
   }
 
   source.onopen = function() {
     // Connected
-    alertConnecting.hide()
     alertClosed.hide()
   }
 
   source.onerror = function() {
     // Disconnected
-    alertConnecting.hide()
     alertClosed.show()
   }
 

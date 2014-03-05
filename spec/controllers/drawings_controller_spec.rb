@@ -3,10 +3,16 @@ require 'spec_helper'
 describe DrawingsController do
   before(:each) do
     @sample_user = User.create name: "john", email: "john@john.com", password: "password"
+    @another_user = User.create name: "jane", email: "jane@jane.com", password: "password"
+    
     @sample_video = "http://www.youtube.com/watch?v=NX_23r7vYak"
     @sample_remote = Remote.make
     @sample_remote.populate("http://www.youtube.com/watch?v=NX_23r7vYak")
     @sample_remote.save
+
+    @sample_owned_remote = Remote.make(@sample_user)
+    @sample_owned_remote.populate("http://www.youtube.com/watch?v=NX_23r7vYak")
+    @sample_owned_remote.save
 
     @sample_coordinates = []
     10.times do |number|
@@ -15,29 +21,41 @@ describe DrawingsController do
   end
 
   describe 'POST write' do
-    it 'retrieves @remote from remote_id' do
-      post :write, id: @sample_remote.remote_id, coordinates: @sample_coordinates
-      expect(assigns(:remote)).to eq (@sample_remote)
+    context 'when given coordinates' do
+      before(:each) do
+        controller.stub(:current_user){@sample_user}
+        post :write, id: @sample_remote.remote_id, coordinates: @sample_coordinates
+        @drawing_response = response.dup
+        response.close
+      end
+      
+      it 'retrieves @remote from remote_id' do
+        expect(assigns(:remote)).to eq (@sample_remote)
+      end
+
+      it 'gets the current user if there is one' do
+        expect(assigns(:user)).to eq(@sample_user)
+      end
+
+      it 'returns an OK response' do
+        expect(@drawing_response.status).to eq 200
+      end
+
+      it 'returns a response that contains the correct color' do
+        expect(@drawing_response.as_json.to_s).to include 'FF0000'
+      end
     end
 
-    it 'gets the current user if there is one' do
-      controller.stub(:current_user){@sample_user}
-      post :write, id: @sample_remote.remote_id, coordinates: @sample_coordinates
-      expect(assigns(:user)).to eq(@sample_user)
-    end
+    context 'when there are no coordinates' do
+      before(:each) do
+        post :write, id: @sample_remote.remote_id, coordinates: []
+        @drawing_response = response.dup
+        response.close
+      end
 
-    it 'returns an OK response' do
-      post :write, id: @sample_remote.remote_id, coordinates: @sample_coordinates
-      @drawing_response = response.dup
-      response.close
-      expect(@drawing_response.status).to eq 200
-    end
-
-    it 'returns a response that contains the correct color' do
-      post :write, id: @sample_remote.remote_id, coordinates: @sample_coordinates
-      @drawing_response = response.dup
-      response.close
-      expect(@drawing_response.as_json.to_s).to include 'FF0000'
+      it 'renders nothing' do
+        expect(@drawing_response.as_json.to_s).to_not include 'FF0000'
+      end
     end
   end
 
@@ -60,7 +78,6 @@ describe DrawingsController do
   end
 
   describe "POST update" do
-
     it "retrieves @remote from remote_id" do
       post :update, id: @sample_remote.remote_id
       expect(assigns(:remote)).to eq(@sample_remote)
@@ -98,24 +115,39 @@ describe DrawingsController do
       response.close
       expect(@drawing_response.as_json.to_s).to include 'FF0000'
     end
-
   end
 
   describe 'POST clear' do
-    before(:each) do
-      post :write, id: @sample_remote.remote_id, coordinates: @sample_coordinates
-      post :clear, id: @sample_remote.remote_id
-      @clear_response = response.dup
-      response.close
+    context 'when the user is authorized to use the canvas' do
+      before(:each) do
+        post :write, id: @sample_remote.remote_id, coordinates: @sample_coordinates
+        post :clear, id: @sample_remote.remote_id
+        @clear_response = response.dup
+        response.close
+      end
+
+      it 'returns an OK response' do
+        expect(@clear_response.status).to eq 200
+      end
+
+      it 'sets drawing coordinates to an empty array' do
+        expect(Remote.last.drawing.coordinates.length).to eq 0
+      end
     end
 
-    it 'returns an OK response' do
-      expect(@clear_response.status).to eq 200
-    end
+    context 'when the user is not authorized to use the canvas' do
+      before(:each) do
+        sign_in @another_user
 
-    it 'sets drawing coordinates to an empty array' do
-      expect(Remote.last.drawing.coordinates.length).to eq 0
+        post :write, id: @sample_owned_remote.remote_id, coordinates: @sample_coordinates
+        post :clear, id: @sample_remote.remote_id
+        @clear_response = response.dup
+        response.close
+      end
+
+      it 'does not clear the canvas' do
+        expect(Remote.last.drawing.coordinates.length).to eq 10
+      end
     end
   end
-
 end

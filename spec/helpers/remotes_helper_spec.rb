@@ -11,7 +11,7 @@ require 'spec_helper'
 #   end
 # end
 describe RemotesHelper do
-
+  context "to_boolean" do
     it "should convert true string to true boolean" do
       to_boolean("true").should equal(true)
     end
@@ -35,5 +35,63 @@ describe RemotesHelper do
     it "should convert one integer to true boolean" do
       to_boolean(1).should equal(true)
     end
+  end
 
+  context "is_authorized?" do
+    before(:all) do
+      @sample_user = create(:user)
+      @another_user = create(:user, name: 'Another user', email: 'test2@test.com')
+      @sample_remote = Remote.make(@sample_user)
+      @sample_remote.populate('http://www.youtube.com/watch?v=NX_23r7vYak')
+      @sample_remote.save
+    end
+
+    it "should return true if a user is authorized to use a remote" do
+      @sample_remote.admin_only = false
+      @sample_remote.save 
+
+      expect(is_authorized?(@sample_remote, @another_user))
+    end
+
+    it "should return false if a user is not authorized to use a remote" do
+      @sample_remote.admin_only = true
+      @sample_remote.save
+
+      expect(is_authorized?(@sample_remote, @another_user))
+    end
+
+    it "should return true if a guest is authorized to use a remote" do
+      @sample_remote.admin_only = false
+      @sample_remote.save 
+
+      expect(is_authorized?(@sample_remote))
+    end
+
+    it "should return false if a guest is not authorized to use a remote" do
+      @sample_remote.admin_only = true
+      @sample_remote.save
+
+      expect(is_authorized?(@sample_remote))
+    end
+  end
+
+  context "sanitized_name" do
+    before(:all) do
+      @one_word_user_name = create(:user, name: 'One')
+      @two_word_user_name = create(:user, name: 'One Two', email: 'test2@test.com')
+      @three_word_user_name = create(:user, name: 'One Two Three', email: 'test3@test.com')
+    end
+
+    it "returns the user's name if their name is one word" do
+      expect(sanitized_name(@one_word_user_name)).to eq 'One'
+    end
+
+    it "returns the user's sanitzed name if their name is two words" do
+      expect(sanitized_name(@two_word_user_name)).to eq 'One_Two'
+    end
+
+    it "returns the user's sanitized name if their name is three words" do
+      expect(sanitized_name(@three_word_user_name)).to eq 'One_Two_Three'
+    end
+  end
 end

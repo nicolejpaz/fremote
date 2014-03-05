@@ -2,7 +2,6 @@ $(document).ready(function() {
   var localCanvas = $('canvas')
   var canvas = new Canvas(localCanvas)
   var video = $('#player')[0]
-  var videoPosition = getVideoPosition(video)
 
   canvas.draw()
 
@@ -12,24 +11,10 @@ $(document).ready(function() {
       url: '/remotes/' + Remote.remote_id + '/clear'
     })
   })
-
-  setCanvasPosition(localCanvas, videoPosition)
-
-  $('button.close').on('click', function(e) {
-    localCanvas.css({
-      top: 50
-    })
-  })
 })
 
 function getVideoPosition(video) {
   return video.getBoundingClientRect()
-}
-
-function setCanvasPosition(localCanvas, position) {
-  localCanvas.css({
-    top: position.top
-  })
 }
 
 var Canvas = function(canvas) {

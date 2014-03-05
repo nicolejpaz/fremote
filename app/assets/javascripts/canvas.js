@@ -1,7 +1,6 @@
 $(document).ready(function() {
   var localCanvas = $('canvas')
   var canvas = new Canvas(localCanvas)
-  var video = $('#player')[0]
 
   canvas.draw()
 
@@ -12,10 +11,6 @@ $(document).ready(function() {
     })
   })
 })
-
-function getVideoPosition(video) {
-  return video.getBoundingClientRect()
-}
 
 var Canvas = function(canvas) {
   this.canvas = canvas[0]

@@ -22,6 +22,7 @@ class RemotesController < ApplicationController
 		@user = current_user if current_user
 		@remote = Remote.find_by({remote_id: params[:id]})
 		@remote_owner = @user if @user == @remote.user
+		render nothing: true
 	end
 
 	def update

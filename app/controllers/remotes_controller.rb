@@ -6,6 +6,11 @@ class RemotesController < ApplicationController
 		@remote = Remote.new
 	end
 
+	def new
+		@user = current_user if current_user
+		@remote = Remote.new
+	end
+
 	def create
 		@user = current_user if current_user
 		@remote = Remote.make(@user)
@@ -28,8 +33,7 @@ class RemotesController < ApplicationController
 	def update
 		@user = current_user if current_user
 		@remote = Remote.find_by({remote_id: params[:id]})
-    @remote_owner = @user if @user == @remote.user
-    if @remote_owner
+    if is_authorized?(@remote, @user)
     	@remote.update(params)
     end
     render json: {'remote' => @remote}.to_json
@@ -68,4 +72,12 @@ class RemotesController < ApplicationController
 		render json: {time: Time.now}.to_json
 	end
 
+	private
+  def is_authorized?(remote, user = nil)
+    if user == remote.user || remote.admin_only == false
+      return true
+    else
+      return false
+    end
+  end
 end

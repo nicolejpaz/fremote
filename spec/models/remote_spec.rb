@@ -3,12 +3,12 @@ require 'spec_helper'
 describe Remote do
 
 	before(:each) do
-		@attr = {
-			url: "http://www.youtube.com/embed/mZqGqE0D0n4",
+		@params = {
       name: "Test name",
       description: "Test description"
 		}
-		 @sample_user = create(:user)
+     @sample_user = create(:user)
+		 @another_user = create(:user, name: 'Another name', email: 'test2@test.com')
 		 @sample_video = "http://www.youtube.com/embed/mZqGqE0D0n4"
 	end
 
@@ -73,7 +73,7 @@ describe Remote do
   it "should have a custom name if given" do
     @sample_remote = Remote.make
     @sample_remote.populate(@sample_video)
-    @sample_remote.name = @attr[:name]
+    @sample_remote.name = @params[:name]
     @sample_remote.save
 
     @sample_remote.name.should eq "Test name"
@@ -82,10 +82,61 @@ describe Remote do
   it "should have a custom description if given" do
     @sample_remote = Remote.make
     @sample_remote.populate(@sample_video)
-    @sample_remote.description = @attr[:description]
+    @sample_remote.description = @params[:description]
     @sample_remote.save
 
     @sample_remote.description.should eq "Test description"
   end
 
+  it "should rename a remote if the parameters include a :name key" do
+    @sample_remote = Remote.make
+    @sample_remote.populate(@sample_video)
+    @sample_remote.save
+    @params[:description] = ''
+    @sample_remote.update(@params)
+
+    expect(@sample_remote.name).to eq @params[:name]
+  end
+
+  it "should change a remote description if the parameters include a :description key" do
+    @sample_remote = Remote.make
+    @sample_remote.populate(@sample_video)
+    @sample_remote.save
+    @params[:name] = ''
+    @sample_remote.update(@params)
+
+    expect(@sample_remote.description).to eq @params[:description]
+  end
+
+  context "when checking the user type" do
+    it "should return 'guest' if a guest created the remote" do
+      @sample_remote = Remote.make
+      @sample_remote.populate(@sample_video)
+      @sample_remote.save 
+
+      guest = @sample_remote.kind_of_user
+
+      expect(guest).to eq "guest"
+    end
+
+    it "should return 'owner' if the remote's owner is also logged in" do
+      @sample_remote = Remote.make(@sample_user)
+      @sample_remote.populate(@sample_video)
+      @sample_remote.save 
+
+      owner = @sample_remote.kind_of_user(@sample_user)
+
+      expect(owner).to eq "owner"
+    end
+
+    it "should return 'user' if there is a user but they are not the remote's owner" do
+      @sample_remote = Remote.make(@sample_user)
+      @sample_remote.populate(@sample_video)
+      @sample_remote.save 
+
+      user = @sample_remote.kind_of_user(@another_user)
+
+      expect(user).to eq "user"
+    end
+  end
 end

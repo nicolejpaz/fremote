@@ -10,8 +10,6 @@ feature 'Create Remote' do
         expect(page).to have_content "Congratulations"
       end
 
-      it 'can create a remote from an outside supported source'
-
       it 'can create a remote from a direct link with a valid extension' do
         visit root_path
         fill_in 'video_url', with: "https://ia700302.us.archive.org/29/items/CC_1916_12_04_TheRink/CC_1916_12_04_TheRink_512kb.mp4"
@@ -38,12 +36,13 @@ end
 
 feature 'View Remote' do
   context 'on show page' do
-    xit 'can show a video player' do
+    it 'can show a video player' do
       visit root_path
       fill_in 'video_url',   with: "http://www.youtube.com/watch?v=zoO0s1ukcqQ"
       expect{click_button "Create Remote"}.to change{Remote.all.count}.by(1)
+      click_button "Send"
       node = page.find('body')
-      node.native.inner_html.should include('player')
+      node.native.inner_html.should include('video')
     end
 
     xit 'can display new chat messages' do

@@ -45,24 +45,38 @@ feature "View Remote" do
       node.native.inner_html.should include("video")
     end
 
+    it "should list all the watchers on the page" do
+      sample_user = User.create name: "john", email: "john@john.com", password: "password"
+      visit user_session_path
+      fill_in "user_login",   with: "john@john.com"
+      fill_in "user_password", with: "password"
+      click_button "Log in"
+      fill_in "video_url",   with: "http://www.youtube.com/watch?v=zoO0s1ukcqQ"
+      expect{click_button "Create Remote"}.to change{Remote.all.count}.by(1)
+      node = page.find("body")
+      expect(page).to have_content "Users currently watching this remote:"
+    end
+
     context "when a guest creates a remote" do
-      it "allows the guest to create a temporary chat name" do
+      before(:each) do
         visit root_path
         fill_in "video_url",   with: "http://www.youtube.com/watch?v=zoO0s1ukcqQ"
         click_button "Create Remote"
-        fill_in "guest_name", with: "test name"
-        click_button "Send"
-        node = page.find('body')
-        node.native.inner_html.should include("test")
       end
 
-      it "allows the guest to have an auto-generated chat name if they do not fill out the guest chat name form" do
-        visit root_path
-        fill_in "video_url",   with: "http://www.youtube.com/watch?v=zoO0s1ukcqQ"
-        click_button "Create Remote"
-        click_button "Send"
-        node = page.find("body")
-        node.native.inner_html.should include("anon")
+      context "in the chat" do
+        it "allows the guest to create a temporary chat name" do
+          fill_in "guest_name", with: "test name"
+          click_button "Send"
+          node = page.find('body')
+          node.native.inner_html.should include("test")
+        end
+
+        it "allows the guest to have an auto-generated chat name if they do not fill out the guest chat name form" do
+          click_button "Send"
+          node = page.find("body")
+          node.native.inner_html.should include("anon")
+        end
       end
     end
 
@@ -79,7 +93,6 @@ feature "View Remote" do
     end
   end
 end
-
 
 feature "Remote Owner Controls" do
   context "on show page and new page" do

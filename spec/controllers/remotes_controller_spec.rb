@@ -21,8 +21,30 @@ describe RemotesController do
 
   describe "GET index" do
     it "assigns @remote to a new remote" do
-      get :new
+      get :index
       expect(assigns(:remote).is_a?(Remote)).to eq(true)
+    end
+  end
+
+  describe "GET new" do
+    context "when there is a current user" do
+      it "assigns the current user to @user" do
+        controller.stub(:current_user){@sample_user}
+        get :new
+        expect(assigns(:user)).to eq @sample_user
+      end
+    end
+
+    context "when there is no current user" do
+      it "does not assign any user to @user" do
+        get :new
+        expect(assigns(:user)).to be_nil
+      end
+    end
+
+    it "assigns @remote to a new remote" do
+      get :new
+      expect(assigns(:remote).is_a?(Remote)).to eq true
     end
   end
 
@@ -173,7 +195,7 @@ describe RemotesController do
       @sample_owned_remote.populate(@params[:video_url])
       @sample_owned_remote.name = @params[:name]
       @sample_owned_remote.description = @params[:description]
-      @sample_owned_remote.save      
+      @sample_owned_remote.save  
     end
 
     context "when the current user is the remote owner" do
@@ -190,10 +212,6 @@ describe RemotesController do
         expect(assigns(:remote).remote_id).to eq @sample_owned_remote.remote_id
       end
 
-      it "assigns the current user to @remote_owner" do
-        expect(assigns(:remote_owner)).to eq @sample_user
-      end
-
       it "updates the remote based off of the given parameters" do
         expect(Remote.last.name).to eq @params[:alternate_name]
       end
@@ -202,45 +220,86 @@ describe RemotesController do
     context "when the current user is not the remote owner" do
       before(:each) do
         controller.stub(:current_user){@another_user}
-        patch :update, id: @sample_owned_remote.remote_id, name: @params[:alternate_name]
       end
 
-      it "assigns the current user to @user" do
-        expect(assigns(:user)).to eq @another_user
+      context "and the remote is not admin_only" do
+        before(:each) do
+          patch :update, id: @sample_owned_remote.remote_id, name: @params[:alternate_name]
+        end
+        
+        it "assigns the current user to @user" do
+          expect(assigns(:user)).to eq @another_user
+        end
+
+        it "retrieves @remote from remote_id" do
+          expect(assigns(:remote).remote_id).to eq @sample_owned_remote.remote_id
+        end
+
+        it "updates the remote's attributes" do
+          expect(Remote.last.name).to eq @params[:alternate_name]
+        end
       end
 
-      it "retrieves @remote from remote_id" do
-        expect(assigns(:remote).remote_id).to eq @sample_owned_remote.remote_id
-      end
+      context "and the remote is admin_only" do
+        before(:each) do
+          @sample_owned_remote.admin_only = true
+          @sample_owned_remote.save  
 
-      it "does not assign @remote_owner" do
-        expect(assigns(:remote_owner)).to be_nil
-      end
+          patch :update, id: @sample_owned_remote.remote_id, name: @params[:alternate_name]
+        end
 
-      it "does not update the remote's attributes" do
-        expect(Remote.last.name).to_not eq @params[:alternate_name]
+        it "assigns the current user to @user" do
+          expect(assigns(:user)).to eq @another_user
+        end
+
+        it "retrieves @remote from remote_id" do
+          expect(assigns(:remote).remote_id).to eq @sample_owned_remote.remote_id
+        end
+
+        it "does not update the remote's attributes" do
+          expect(Remote.last.name).to_not eq @params[:alternate_name]
+        end       
       end
     end
 
     context "when the current user is a guest" do
-      before(:each) do
-        patch :update, id: @sample_owned_remote.remote_id, name: @params[:alternate_name]
+      context "and the remote is not admin_only" do
+        before(:each) do
+          patch :update, id: @sample_owned_remote.remote_id, name: @params[:alternate_name]
+        end
+
+        it "does not assign @user" do
+          expect(assigns(:user)).to be_nil
+        end
+
+        it "retrieves @remote from remote_id" do
+          expect(assigns(:remote).remote_id).to eq @sample_owned_remote.remote_id
+        end
+
+        it "updates the remote's attributes" do
+          expect(Remote.last.name).to eq @params[:alternate_name]
+        end
       end
 
-      it "does not assign @user" do
-        expect(assigns(:user)).to be_nil
-      end
+      context "and the remote is admin_only" do
+        before(:each) do
+          @sample_owned_remote.admin_only = true
+          @sample_owned_remote.save
+          
+          patch :update, id: @sample_owned_remote.remote_id, name: @params[:alternate_name]
+        end
 
-      it "retrieves @remote from remote_id" do
-        expect(assigns(:remote).remote_id).to eq @sample_owned_remote.remote_id
-      end
+        it "does not assign @user" do
+          expect(assigns(:user)).to be_nil
+        end
 
-      it "does not assign @remote_owner" do
-        expect(assigns(:remote_owner)).to be_nil
-      end
-      
-      it "does not update the remote's attributes" do
-        expect(Remote.last.name).to_not eq @params[:alternate_name]
+        it "retrieves @remote from remote_id" do
+          expect(assigns(:remote).remote_id).to eq @sample_owned_remote.remote_id
+        end
+
+        it "does not update the remote's attributes" do
+          expect(Remote.last.name).to_not eq @params[:alternate_name]
+        end
       end
     end
   end

@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'spec_helper'
 
 describe Remote do
 
@@ -9,7 +10,7 @@ describe Remote do
 		}
      @sample_user = create(:user)
 		 @another_user = create(:user, name: 'Another name', email: 'test2@test.com')
-		 @sample_video = "http://www.youtube.com/embed/mZqGqE0D0n4"
+		 @sample_video = "http://www.youtube.com/watch?v=zoO0s1ukcqQ"
 	end
 
 	it "should create a new instance given a valid attribute" do

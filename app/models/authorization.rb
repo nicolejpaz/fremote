@@ -1,4 +1,5 @@
 class Authorization
+  include ActionView::Helpers::FormHelper
   include Mongoid::Document
   include Mongoid::Timestamps
   field :_guest, type: Hash, default: {"control" => "1", "chat" => "1", "playlist" => "1", "draw" => "1", "settings" => "1"}
@@ -16,28 +17,25 @@ class Authorization
   end
 
   def update_permissions(params)
-    self._guest = params["_guest"] unless params["_guest"] == nil
-    self._user = params["_user"] unless params["_user"] == nil
-    self._member = params["_member"] unless params ["_member"] == nil
+    default_permissions = {"control" => "0", "chat" => "0", "playlist" => "0", "draw" => "0", "settings" => "0"}
+    self._guest = default_permissions.merge(params["_guest"]) unless params["_guest"] == nil
+    self._user = default_permissions.merge(params["_user"]) unless params["_user"] == nil
+    self._member = default_permissions.merge(params["_member"]) unless params ["_member"] == nil
+  end
+
+  def active_or_inactive(kind, permission)
+    return "active" if self[kind][permission] == "1"
+    return "inactive" if self[kind][permission] == "0"
   end
 
   private
 
   def kind_of_entity(user = nil)
-    # if self.remote.members.contains?(user)
-    #   return :_member
-    # elsif user.is_a?(User)
-    #   return :_user
-    # else
-    #   return :_guest
-    # end
-
     if user.is_a?(User)
       return :_user
     else
       return :_guest
     end
-
   end
 
   def to_boolean(str)

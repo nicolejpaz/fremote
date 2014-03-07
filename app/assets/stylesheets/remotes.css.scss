@@ -2,6 +2,18 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+p.navbar-text {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  /*letter-spacing: 2px;*/
+}
+
+nav {
+  background: #00a67c;
+  box-shadow: 3px 3px 3px #1f7c65;
+}
+
 #center_column{
 	width: 640px;
 	margin: 0 auto;

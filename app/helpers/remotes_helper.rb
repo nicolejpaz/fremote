@@ -22,4 +22,12 @@ module RemotesHelper
     return user_name.join('_')
   end
 
+  def remote_authorization_checkbox(remote, kind, permission)
+    if remote.authorization[kind][permission] == "1"
+      check_box_tag "#{kind}[#{permission}]", 1, "active"
+    elsif remote.authorization[kind][permission] == "0"
+      check_box_tag "#{kind}[#{permission}]", 1
+    end
+  end
+
 end

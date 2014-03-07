@@ -60,6 +60,8 @@ class Remote
       self.description = params[:description]
     end
 
+    self.authorization.update_permissions(params)
+
     self.save
   end
 

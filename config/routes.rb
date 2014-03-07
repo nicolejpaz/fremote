@@ -2,7 +2,7 @@ Fremote::Application.routes.draw do
   devise_for :users
   root 'remotes#index'
 
-  resources :remotes, only: [:index, :new, :create,:show,:update]
+  resources :remotes, only: [:index, :new, :create,:show,:update, :edit]
   resources :users, only: [:show]
 
   get 'remotes/:id/stream' => 'streams#stream'

@@ -18,9 +18,10 @@ class Authorization
 
   def update_permissions(params)
     default_permissions = {"control" => "0", "chat" => "0", "playlist" => "0", "draw" => "0", "settings" => "0"}
-    self._guest = default_permissions.merge(params["_guest"]) unless params["_guest"] == nil
-    self._user = default_permissions.merge(params["_user"]) unless params["_user"] == nil
-    self._member = default_permissions.merge(params["_member"]) unless params ["_member"] == nil
+    # new_guest_settings = {} unless params["_guest"]
+    self._guest = default_permissions.merge(params["_guest"] || {})
+    self._user = default_permissions.merge(params["_user"] || {})
+    self._member = default_permissions.merge(params["_member"] || {})
   end
 
   def active_or_inactive(kind, permission)

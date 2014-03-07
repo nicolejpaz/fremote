@@ -7,6 +7,9 @@
   = render :partial => 'playlist', :locals => { :remote => @remote, :username => @username }
   = render :partial => 'owner_controls', :locals => { :remote => @remote, :current_user => current_user }
 
+
+
+
   :javascript
     var Remote = #{@remote.to_json}
     var user = '#{@identifier}'

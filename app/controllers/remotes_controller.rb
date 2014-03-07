@@ -14,13 +14,15 @@ class RemotesController < ApplicationController
 	def create
 		@user = current_user if current_user
 		@remote = Remote.make(@user)
+    @remote.authorization.update_permissions(params)
 		dispatch = @remote.populate(params[:video_url])
 		@remote.name = params[:name] unless params[:name] == ''
 		@remote.description = params[:description] unless params[:description] == ''
 		@remote.admin_only = to_boolean(params[:admin_only]) || false
 		@remote.save
-		flash[dispatch[:status]] = dispatch[:message]
-		redirect_to dispatch[:path]
+    flash[:notice] = "Congratulations!  Take control of your remote."
+		# flash[dispatch[:status]] = dispatch[:message]
+    redirect_to remote_path(@remote.remote_id)
 	end
 
 	def edit
@@ -33,9 +35,7 @@ class RemotesController < ApplicationController
 	def update
 		@user = current_user if current_user
 		@remote = Remote.find_by({remote_id: params[:id]})
-    if is_authorized?(@remote, @user)
-    	@remote.update(params)
-    end
+    @remote.update(params) if @remote.authorization.is_authorized?("settings", @user)
     render json: {'remote' => @remote}.to_json
 	end
 
@@ -43,7 +43,7 @@ class RemotesController < ApplicationController
 		@user = current_user if current_user
 		@remote = Remote.find_by({remote_id: params[:id]})
     @remote_owner = @user if @user == @remote.user
-    @remote.control(params, @remote_owner)
+    @remote.control(params, @remote_owner) if @remote.authorization.is_authorized?("settings", @user)
     render nothing: true
 	end
 
@@ -73,11 +73,5 @@ class RemotesController < ApplicationController
 	end
 
 	private
-  def is_authorized?(remote, user = nil)
-    if user == remote.user || remote.admin_only == false
-      return true
-    else
-      return false
-    end
-  end
+
 end

@@ -3,7 +3,7 @@ class Remote
   include Mongoid::Document
   include Mongoid::Timestamps
   include RemotesHelper
-  after_initialize :spawn_embeds
+  after_initialize :spawn_embeds, :generate_remote_id
   field :remote_id, type: String
   field :name, type: String, default: "Unnamed Remote"
   field :description, type: String, default: "No description."
@@ -15,6 +15,7 @@ class Remote
   belongs_to :user
   embeds_one :playlist
   embeds_one :drawing
+  embeds_one :authorization
   validates_presence_of :status
   validates_presence_of :start_at
 
@@ -90,17 +91,21 @@ class Remote
   def spawn_embeds
     self.playlist = Playlist.new if self.playlist == nil
     self.drawing = Drawing.new if self.drawing == nil
+    self.authorization = Authorization.new if self.authorization == nil 
+  end
+
+  def generate_remote_id
+    self.remote_id = Digest::MD5.hexdigest(DateTime.now.to_s + DateTime.now.nsec.to_s).slice(0..9) if self.remote_id == nil
   end
 
   def push_link_to_playlist(url)
     new_media = Media.new(url)
     if new_media != nil
       self.playlist.list << new_media
-      self.remote_id = Digest::MD5.hexdigest(url + DateTime.now.to_s + DateTime.now.nsec.to_s).slice(0..9)
       self.save
-      return { message: "Congratulations!  Take control of your remote.", status: :notice, path: remote_path(self.remote_id)}
+      # return { message: "Congratulations!  Take control of your remote.", status: :notice, path: remote_path(self.remote_id)}
     else
-      return { message: "Invalid URL", status: :alert, path: root_path }
+      return { message: "The video URL you provided is invalid.  Try again using a valid YouTube, Vimeo, Veoh, Blip, or Soundcloud URL.", status: :alert, path: root_path }
     end
   end
 

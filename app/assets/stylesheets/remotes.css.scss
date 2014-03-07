@@ -2,11 +2,19 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+html {
+  background-color: #fff;
+}
+
+main {
+  background-color: #006c51 !important;
+  padding-bottom: 0;
+}
+
 p.navbar-text {
   font-family: 'Open Sans', sans-serif;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 300;
-  /*letter-spacing: 2px;*/
 }
 
 nav {
@@ -14,8 +22,42 @@ nav {
   box-shadow: 3px 3px 3px #1f7c65;
 }
 
+#landing p {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 48px;
+  font-weight: 300;
+  color: #fff;
+  margin: 20px 0;
+}
+
+#landing input {
+  clear: both;
+}
+
+.left {
+  float: left;
+  width: 100%;
+}
+
+.right {
+  float: right;
+}
+
+div#footer {
+  background: #00a67c;
+  box-shadow: -3px -3px 3px #1f7c65;
+  text-align: center;
+  padding-top: 15px;
+  min-height: 50px;
+}
+
+div#footer a {
+  color: #b8bec3;
+}
+
 #center_column{
-	width: 640px;
+  width: 68%;
+	max-width: 925px;
 	margin: 0 auto;
 }
 

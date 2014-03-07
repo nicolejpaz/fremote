@@ -1,0 +1,64 @@
+= form_for @remote, :url => { :controller => 'remotes', :action => 'update' }, :html => {:id => "edit_remote"} do |f|
+  / = label_tag :video_label, "Video URL", :class => 'header_label'
+  .input-group.full-width
+    = text_field_tag :name, @remote.name, :class => 'form-control', placeholder: 'Optional: Name your remote here...'
+    = text_area_tag :description, @remote.description, :class => 'form-control', placeholder: 'Optional: Describe your remote here...'
+  %table
+    %thead
+      %tr
+        %td
+        %td
+          Controls
+        %td
+          Playlist
+        %td
+          Chat
+        %td
+          Drawa
+        %td
+          Settings
+    %tbody
+      %tr
+        %td
+          Guest
+        %td
+          = remote_authorization_checkbox(@remote, "_guest", "control")
+        %td
+          = remote_authorization_checkbox(@remote, "_guest", "playlist")
+        %td
+          = remote_authorization_checkbox(@remote, "_guest", "chat")
+        %td
+          = remote_authorization_checkbox(@remote, "_guest", "draw")
+        %td
+          = remote_authorization_checkbox(@remote, "_guest", "settings")
+      %tr
+        %td
+          User
+        %td
+          = remote_authorization_checkbox(@remote, "_user", "control")
+        %td
+          = remote_authorization_checkbox(@remote, "_user", "playlist")
+        %td
+          = remote_authorization_checkbox(@remote, "_user", "chat")
+        %td
+          = remote_authorization_checkbox(@remote, "_user", "draw")
+        %td
+          = remote_authorization_checkbox(@remote, "_user", "settings")
+      %tr
+        %td
+          Member
+        %td
+          = remote_authorization_checkbox(@remote, "_member", "control")
+        %td
+          = remote_authorization_checkbox(@remote, "_member", "playlist")
+        %td
+          = remote_authorization_checkbox(@remote, "_member", "chat")
+        %td
+          = remote_authorization_checkbox(@remote, "_member", "draw")
+        %td
+          = remote_authorization_checkbox(@remote, "_member", "settings")
+
+
+  .input-group
+    %span.input-group-btn
+      = submit_tag "Update Remote", class: "btn btn-success"

@@ -29,14 +29,17 @@ class RemotesController < ApplicationController
 		@user = current_user if current_user
 		@remote = Remote.find_by({remote_id: params[:id]})
 		@remote_owner = @user if @user == @remote.user
-		render nothing: true
 	end
 
 	def update
 		@user = current_user if current_user
 		@remote = Remote.find_by({remote_id: params[:id]})
     @remote.update(params) if @remote.authorization.is_authorized?("settings", @user)
-    render json: {'remote' => @remote}.to_json
+
+    respond_to do |format|
+      format.json { render json: {'remote' => @remote}.to_json }
+      format.html { redirect_to remote_path(@remote) }
+    end
 	end
 
 	def control

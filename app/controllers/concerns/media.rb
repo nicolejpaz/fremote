@@ -3,18 +3,20 @@ module Media
   require 'uri'
 
   def self.new(url = nil)
-    if self.is_viddl?(url)
-      new_media = {}
-      new_media["url"] = url
-      new_media["title"] = ViddlRb.get_names(url).first
-    elsif self.is_other?(url)
-      new_media = {}
-      new_media["url"] = url
-      new_media["title"] = url
-    elsif self.is_direct?(url)
-      new_media = {}
-      new_media["url"] = url
-      new_media["title"] = url
+    unless url == nil
+      if self.is_viddl?(url)
+        new_media = {}
+        new_media["url"] = url
+        new_media["title"] = ViddlRb.get_names(url).first
+      elsif self.is_other?(url)
+        new_media = {}
+        new_media["url"] = url
+        new_media["title"] = url
+      elsif self.is_direct?(url)
+        new_media = {}
+        new_media["url"] = url
+        new_media["title"] = url
+      end
     end
     return new_media
   end

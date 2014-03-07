@@ -3,7 +3,7 @@ class DrawingsController < ApplicationController
     @remote = Remote.find_by({remote_id: params[:id]})
     @user = current_user if current_user
 
-    if is_authorized?(@remote, @user)
+    if @remote.authorization.is_authorized?("draw", @user)
       Notify.new("drawing:#{@remote.remote_id}", {'coordinates' => params['coordinates']})
     end
 
@@ -15,7 +15,7 @@ class DrawingsController < ApplicationController
     @remote = Remote.find_by({remote_id: params[:id]})
     @drawing = @remote.drawing
 
-    if is_authorized?(@remote, @user)
+    if @remote.authorization.is_authorized?("draw", @user)
       @drawing.save_to_database(params[:coordinates])
     end
 
@@ -38,7 +38,7 @@ class DrawingsController < ApplicationController
     @user = current_user if current_user
     @drawing = @remote.drawing
 
-    if is_authorized?(@remote, @user)
+    if @remote.authorization.is_authorized?("draw", @user)
       @drawing.coordinates = []
       @drawing.save
       Notify.new("clear:#{@remote.remote_id}")
@@ -48,11 +48,5 @@ class DrawingsController < ApplicationController
   end
 
   private 
-  def is_authorized?(remote, user = nil)
-    if user == remote.user || remote.admin_only == false
-      return true
-    else
-      return false
-    end
-  end
+
 end

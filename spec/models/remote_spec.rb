@@ -42,7 +42,6 @@ describe Remote do
 
 	it "should not have an owner if not created by a user" do
     @sample_remote = Remote.make(nil)
-    p @sample_video
     @sample_remote.populate(@sample_video)
     @sample_remote.save
     @sample_remote.user.should equal(nil)

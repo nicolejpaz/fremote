@@ -9,7 +9,7 @@ describe RemotesController do
       name: "Test name",
       alternate_name: "Alternate name",
       description: "Test description",
-      video_url: "http://www.youtube.com/watch?v=NX_23r7vYak"
+      video_url: "http://www.youtube.com/watch?v=zoO0s1ukcqQ"
     }
 
     @sample_remote = Remote.make
@@ -240,9 +240,9 @@ describe RemotesController do
         end
       end
 
-      context "and the remote is admin_only" do
+      context "and the only the remote owner is allowed to modify the remote" do
         before(:each) do
-          @sample_owned_remote.admin_only = true
+          @sample_owned_remote.authorization.update_permissions({"_user" => {}, "_member" => {}, "_guest" => {}})
           @sample_owned_remote.save  
 
           patch :update, id: @sample_owned_remote.remote_id, name: @params[:alternate_name]
@@ -283,7 +283,7 @@ describe RemotesController do
 
       context "and the remote is admin_only" do
         before(:each) do
-          @sample_owned_remote.admin_only = true
+          @sample_owned_remote.authorization.update_permissions({"_user" => {}, "_member" => {}, "_guest" => {}})
           @sample_owned_remote.save
           
           patch :update, id: @sample_owned_remote.remote_id, name: @params[:alternate_name]

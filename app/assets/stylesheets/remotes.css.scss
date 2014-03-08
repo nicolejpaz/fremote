@@ -104,11 +104,6 @@ div#footer {
 	margin: 0 auto;
 }
 
-#center_column:before {
-  content: '';
-  display: inline-block;
-}
-
 #chat_messages {
   height: 250px;
   overflow-y: scroll;

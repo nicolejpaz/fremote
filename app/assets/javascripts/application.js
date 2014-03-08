@@ -23,3 +23,4 @@
 //= require canvas
 //= require chat
 //= require update.remote
+//= require landing.ui

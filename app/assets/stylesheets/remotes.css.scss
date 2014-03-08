@@ -15,7 +15,7 @@ $light-green: #00a67c;
 $light-weight: 300;
 
 html {
-  background-color: #fff;
+  background-color: $dark-green;
 }
 
 body {
@@ -38,8 +38,8 @@ nav {
 }
 
 #landing p {
-  font-size: 2em;
-  color: #fff;
+  font-size: 1.45em;
+  color: white;
   margin: 20px 0;
 }
 
@@ -73,27 +73,38 @@ nav {
   border-bottom: $borders $light-gold;
   border-right: $borders $light-gold;
   font-weight: $light-weight;
-  color: #fff;
+  color: white;
 }
 
 div#footer {
   background: $light-green;
   box-shadow: -3px -3px 3px $medium-green;
   text-align: center;
-  padding-top: 15px;
-  min-height: 50px;
+  min-height: 20px;
   font-size: 1em;
+  bottom: 0;
+  position: fixed;
+  width: 100%;
+}
+
+div#footer p {
+  padding: 0.25em;
 }
 
 div#footer a {
-  color: #006c51;
+  color: $dark-green;
   font-weight: 600;
 }
 
-#center_column{
+#center_column {
   width: 68%;
 	max-width: 925px;
 	margin: 0 auto;
+}
+
+#center_column:before {
+  content: '';
+  display: inline-block;
 }
 
 #chat_messages {

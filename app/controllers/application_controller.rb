@@ -7,8 +7,14 @@ class ApplicationController < ActionController::Base
 
   def store_location
     # store last url as long as it isn't a /users path
-    path = request.fullpath.scan(/.*remotes\/.{10}/)
-    session[:previous_url] = path[0] unless path.count == 0
+    if (request.fullpath != "/users/sign_in" &&
+        request.fullpath != "/users/sign_up" &&
+        request.fullpath != "/users/password" &&
+        request.fullpath != "/users/sign_out" &&
+        !request.xhr?) # don't store ajax calls
+      path = request.fullpath.scan(/.*remotes\/.{10}|.*remotes\/new|.*remotes\/.{10}\/edit/)[0]
+      session[:previous_url] = path
+    end 
   end
 
   def after_sign_in_path_for(resource)
@@ -27,3 +33,4 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.for(:account_update) { |u| u.permit(:name, :email, :password, :password_confirmation, :current_password) }
   end
 end
+

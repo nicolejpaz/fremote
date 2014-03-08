@@ -2,36 +2,45 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+$borders: 3px solid;
+
+$light-gold: #bf8800;
+$dark-gold: #a66600;
+$light-gray: #ccc;
+
+$dark-green: #006c51;
+$medium-green: #1f7c65;
+$light-green: #00a67c;
+
+$light-weight: 300;
+
 html {
   background-color: #fff;
 }
 
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: $light-weight;
+}
+
 main {
-  background-color: #006c51 !important;
+  background-color: $dark-green !important;
   padding-bottom: 0;
 }
 
 p.navbar-text {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 14px;
-  font-weight: 300;
+  font-size: 1em;
 }
 
 nav {
-  background: #00a67c;
-  box-shadow: 3px 3px 3px #1f7c65;
+  background: $light-green;
+  box-shadow: 3px 3px 3px $medium-green;
 }
 
 #landing p {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 48px;
-  font-weight: 300;
+  font-size: 2em;
   color: #fff;
   margin: 20px 0;
-}
-
-#landing input {
-  clear: both;
 }
 
 .left {
@@ -43,16 +52,42 @@ nav {
   float: right;
 }
 
+#landing input {
+  border-radius: 0;
+}
+
+#landing input#video_url {
+  border-bottom: $borders $light-gray;
+  border-right: 0;
+  height: 100%;
+}
+
+.input-addon-border {
+  border-bottom: $borders $light-gray;
+  border-left: 0;
+  font-weight: $light-weight;
+}
+
+.btn-landing {
+  background-color: $dark-gold;
+  border-bottom: $borders $light-gold;
+  border-right: $borders $light-gold;
+  font-weight: $light-weight;
+  color: #fff;
+}
+
 div#footer {
-  background: #00a67c;
-  box-shadow: -3px -3px 3px #1f7c65;
+  background: $light-green;
+  box-shadow: -3px -3px 3px $medium-green;
   text-align: center;
   padding-top: 15px;
   min-height: 50px;
+  font-size: 1em;
 }
 
 div#footer a {
-  color: #b8bec3;
+  color: #006c51;
+  font-weight: 600;
 }
 
 #center_column{

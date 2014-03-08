@@ -2,8 +2,105 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-#center_column{
-	width: 640px;
+$borders: 3px solid;
+
+$light-gold: #bf8800;
+$dark-gold: #a66600;
+$light-gray: #ccc;
+
+$dark-green: #006c51;
+$medium-green: #1f7c65;
+$light-green: #00a67c;
+
+$light-weight: 300;
+
+html {
+  background-color: $dark-green;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: $light-weight;
+}
+
+main {
+  background-color: $dark-green !important;
+  padding-bottom: 0;
+}
+
+p.navbar-text {
+  font-size: 1em;
+}
+
+nav {
+  background: $light-green;
+  box-shadow: 3px 3px 3px $medium-green;
+}
+
+#landing {
+  p {
+    font-size: 1.45em;
+    color: white;
+    margin: 20px 0;
+  }
+
+  input {
+    border-radius: 0;
+  }
+
+  input#video_url {
+    border-bottom: $borders $light-gray;
+    border-right: 0;
+    height: 100%;
+  }
+}
+
+.left {
+  float: left;
+  width: 100%;
+}
+
+.right {
+  float: right;
+}
+
+.input-addon-border {
+  border-bottom: $borders $light-gray;
+  border-left: 0;
+  font-weight: $light-weight;
+}
+
+.btn-landing {
+  background-color: $dark-gold;
+  border-bottom: $borders $light-gold;
+  border-right: $borders $light-gold;
+  font-weight: $light-weight;
+  color: white;
+}
+
+div#footer {
+  background: $light-green;
+  box-shadow: -3px -3px 3px $medium-green;
+  text-align: center;
+  min-height: 20px;
+  font-size: 1em;
+  bottom: 0;
+  position: fixed;
+  width: 100%;
+
+  p {
+    padding: 0.25em;
+  }
+
+  a {
+    color: $dark-green;
+    font-weight: 600;
+  }
+}
+
+#center_column {
+  width: 68%;
+	max-width: 925px;
 	margin: 0 auto;
 }
 

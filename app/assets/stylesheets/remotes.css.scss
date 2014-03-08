@@ -37,10 +37,22 @@ nav {
   box-shadow: 3px 3px 3px $medium-green;
 }
 
-#landing p {
-  font-size: 1.45em;
-  color: white;
-  margin: 20px 0;
+#landing {
+  p {
+    font-size: 1.45em;
+    color: white;
+    margin: 20px 0;
+  }
+
+  input {
+    border-radius: 0;
+  }
+
+  input#video_url {
+    border-bottom: $borders $light-gray;
+    border-right: 0;
+    height: 100%;
+  }
 }
 
 .left {
@@ -50,16 +62,6 @@ nav {
 
 .right {
   float: right;
-}
-
-#landing input {
-  border-radius: 0;
-}
-
-#landing input#video_url {
-  border-bottom: $borders $light-gray;
-  border-right: 0;
-  height: 100%;
 }
 
 .input-addon-border {
@@ -85,15 +87,15 @@ div#footer {
   bottom: 0;
   position: fixed;
   width: 100%;
-}
 
-div#footer p {
-  padding: 0.25em;
-}
+  p {
+    padding: 0.25em;
+  }
 
-div#footer a {
-  color: $dark-green;
-  font-weight: 600;
+  a {
+    color: $dark-green;
+    font-weight: 600;
+  }
 }
 
 #center_column {

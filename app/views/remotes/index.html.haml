@@ -1,41 +1,15 @@
 #center_column
 	.tab-content
 		#landing.tab-pane.active.fade.in
-			.jumbotron
-				%h2 Make a remote to control the videos you share!
-				%p Just give a YouTube/Vimeo link in the form below.
-				%p 
-					= link_to "Tell me more!", "#learn_more", :class => "btn btn-primary", "data-toggle" => "tab"
+			%p.left create a remote
 			= form_for :remote, :url => { :controller => 'remotes', :action => 'create' }, :html => {:id => "new_remote"} do |f|
-				/ = label_tag :video_label, "Video URL", :class => 'header_label'
 				.input-group.full-width
-					= text_field_tag :name, '', :class => 'form-control', placeholder: 'Optional: Name your remote here...'
-					= text_area_tag :description, '', :class => 'form-control', placeholder: 'Optional: Describe your remote here...'
-				.input-group
-					= text_field_tag :video_url, "", :class => 'form-control', placeholder: 'Paste video URL here...'
+					= text_field_tag :video_url, "", :class => 'form-control', placeholder: 'enter a url'
 					- if current_user
-						%span.input-group-addon
+						%span.input-group-addon.input-addon-border
 							Owner-only
 							\#{check_box_tag 'admin_only'}
 							%span#owner_only_tooltip.glyphicon.glyphicon-question-sign{"data-placement" => "top", "data-toggle" => "tooltip", title: "Your remote will be viewable\r\nby guests but only the creator can control the remote."}
 					%span.input-group-btn
-						= submit_tag "Create Remote", class: "btn btn-success"
-		#learn_more.tab-pane.fade
-			.well
-				.page-header.text-center
-					%h2
-						Fremote
-						%small
-							What is it?
-				.text-center
-					%p
-						We're changing the way that people watch & share videos.  
-					%p Watching videos and movies has become a very isolated activity; let's it a social activity!  
-				%p
-					= image_tag("demo.jpg", class: "transparent-class img-responsive")
-				%p
-					With Fremote, you can share videos with people by creating a "remote" -- it will allow you to control your video for everyone watching it!  All you need to do is provide a link to the video you want to share; we currently support YouTube and Vimeo.  Support for many more video providers will come very soon.
-				%p
-					You can use our services without registering.  It's a great idea to register because it will not only give you a dedicated username for Fremote chat, but it will also allow you to make remotes that only you can control.
-				%p
-					= link_to "Get started and pass the popcorn!", "#landing", :class => "btn btn-primary", "data-toggle" => "tab"
+						= submit_tag "Create Remote", class: "btn btn-landing"
+			%p.right that everyone can control

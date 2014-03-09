@@ -1,7 +1,7 @@
 #center_column
   #remote
+    %h3 New Remote    
     - if current_user  
-      %h3 New Remote    
       = form_for :remote, :url => { :controller => 'remotes', :action => 'create' }, :html => {:id => "new_remote"} do |f|
         .input-group.full-width
           = text_field_tag :name, '', :class => 'form-control', placeholder: 'Optional: Name your remote here...'

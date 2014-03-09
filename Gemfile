@@ -66,3 +66,5 @@ gem 'viddl-rb', git: 'https://github.com/Ravenstine/viddl-rb.git'
 gem 'debugger', group: :development
 
 gem 'simplecov', :require => false, :group => :test
+
+gem 'less-rails'

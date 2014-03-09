@@ -1,6 +1,6 @@
-%ul#playlist_group.list-group
-  %li.list-group-item
-    Playlist
+%ul#playlist_group.list-group.panel
+  %li.list-group-item.video-heading
+    %h3.panel-title Playlist
   %li.list-group-item
     = form_for :playlist, url: remote_playlist_path(remote.remote_id), remote: true, html: { id: "playlist_form" } do |f|
       .input-group.input-group-sm
@@ -9,5 +9,5 @@
         %span.input-group-btn
           = submit_tag "Add", class: "btn btn-success"
 
-  %li.list-group-item
+  %li.list-group-item.video-body
     %ol#playlist.sortable.list

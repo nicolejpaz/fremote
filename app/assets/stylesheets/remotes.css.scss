@@ -184,6 +184,110 @@ nav {
   }
 }
 
+#show_remote {
+  margin-top: 20px;
+
+  .panel {
+    border-radius: 0;
+    padding: 0;
+    margin: 10px 0;
+    border: none;
+  }
+
+  .list-group-item:first-child {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+  }
+
+  #owner_controls {
+    margin-bottom: 50px;
+  }
+
+  .list-group-item {
+    border: none;
+  }
+
+  #video_info {
+    width: 630px;
+    background: white;
+  }
+
+  .video-heading {
+    background-color: $light-green;
+    color: white;
+    padding: 10px;
+  }
+
+  .video-body {
+    color: #999;
+    padding: 10px;
+  }
+
+  .canvas-controls {
+    background-color: $light-gold;
+    height: 28px;
+    width: 630px;
+
+    .btn-canvas-controls {
+      background-color: $dark-gold;
+      border: none;
+      border-bottom: $borders $light-gold;
+      margin-right: 5px;
+    }
+
+    p {
+      display: inline;
+      padding: 10px;
+    }
+
+    input#color {
+      border: none;
+    }
+
+    input#line {
+      display: inline;
+      width: 250px;
+    }
+  }
+
+  #chat, #playlist_group {
+    padding: 0;
+    margin: 0;
+
+    #chat_title, #chat_messages {
+      border-radius: 0;
+    }
+
+    #chat_messages {
+      height: 313px;
+      margin-bottom: 5px;
+
+      table#chat_table {
+        color: grey;
+      }
+    }
+
+    input {
+      border-radius: 0;
+    }
+
+    input#chat_message, #playlist_form input {
+      border-bottom: $borders $light-gray;
+      border-right: 0;
+      height: 100%;
+    }
+
+    #playlist_form input:last-child {
+      height: auto;
+      border-bottom: $borders $light-gold;
+    }
+
+    .input-group-btn:last-child > .btn {
+      height: auto;
+    }
+  }
+}
+
 .left {
   float: left;
   width: 100%;
@@ -216,6 +320,7 @@ div#footer {
   bottom: 0;
   position: fixed;
   width: 100%;
+  z-index: 2147483647;
 
   p {
     padding: 0.25em;
@@ -254,20 +359,21 @@ div#footer {
 canvas#drawing-surface {
   position: absolute;
   z-index: 2147483630;
-  top: 50px;
+  top: 0;
 }
 
 .connect-alert {
   z-index: 2147483647;
   position: fixed;
+  display: none;
+  border-radius: 0;
+  margin: 0;
 }
 
 .full-width {
   width: 100%;
 }
-.connect-alert {
-  display: none;
-}
+
 #chat_character_limit {
   font-size: 12px;
   margin-left: 10px;

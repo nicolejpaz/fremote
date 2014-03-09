@@ -1,8 +1,8 @@
 - if current_user
   #owner_controls.panel.panel-success
-    .panel-heading
+    .video-heading
       %h3.panel-title Remote Owner Controls
-    .panel-body
+    .video-body
       = form_for(remote, remote: true, :html => {:id => "owner_controls_form"}) do |f|
         .checkbox
           %label

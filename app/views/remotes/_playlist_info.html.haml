@@ -1,11 +1,11 @@
-#video_info.panel.panel-default
-  .panel-heading
+#video_info.panel
+  .video-heading
     - if is_authorized?(@remote, current_user)
       #remote_name
         %h3.panel-title= @remote.name
     - else
       %h3.panel-title= @remote.name
-  .panel-body
+  .video-body
     - if is_authorized?(@remote, current_user)
       #remote_description
         %p= @remote.description

@@ -8,8 +8,6 @@ $screen-sm-min: 768px;
 @media (max-width: $screen-md-min) { 
   .column {
     width: 660px !important;
-    padding-left: 0 auto;
-    padding-right: 0 auto;
+    margin: 0 auto;
   }
-
 }

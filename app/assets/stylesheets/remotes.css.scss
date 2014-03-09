@@ -39,8 +39,30 @@ nav {
   }
 }
 
+div#footer {
+  background: $light-green;
+  box-shadow: -3px -3px 3px $medium-green;
+  text-align: center;
+  min-height: 20px;
+  font-size: 1em;
+  bottom: 0;
+  position: fixed;
+  width: 100%;
+  z-index: 999;
+
+  p {
+    padding: 0.25em;
+  }
+
+  a {
+    color: $dark-green;
+    font-weight: 600;
+  }
+}
+
 main {
   margin-top: 60px;
+  margin-bottom: 50px;
 }
 
 canvas#drawing-surface {
@@ -88,11 +110,51 @@ canvas#drawing-surface {
       margin-left: 11px;
       font-size: 10px;
     }
+
+    #chat_messages {
+      height: 320px;
+      overflow-y: scroll;
+    }
   }
 
   #video_info {
     width: 630px;
   }
+
+  .video-heading {
+    background-color: $light-green;
+    padding: 10px;
+    color: white;
+    font-weight: 300;
+    font-size: 16px;
+
+    h3.panel-title {
+      font-weight: 300;
+      font-size: 16px;
+    }
+  }
+
+  .video-body {
+    padding: 10px;
+    color: #999;
+  }
+
+  #playlist {
+    a {
+      font-size: 12px;
+    }
+
+    .btn-danger {
+      width: 20px;
+      height: 20px;
+      padding: 0;
+      border-radius: 0;
+    }
+  }
+}
+
+.list-group-item {
+  border: none;
 }
 
 .list-group-item:first-child, .list-group-item:last-child {
@@ -116,8 +178,9 @@ input[type="submit"] {
   border-radius: 0;
 }
 
-/*@media (max-width: 1000px) {
-  .col-md-8, .col-md-4, .col-md-12 {
-    width: 630px;
-  }
-}*/
+.panel {
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}

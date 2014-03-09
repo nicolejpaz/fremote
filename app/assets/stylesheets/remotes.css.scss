@@ -33,6 +33,10 @@ p.navbar-text {
   font-size: 1em;
 }
 
+h3 {
+  font-weight: $light-weight;
+}
+
 #registration {
   h1, h2, h3 {
     color: white;
@@ -95,6 +99,65 @@ p.navbar-text {
       border-bottom: $borders $light-gold;
       font-weight: $light-weight;
     }
+  }
+}
+
+#remote {
+  h3 {
+    font-weight: $light-weight;
+  }
+
+  a {
+    color: white;
+  }
+
+  ul {
+    background-color: $light-green;
+
+    li {
+      padding: 10px;
+    }
+  }
+
+  .list-border {
+    border-bottom: $borders $medium-green;
+    border-right: $borders $medium-green;
+  }
+
+  h4 {
+    padding: 10px;
+  }
+
+  input, textarea {
+    border-radius: 0;
+    border-bottom: $borders $light-gray;
+    width: 100%;
+    margin: 5px 0;
+  }
+
+  .btn {
+    border: none;
+    background-color: $dark-gold;
+    border-bottom: $borders $light-gold;
+    font-weight: $light-weight;
+  }
+
+  table {
+    background-color: rgba(128, 128, 128, 0.5);
+    margin: 10px 0;
+    width: 100%;
+  }
+
+  thead, tbody td:first-child {
+    background-color: $medium-green;
+  }
+
+  tbody tr:hover {
+    background-color: $light-green;
+  }
+
+  td {
+    width: 15%;
   }
 }
 
@@ -179,7 +242,7 @@ div#footer {
   color: grey;
 }
 
-#new_remote {
+#remote {
   padding-left: 60px;
   padding-right: 60px;
 }

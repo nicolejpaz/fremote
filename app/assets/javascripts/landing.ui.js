@@ -8,5 +8,5 @@ window.onresize = function() {
 
 function changeWindowHeight() {
   var windowHeight = $(window).height()
-  $('#center_column').css('padding-top', windowHeight / 3)
+  $('#on_landing').css('padding-top', windowHeight / 3)
 }

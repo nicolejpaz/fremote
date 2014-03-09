@@ -184,6 +184,65 @@ nav {
   }
 }
 
+#show_remote {
+  margin-top: 20px;
+
+  .canvas-controls {
+    background-color: $light-gold;
+    height: 28px;
+    width: 630px;
+
+    .btn-canvas-controls {
+      background-color: $dark-gold;
+      border: none;
+      border-bottom: $borders $light-gold;
+      margin-right: 5px;
+    }
+
+    p {
+      display: inline;
+      padding: 10px;
+    }
+
+    input#color {
+      border: none;
+    }
+
+    input#line {
+      display: inline;
+      width: 250px;
+    }
+  }
+
+  #chat {
+    padding: 0;
+    margin: 0;
+
+    #chat_title, #chat_messages {
+      border-radius: 0;
+    }
+
+    #chat_messages {
+      height: 313px;
+      margin-bottom: 5px;
+    }
+
+    input {
+      border-radius: 0;
+    }
+
+    input#chat_message {
+      border-bottom: $borders $light-gray;
+      border-right: 0;
+      height: 100%;
+    }
+
+    .input-group-btn:last-child > .btn {
+      height: auto;
+    }
+  }
+}
+
 .left {
   float: left;
   width: 100%;
@@ -254,7 +313,7 @@ div#footer {
 canvas#drawing-surface {
   position: absolute;
   z-index: 2147483630;
-  top: 50px;
+  top: 0;
 }
 
 .connect-alert {

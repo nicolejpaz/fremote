@@ -1,19 +1,22 @@
 #center_column
   #show_remote
-    .row
-      .col-md-8.col-sm-12
-        = render :partial => 'video', :locals => { :remote => @remote, :remote_user => @remote_user }
-        = render :partial => 'canvas', :locals => { :remote => @remote, :user => @user }
-      .col-md-4.col-sm-12
-        = render :partial => 'chat', :locals => { :username => @username, :remote => @remote }
-    .row
-      .col-md-8.col-sm-12
-        = render :partial => 'playlist_info', :locals => { :remote => @remote, :remote_user => @remote_user }
-      .col-md-4.col-sm-12
-        = render :partial => 'watchers', :locals => { :remote => @remote }
-    .row
-      .col-md-12.bottom
-        = render :partial => 'playlist', :locals => { :remote => @remote, :username => @username }
+    .container
+      .row.clearfix
+        .col-md-12.column
+          .row.clearfix
+            .col-md-8.col-lg-7.column
+              = render :partial => 'video', :locals => { :remote => @remote, :remote_user => @remote_user }
+              = render :partial => 'canvas', :locals => { :remote => @remote, :user => @user }
+            .col-md-4.col-lg-5.column
+              = render :partial => 'chat', :locals => { :username => @username, :remote => @remote }
+          .row.clearfix
+            .col-md-8.col-lg-7.column
+              = render :partial => 'playlist_info', :locals => { :remote => @remote, :remote_user => @remote_user }
+            .col-md-4.col-lg-5.column
+              = render :partial => 'watchers', :locals => { :remote => @remote }
+          .row.clearfix
+            .col-md-12.column
+              = render :partial => 'playlist', :locals => { :remote => @remote, :username => @username }
 
   :javascript
     var Remote = #{@remote.to_json}

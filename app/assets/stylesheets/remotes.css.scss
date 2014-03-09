@@ -2,3 +2,84 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+$border: 3px solid;
+
+$light-gold: #bf8800;
+$dark-gold: #a66600;
+$light-gray: #ccc;
+$dark-green: #006c51;
+$medium-green: #1f7c65;
+$light-green: #00a67c;
+$default-font: 'Open Sans', sans-serif;
+
+body {
+  background-color: $dark-green;
+  font-family: $default-font;
+  color: white;
+}
+
+nav {
+  background-color: $light-green;
+  box-shadow: 3px 3px 3px $medium-green;
+
+  .img-responsive {
+    max-height: 40px;
+  }
+
+  img {
+    margin-top: -10px;
+  }
+
+  a {
+    color: $dark-green;
+  }
+
+  p.navbar-text {
+    font-size: 1em;
+  }
+}
+
+main {
+  margin-top: 60px;
+}
+
+canvas#drawing-surface {
+  position: absolute;
+  top: 0;
+}
+
+.connect-alert {
+  position: fixed;
+  display: none;
+  border-radius: 0;
+  margin: 0;
+  z-index: 9999;
+}
+
+#show_remote {
+  .canvas-controls {
+    background-color: $light-gold;
+    height: 28px;
+    width: 630px;
+
+    .btn-canvas-controls {
+      background-color: $dark-gold;
+      border: none;
+      border-bottom: $border $light-gold;
+    }
+
+    p {
+      display: inline;
+      padding: 10px;
+    }
+
+    input#color {
+      border: none;
+    }
+
+    input#line {
+      display: inline;
+      width: 250px;
+    }
+  }
+}

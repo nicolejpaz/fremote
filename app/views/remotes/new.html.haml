@@ -1,65 +1,67 @@
-- if current_user      
-  = form_for :remote, :url => { :controller => 'remotes', :action => 'create' }, :html => {:id => "new_remote"} do |f|
-    / = label_tag :video_label, "Video URL", :class => 'header_label'
-    .input-group.full-width
-      = text_field_tag :name, '', :class => 'form-control', placeholder: 'Optional: Name your remote here...'
-      = text_area_tag :description, '', :class => 'form-control', placeholder: 'Optional: Describe your remote here...'
-    %table
-      %thead
-        %tr
-          %td
-          %td
-            Controls
-          %td
-            Playlist
-          %td
-            Chat
-          %td
-            Draw
-          %td
-            Settings
-      %tbody
-        %tr
-          %td
-            Guest
-          %td
-            = check_box_tag '_guest[control]', 1
-          %td
-            = check_box_tag '_guest[playlist]', 1
-          %td
-            = check_box_tag '_guest[chat]', 1, 'active'
-          %td
-            = check_box_tag '_guest[draw]', 1
-          %td
-            = check_box_tag '_guest[settings]', 1
-        %tr
-          %td
-            User
-          %td
-            = check_box_tag '_user[control]', 1
-          %td
-            = check_box_tag '_user[playlist]', 1
-          %td
-            = check_box_tag '_user[chat]', 1, 'active'
-          %td
-            = check_box_tag '_user[draw]', 1
-          %td
-            = check_box_tag '_user[settings]', 1
-        %tr
-          %td
-            Member
-          %td
-            = check_box_tag '_member[control]', 1, 'active'
-          %td
-            = check_box_tag '_member[playlist]', 1, 'active'
-          %td
-            = check_box_tag '_member[chat]', 1, 'active'
-          %td
-            = check_box_tag '_member[draw]', 1, 'active'
-          %td
-            = check_box_tag '_member[settings]', 1
+#center_column
+  #new_remote
+    - if current_user  
+      %h3 New Remote    
+      = form_for :remote, :url => { :controller => 'remotes', :action => 'create' }, :html => {:id => "new_remote"} do |f|
+        .input-group.full-width
+          = text_field_tag :name, '', :class => 'form-control', placeholder: 'Optional: Name your remote here...'
+          = text_area_tag :description, '', :class => 'form-control', placeholder: 'Optional: Describe your remote here...'
+        %table.table.table-responsive
+          %thead
+            %tr
+              %td
+              %td
+                Controls
+              %td
+                Playlist
+              %td
+                Chat
+              %td
+                Draw
+              %td
+                Settings
+          %tbody
+            %tr
+              %td
+                Guest
+              %td
+                = check_box_tag '_guest[control]', 1
+              %td
+                = check_box_tag '_guest[playlist]', 1
+              %td
+                = check_box_tag '_guest[chat]', 1, 'active'
+              %td
+                = check_box_tag '_guest[draw]', 1
+              %td
+                = check_box_tag '_guest[settings]', 1
+            %tr
+              %td
+                User
+              %td
+                = check_box_tag '_user[control]', 1
+              %td
+                = check_box_tag '_user[playlist]', 1
+              %td
+                = check_box_tag '_user[chat]', 1, 'active'
+              %td
+                = check_box_tag '_user[draw]', 1
+              %td
+                = check_box_tag '_user[settings]', 1
+            %tr
+              %td
+                Member
+              %td
+                = check_box_tag '_member[control]', 1, 'active'
+              %td
+                = check_box_tag '_member[playlist]', 1, 'active'
+              %td
+                = check_box_tag '_member[chat]', 1, 'active'
+              %td
+                = check_box_tag '_member[draw]', 1, 'active'
+              %td
+                = check_box_tag '_member[settings]', 1
 
 
-    .input-group
-      %span.input-group-btn
-        = submit_tag "Create Remote", class: "btn btn-success"
+        .input-group
+          %span.input-group-btn
+            = submit_tag "Create Remote", class: "btn btn-success"

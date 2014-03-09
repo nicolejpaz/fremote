@@ -102,6 +102,44 @@ h3 {
   }
 }
 
+#new_remote {
+  h3 {
+    font-weight: $light-weight;
+  }
+
+  input, textarea {
+    border-radius: 0;
+    border-bottom: $borders $light-gray;
+    width: 100%;
+    margin: 5px 0;
+  }
+
+  .btn {
+    border: none;
+    background-color: $dark-gold;
+    border-bottom: $borders $light-gold;
+    font-weight: $light-weight;
+  }
+
+  table {
+    background-color: rgba(128, 128, 128, 0.5);
+    margin: 10px 0;
+    width: 100%;
+  }
+
+  thead, tbody td:first-child {
+    background-color: $medium-green;
+  }
+
+  tbody tr:hover {
+    background-color: $light-green;
+  }
+
+  td {
+    width: 15%;
+  }
+}
+
 nav {
   background: $light-green;
   box-shadow: 3px 3px 3px $medium-green;

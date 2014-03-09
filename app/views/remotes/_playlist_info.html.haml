@@ -1,12 +1,13 @@
 #video_info.panel
   .video-heading
-    - if is_authorized?(@remote, current_user)
+    -if @remote.authorization.is_authorized?('settings', current_user)
       #remote_name
         %h3.panel-title= @remote.name
     - else
       %h3.panel-title= @remote.name
   .video-body
-    - if is_authorized?(@remote, current_user)
+    -if @remote.authorization.is_authorized?('settings', current_user)
+      = link_to 'Edit Remote', edit_remote_path(@remote.remote_id), class: "btn btn-edit right"
       #remote_description
         %p= @remote.description
     - else
@@ -14,5 +15,5 @@
     %p
       %a{href: remote.url}
         Watch video on its own site.
-    - if is_authorized?(remote, @user)
+    -if @remote.authorization.is_authorized?('settings', current_user)
       %span.label.label-success You are allowed to use this remote!

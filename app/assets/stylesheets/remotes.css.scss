@@ -19,8 +19,9 @@ html {
 }
 
 body {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Open Sans', sans-serif !important;
   font-weight: $light-weight;
+  color: white;
 }
 
 main {
@@ -30,6 +31,71 @@ main {
 
 p.navbar-text {
   font-size: 1em;
+}
+
+#registration {
+  h1, h2, h3 {
+    color: white;
+    font-weight: $light-weight;
+  }
+
+  a {
+    color: $light-green;
+  }
+
+  label {
+    font-weight: $light-weight;
+  }
+
+  .checkbox {
+    margin-top: 70px;
+
+    input[type="checkbox"] {
+      height: auto;
+      margin: 0;
+      width: 25%;
+    }
+  }
+
+  .authform {
+    padding-top: 0;
+
+    form {
+      border-radius: 0;
+      box-shadow: none;
+      -webkit-box-shadow: none;
+      border: none;
+      background-color: rgba(128, 128, 128, 0);
+      margin-bottom: 50px;
+      padding-bottom: 50px;
+    }
+
+    fieldset {
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    input {
+      height: 30px;
+      width: 100%;
+    }
+
+    .form-control {
+      border: none;
+      border-radius: 0;
+      box-shadow: 0;
+      border-bottom: $borders $light-gray;
+    }
+
+    .button {
+      border: none;
+      border-radius: 0;
+      background-color: $dark-gold;
+      border-bottom: $borders $light-gold;
+      font-weight: $light-weight;
+    }
+  }
 }
 
 nav {
@@ -132,10 +198,6 @@ canvas#drawing-surface {
   z-index: 2147483647;
   position: fixed;
 }
-
-/*.alert-danger.connect-alert {
-  top: 250;
-}*/
 
 .full-width {
   width: 100%;

@@ -1,12 +1,15 @@
 #center_column
-  %h3
-    List of #{@user_viewed.name}'s' remotes:
-  - if @remotes != []
-    - @remotes.each do |remote|
-      %ul.list-unstyled
-        %li
-          = link_to "#{remote.name}", remote_path(remote.remote_id)
-          %ul
-            %li #{remote.description}
-  - else
-    %p This user has no remotes.
+  #remote
+    %h3
+      List of #{@user_viewed.name}'s' remotes:
+    - if @remotes != []
+      - @remotes.each do |remote|
+        %ul.list-unstyled.list-border
+          %li
+            %h4
+              %span.glyphicon.glyphicon-link
+              = link_to "#{remote.name}", remote_path(remote.remote_id)
+            %ul
+              %li #{remote.description}
+    - else
+      %p This user has no remotes.

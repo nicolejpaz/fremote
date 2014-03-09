@@ -1,5 +1,5 @@
 %canvas#drawing-surface{height: "310", width: "630"}
-- if is_authorized?(remote, user)
+- if remote.authorization.is_authorized?("draw", user)
   .canvas-controls
     %button#clear.btn-canvas-controls Clear Screen
     %p stroke color: 

@@ -39,7 +39,7 @@ h3 {
 
 .center { 
   margin: 0 auto; 
-  width: 630px; 
+  width: 660px; 
 }
 
 #registration {
@@ -166,6 +166,10 @@ h3 {
   }
 }
 
+header {
+  z-index: 2147483647;
+}
+
 nav {
   background: $light-green;
   box-shadow: 3px 3px 3px $medium-green;
@@ -255,10 +259,6 @@ nav {
     }
   }
 
-  .col-md-8 {
-    min-width: 630px;
-  }
-
   #chat, #playlist_group {
     padding: 0;
     margin: 0;
@@ -320,6 +320,10 @@ nav {
   color: white;
 }
 
+.bottom, .col-md-12:last-child {
+  margin-bottom: 50px;
+}
+
 div#footer {
   background: $light-green;
   box-shadow: -3px -3px 3px $medium-green;
@@ -347,12 +351,21 @@ div#footer {
 	margin: 0 auto;
 }
 
+.navbar-toggle {
+  background-color: #ccc;
+}
+
+.navbar-fixed-top {
+  z-index: 20000000000000000;
+}
+
 @media (max-width: 1380px) {
   #center_column {
     width: 90%;
   }
-  .col-md-8, .col-md-4 {
-    width: 100%;
+  .col-md-8, .col-md-4, .col-md-12 {
+    width: 660px;
+    margin: 0 auto; 
   }
 }
 
@@ -382,7 +395,7 @@ div#footer {
 
 canvas#drawing-surface {
   position: absolute;
-  z-index: 2147483630;
+  z-index: 2147483000;
   top: 0;
 }
 

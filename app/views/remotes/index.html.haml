@@ -1,15 +1,16 @@
-#center_column#on_landing
-	.tab-content
-		#landing.tab-pane.active.fade.in
-			%p.left create a remote
-			= form_for :remote, :url => { :controller => 'remotes', :action => 'create' }, :html => {:id => "new_remote"} do |f|
-				.input-group.full-width
-					= text_field_tag :video_url, "", :class => 'form-control', placeholder: 'enter a url'
-					- if current_user
-						%span.input-group-addon.input-addon-border
-							Owner-only
-							\#{check_box_tag 'admin_only'}
-							%span#owner_only_tooltip.glyphicon.glyphicon-question-sign{"data-placement" => "top", "data-toggle" => "tooltip", title: "Your remote will be viewable\r\nby guests but only the creator can control the remote."}
-					%span.input-group-btn
-						= submit_tag "Create Remote", class: "btn btn-landing"
-			%p.right that everyone can control
+#on_landing
+	#center_column
+		.tab-content
+			#landing.tab-pane.active.fade.in
+				%p.left create a remote
+				= form_for :remote, :url => { :controller => 'remotes', :action => 'create' }, :html => {:id => "new_remote"} do |f|
+					.input-group.full-width
+						= text_field_tag :video_url, "", :class => 'form-control', placeholder: 'enter a url'
+						- if current_user
+							%span.input-group-addon.input-addon-border
+								Owner-only
+								\#{check_box_tag 'admin_only'}
+								%span#owner_only_tooltip.glyphicon.glyphicon-question-sign{"data-placement" => "top", "data-toggle" => "tooltip", title: "Your remote will be viewable\r\nby guests but only the creator can control the remote."}
+						%span.input-group-btn
+							= submit_tag "Create Remote", class: "btn btn-landing"
+				%p.right that everyone can control

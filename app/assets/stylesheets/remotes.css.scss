@@ -261,16 +261,25 @@ nav {
     #chat_messages {
       height: 313px;
       margin-bottom: 5px;
+
+      table#chat_table {
+        color: grey;
+      }
     }
 
     input {
       border-radius: 0;
     }
 
-    input#chat_message {
+    input#chat_message, #playlist_form input {
       border-bottom: $borders $light-gray;
       border-right: 0;
       height: 100%;
+    }
+
+    #playlist_form input:last-child {
+      height: auto;
+      border-bottom: $borders $light-gold;
     }
 
     .input-group-btn:last-child > .btn {

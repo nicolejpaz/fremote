@@ -1,10 +1,10 @@
 #center_column
   #show_remote
     .row
-      .col-md-8
+      .col-md-8.col-sm-12
         = render :partial => 'video', :locals => { :remote => @remote, :remote_user => @remote_user }
         = render :partial => 'canvas', :locals => { :remote => @remote, :user => @user }
-      .col-md-4
+      .col-md-4.col-sm-12
         = render :partial => 'chat', :locals => { :username => @username, :remote => @remote }
     .row
       .col-md-8

@@ -68,3 +68,5 @@ gem 'debugger', group: :development
 gem 'simplecov', :require => false, :group => :test
 
 gem 'less-rails'
+
+gem 'opal-rails'

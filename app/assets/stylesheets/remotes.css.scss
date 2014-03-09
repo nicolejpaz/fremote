@@ -2,116 +2,89 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-$borders: 3px solid;
+$border: 3px solid;
 
 $light-gold: #bf8800;
 $dark-gold: #a66600;
 $light-gray: #ccc;
-
 $dark-green: #006c51;
 $medium-green: #1f7c65;
 $light-green: #00a67c;
-
-$light-weight: 300;
-
-html {
-  background-color: $dark-green;
-}
+$default-font: 'Open Sans', sans-serif;
 
 body {
-  font-family: 'Open Sans', sans-serif !important;
-  font-weight: $light-weight;
+  background-color: $dark-green;
+  font-family: $default-font;
   color: white;
 }
 
-main {
-  background-color: $dark-green !important;
-  padding-bottom: 0;
-}
+nav {
+  background-color: $light-green;
+  box-shadow: 3px 3px 3px $medium-green;
 
-p.navbar-text {
-  font-size: 1em;
-}
+  .img-responsive {
+    max-height: 40px;
+  }
 
-h3 {
-  font-weight: $light-weight;
-}
-
-.center { 
-  margin: 0 auto; 
-  width: 660px; 
-}
-
-#registration {
-  h1, h2, h3 {
-    color: white;
-    font-weight: $light-weight;
+  img {
+    margin-top: -10px;
   }
 
   a {
-    color: $light-green;
+    color: $dark-green;
   }
 
-  label {
-    font-weight: $light-weight;
-  }
-
-  .checkbox {
-    margin-top: 70px;
-
-    input[type="checkbox"] {
-      height: auto;
-      margin: 0;
-      width: 25%;
-    }
-  }
-
-  .authform {
-    padding-top: 0;
-
-    form {
-      border-radius: 0;
-      box-shadow: none;
-      -webkit-box-shadow: none;
-      border: none;
-      background-color: rgba(128, 128, 128, 0);
-      margin-bottom: 50px;
-      padding-bottom: 50px;
-    }
-
-    fieldset {
-      border: none;
-      border-radius: 0;
-      box-shadow: none;
-    }
-
-    input {
-      height: 30px;
-      width: 100%;
-    }
-
-    .form-control {
-      border: none;
-      border-radius: 0;
-      box-shadow: 0;
-      border-bottom: $borders $light-gray;
-    }
-
-    .button {
-      border: none;
-      border-radius: 0;
-      background-color: $dark-gold;
-      border-bottom: $borders $light-gold;
-      font-weight: $light-weight;
-    }
+  p.navbar-text {
+    font-size: 1em;
   }
 }
 
-#remote {
-  h3 {
-    font-weight: $light-weight;
+div#footer {
+  background: $light-green;
+  box-shadow: -3px -3px 3px $medium-green;
+  text-align: center;
+  min-height: 20px;
+  font-size: 1em;
+  bottom: 0;
+  position: fixed;
+  width: 100%;
+  z-index: 999;
+
+  p {
+    padding: 0.25em;
   }
 
+  a {
+    color: $dark-green;
+    font-weight: 600;
+  }
+}
+
+main {
+  margin-top: 60px;
+  margin-bottom: 50px;
+}
+
+canvas#drawing-surface {
+  position: absolute;
+  top: 0;
+}
+
+.connect-alert {
+  position: fixed;
+  display: none;
+  border-radius: 0;
+  margin: 0;
+  z-index: 9999;
+}
+
+#remote {
+  max-width: 960px;
+  margin: 0 auto;
+
+  h3 {
+    font-weight: 300;
+  }
   a {
     color: white;
   }
@@ -124,33 +97,33 @@ h3 {
     }
   }
 
-  .list-border {
-    border-bottom: $borders $medium-green;
-    border-right: $borders $medium-green;
-  }
-
   h4 {
     padding: 10px;
   }
 
-  input, textarea {
-    border-radius: 0;
-    border-bottom: $borders $light-gray;
-    width: 100%;
-    margin: 5px 0;
+  .list-border {
+    border-bottom: $border $medium-green;
+    border-right: $border $medium-green;
   }
 
   .btn {
     border: none;
     background-color: $dark-gold;
-    border-bottom: $borders $light-gold;
-    font-weight: $light-weight;
+    border-bottom: $border $light-gold;
+    font-weight: 300;
   }
+
+  input, textarea {
+    border-radius: 0;
+    border-bottom: $border $light-gray;
+    width: 100%;
+    margin: 5px 0;
+  }
+
 
   table {
     background-color: rgba(128, 128, 128, 0.5);
     margin: 10px 0;
-    width: 100%;
   }
 
   thead, tbody td:first-child {
@@ -166,20 +139,19 @@ h3 {
   }
 }
 
-header {
-  z-index: 2147483647;
-}
-
-nav {
-  background: $light-green;
-  box-shadow: 3px 3px 3px $medium-green;
-}
-
 #landing {
+  max-width: 960px;
+  margin: 0 auto;
+
   p {
-    font-size: 1.45em;
+    font-size: 1.6em;
     color: white;
     margin: 20px 0;
+    font-weight: 300;
+  }
+
+  form {
+    clear: both;
   }
 
   input {
@@ -187,51 +159,11 @@ nav {
   }
 
   input#video_url {
-    border-bottom: $borders $light-gray;
-    border-right: 0;
     height: 100%;
   }
 }
 
 #show_remote {
-  margin-top: 20px;
-
-  .panel {
-    border-radius: 0;
-    padding: 0;
-    margin: 10px 0;
-    border: none;
-  }
-
-  .list-group-item:first-child {
-    border-top-right-radius: 0;
-    border-top-left-radius: 0;
-  }
-
-  #owner_controls {
-    margin-bottom: 50px;
-  }
-
-  .list-group-item {
-    border: none;
-  }
-
-  #video_info {
-    width: 630px;
-    background: white;
-  }
-
-  .video-heading {
-    background-color: $light-green;
-    color: white;
-    padding: 10px;
-  }
-
-  .video-body {
-    color: #999;
-    padding: 10px;
-  }
-
   .canvas-controls {
     background-color: $light-gold;
     height: 28px;
@@ -240,8 +172,7 @@ nav {
     .btn-canvas-controls {
       background-color: $dark-gold;
       border: none;
-      border-bottom: $borders $light-gold;
-      margin-right: 5px;
+      border-bottom: $border $light-gold;
     }
 
     p {
@@ -259,184 +190,177 @@ nav {
     }
   }
 
-  #chat, #playlist_group {
-    padding: 0;
-    margin: 0;
-
-    #chat_title, #chat_messages {
-      border-radius: 0;
+  #chat {
+    #chat_character_limit {
+      margin-left: 11px;
+      font-size: 10px;
     }
 
     #chat_messages {
-      height: 313px;
-      margin-bottom: 5px;
+      height: 320px;
+      overflow-y: scroll;
+    }
+  }
 
-      table#chat_table {
-        color: grey;
-      }
+  #video_info {
+    width: 630px;
+  }
+
+  .video-heading {
+    background-color: $light-green;
+    padding: 10px;
+    color: white;
+    font-weight: 300;
+    font-size: 16px;
+
+    h3.panel-title {
+      font-weight: 300;
+      font-size: 16px;
+    }
+  }
+
+  .video-body {
+    padding: 10px;
+    color: #999;
+  }
+
+  #playlist {
+    a {
+      font-size: 12px;
     }
 
-    input {
+    .btn-danger {
+      width: 20px;
+      height: 20px;
+      padding: 0;
       border-radius: 0;
-    }
-
-    input#chat_message, #playlist_form input {
-      border-bottom: $borders $light-gray;
-      border-right: 0;
-      height: 100%;
-    }
-
-    #playlist_form input:last-child {
-      height: auto;
-      border-bottom: $borders $light-gold;
-    }
-
-    .input-group-btn:last-child > .btn {
-      height: auto;
     }
   }
 }
 
+#registration {
+  h1, h2, h3 {
+    font-weight: 300;
+  }
+
+  a {
+    color: $light-green;
+  }
+
+  label {
+    font-weight: 300;
+  }
+
+  .checkbox {
+    margin-top: 70px;
+
+    input[type="checkbox"] {
+      height: auto;
+      margin: 0;
+      width: 25%;
+    }
+  }
+
+  .authform {
+    padding-top: 0;
+    max-width: 500px;
+    margin: 0 auto;
+
+    form {
+      border-radius: 0;
+      box-shadow: none;
+      -webkit-box-shadow: none;
+      border: none;
+      background-color: rgba(128, 128, 128, 0);
+      margin-bottom: 50px;
+      padding-bottom: 50px;
+    }
+
+    fieldset {
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      background-color: rgba(128, 128, 128, 0.5);
+      padding: 10px;
+    }
+
+    input {
+      height: 30px;
+      width: 100%;
+    }
+
+    .form-control {
+      border: none;
+      border-radius: 0;
+      box-shadow: 0;
+      border-bottom: $border $light-gray;
+    }
+
+    .button {
+      border: none;
+      border-radius: 0;
+      background-color: $dark-gold;
+      border-bottom: $border $light-gold;
+      font-weight: 300;
+    }
+  }
+
+  .checkbox {
+    margin-top: 70px;
+
+    input[type="checkbox"] {
+      height: auto;
+      margin: 4px 0 0 0;
+      width: 7%;
+    }
+  }
+}
+
+.list-group-item {
+  border: none;
+}
+
+.list-group-item:first-child, .list-group-item:last-child {
+  border-radius: 0;
+  color: #999;
+}
+
+input[type="text"], textarea {
+  border-bottom: $border $light-gray;
+}
+
+input[type="submit"] {
+  background-color: $dark-gold;
+  border-bottom: $border $light-gold;
+  border-right: $border $light-gold;
+  font-weight: 300;
+  color: white;
+}
+
+.input-group-sm > .input-group-btn > .btn {
+  border-radius: 0;
+}
+
+.panel {
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}
+
 .left {
   float: left;
-  width: 100%;
 }
 
 .right {
   float: right;
 }
 
-.input-addon-border {
-  border-bottom: $borders $light-gray;
-  border-left: 0;
-  font-weight: $light-weight;
-}
-
-.btn-landing {
-  background-color: $dark-gold;
-  border-bottom: $borders $light-gold;
-  border-right: $borders $light-gold;
-  font-weight: $light-weight;
-  color: white;
-}
-
-.bottom, .col-md-12:last-child {
-  margin-bottom: 50px;
-}
-
-div#footer {
-  background: $light-green;
-  box-shadow: -3px -3px 3px $medium-green;
-  text-align: center;
-  min-height: 20px;
-  font-size: 1em;
-  bottom: 0;
-  position: fixed;
-  width: 100%;
-  z-index: 2147483647;
-
-  p {
-    padding: 0.25em;
-  }
-
-  a {
-    color: $dark-green;
-    font-weight: 600;
-  }
-}
-
-#center_column {
-  width: 68%;
-	max-width: 925px;
-	margin: 0 auto;
-}
-
-.navbar-toggle {
-  background-color: #ccc;
-}
-
-.navbar-fixed-top {
-  z-index: 20000000000000000;
-}
-
-@media (max-width: 1380px) {
-  #center_column {
-    width: 90%;
-  }
-  .col-md-8, .col-md-4, .col-md-12 {
-    width: 660px;
-    margin: 0 auto; 
-  }
-}
-
-@media (max-width: 1024px) {
-  #center_column {
-    width: 100%;
-  }
-}
-
-#chat_messages {
-  height: 250px;
-  overflow-y: scroll;
-}
-
-.grey-text {
-  color: grey;
-}
-
-#remote {
-  padding-left: 60px;
-  padding-right: 60px;
-}
-
-.tooltip-inner {
-    white-space:pre-wrap;
-}
-
-canvas#drawing-surface {
-  position: absolute;
-  z-index: 2147483000;
-  top: 0;
-}
-
-.connect-alert {
-  z-index: 2147483647;
-  position: fixed;
-  display: none;
-  border-radius: 0;
-  margin: 0;
-}
-
 .full-width {
   width: 100%;
 }
 
-#chat_character_limit {
-  font-size: 12px;
-  margin-left: 10px;
-}
-.error {
-  color: #a94442;
-}
-
-li.user, li.member, li.owner {
-  font-weight: bold;
-}
-
-li.guest .member, li.user .member, li.owner .member {
-  display: none;
-}
-
-li.member .member {
-  color: gold;
-  display: inline;
-}
-
-li.guest .owner, li.user .owner, li.member .owner {
-  display: none;
-}
-
-li.owner .owner {
-  color: tomato;
-  display: inline;
+.alert {
+  border-radius: 0;
+  margin: 0 auto;
 }

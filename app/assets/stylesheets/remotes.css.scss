@@ -107,6 +107,28 @@ h3 {
     font-weight: $light-weight;
   }
 
+  a {
+    color: white;
+  }
+
+  ul {
+    background-color: $light-green;
+
+    li {
+      padding: 10px;
+    }
+  }
+
+  .list-border {
+    border-bottom: $borders $medium-green;
+    border-right: $borders $medium-green;
+  }
+
+  h4 {
+    border-bottom: $borders #ccc;
+    padding: 10px;
+  }
+
   input, textarea {
     border-radius: 0;
     border-bottom: $borders $light-gray;

@@ -82,4 +82,42 @@ canvas#drawing-surface {
       width: 250px;
     }
   }
+
+  #chat {
+    #chat_character_limit {
+      margin-left: 11px;
+      font-size: 10px;
+    }
+  }
+
+  #video_info {
+    width: 630px;
+  }
 }
+
+.list-group-item:first-child, .list-group-item:last-child {
+  border-radius: 0;
+  color: #999;
+}
+
+input[type="text"] {
+  border-bottom: $border $light-gray;
+}
+
+input[type="submit"] {
+  background-color: $dark-gold;
+  border-bottom: $border $light-gold;
+  border-right: $border $light-gold;
+  font-weight: 300;
+  color: white;
+}
+
+.input-group-sm > .input-group-btn > .btn {
+  border-radius: 0;
+}
+
+/*@media (max-width: 1000px) {
+  .col-md-8, .col-md-4, .col-md-12 {
+    width: 630px;
+  }
+}*/

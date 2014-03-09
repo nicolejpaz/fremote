@@ -4,8 +4,8 @@
     %meta{content: "width=device-width, initial-scale=1.0", name: "viewport"}/
     %title= content_for?(:title) ? yield(:title) : "Fremote"
     %meta{content: content_for?(:description) ? yield(:description) : "Fremote", name: "description"}/
-    = stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true
-    = javascript_include_tag "application", "data-turbolinks-track" => true
+    = stylesheet_link_tag "application", media: "all"
+    = javascript_include_tag "application"
     = csrf_meta_tags
   %body
     %header= render 'layouts/navigation'
@@ -16,4 +16,4 @@
       %p 
         Fremote © 2014  · 
         %a{href: "http://github.com/Ravenstine/fremote"} GitHub
-        = javascript_include_tag "remotes", "data-turbolinks-track" => false
+        = javascript_include_tag "remotes"

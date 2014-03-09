@@ -1,8 +1,9 @@
-%canvas#drawing-surface{height: "310", width: "630"}
-- if remote.authorization.is_authorized?("draw", user)
-  .canvas-controls
-    %button#clear.btn-canvas-controls Clear Screen
-    %p stroke color: 
-    %input#color{name: "linecolor", type: "color", value: "#FF0000"}/
-    %p stroke width: 
-    %input#line{max: "10", min: "1", name: "points", type: "range", value: "5"}/
+.center
+  %canvas#drawing-surface{height: "310", width: "630"}
+  - if remote.authorization.is_authorized?("draw", user)
+    .canvas-controls.center
+      %button#clear.btn-canvas-controls Clear Screen
+      %p stroke color: 
+      %input#color{name: "linecolor", type: "color", value: "#FF0000"}/
+      %p stroke width: 
+      %input#line{max: "10", min: "1", name: "points", type: "range", value: "5"}/

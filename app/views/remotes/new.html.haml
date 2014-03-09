@@ -1,5 +1,5 @@
 #center_column
-  #new_remote
+  #remote
     - if current_user  
       %h3 New Remote    
       = form_for :remote, :url => { :controller => 'remotes', :action => 'create' }, :html => {:id => "new_remote"} do |f|
@@ -60,7 +60,6 @@
                 = check_box_tag '_member[draw]', 1, 'active'
               %td
                 = check_box_tag '_member[settings]', 1
-
 
         .input-group
           %span.input-group-btn

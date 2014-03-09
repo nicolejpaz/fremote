@@ -159,3 +159,21 @@ html {
   font-size: 11px;
   padding: 1px 5px;
 }
+
+.vjs-default-skin.vjs-paused .vjs-big-play-button 
+{
+/*display: none;*/
+}
+
+.vjs-poster {
+  /*background-image: url("waiting.svg");*/
+}
+
+@-webkit-keyframes beam {
+  from {opacity: 0 !important;}
+  to {opacity: 1 !important;}
+}
+
+#beam_small {
+  -webkit-animation: beam 1s infinite; /* Safari and Chrome */
+}

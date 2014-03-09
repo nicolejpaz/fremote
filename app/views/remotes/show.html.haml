@@ -1,11 +1,15 @@
 #center_column
-  = render :partial => 'video', :locals => { :remote => @remote, :remote_user => @remote_user }
-  = render :partial => 'canvas', :locals => { :remote => @remote, :user => @user }
-  = render :partial => 'playlist_info', :locals => { :remote => @remote, :remote_user => @remote_user }
-  = render :partial => 'chat', :locals => { :username => @username, :remote => @remote }
-  = render :partial => 'watchers', :locals => { :remote => @remote }
-  = render :partial => 'playlist', :locals => { :remote => @remote, :username => @username }
-  = render :partial => 'owner_controls', :locals => { :remote => @remote, :current_user => current_user }
+  #show_remote
+    .row
+      .col-md-8
+        = render :partial => 'video', :locals => { :remote => @remote, :remote_user => @remote_user }
+        = render :partial => 'canvas', :locals => { :remote => @remote, :user => @user }
+      .col-md-4
+        = render :partial => 'chat', :locals => { :username => @username, :remote => @remote }
+    = render :partial => 'playlist_info', :locals => { :remote => @remote, :remote_user => @remote_user }
+    = render :partial => 'watchers', :locals => { :remote => @remote }
+    = render :partial => 'playlist', :locals => { :remote => @remote, :username => @username }
+    = render :partial => 'owner_controls', :locals => { :remote => @remote, :current_user => current_user }
 
 
 

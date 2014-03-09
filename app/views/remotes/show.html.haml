@@ -6,8 +6,11 @@
         = render :partial => 'canvas', :locals => { :remote => @remote, :user => @user }
       .col-md-4
         = render :partial => 'chat', :locals => { :username => @username, :remote => @remote }
-    = render :partial => 'playlist_info', :locals => { :remote => @remote, :remote_user => @remote_user }
-    = render :partial => 'watchers', :locals => { :remote => @remote }
+    .row
+      .col-md-8
+        = render :partial => 'playlist_info', :locals => { :remote => @remote, :remote_user => @remote_user }
+      .col-md-4
+        = render :partial => 'watchers', :locals => { :remote => @remote }
     = render :partial => 'playlist', :locals => { :remote => @remote, :username => @username }
     = render :partial => 'owner_controls', :locals => { :remote => @remote, :current_user => current_user }
 

@@ -1,6 +1,7 @@
-%canvas#drawing-surface{height: "310", width: "630"}
+.center
+  %canvas#drawing-surface{height: "310", width: "630"}
 - if is_authorized?(remote, user)
-  .canvas-controls
+  .canvas-controls.center
     %button#clear.btn-canvas-controls Clear Screen
     %p stroke color: 
     %input#color{name: "linecolor", type: "color", value: "#FF0000"}/

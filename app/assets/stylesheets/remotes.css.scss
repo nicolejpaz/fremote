@@ -39,8 +39,22 @@ p.navbar-text {
     font-weight: $light-weight;
   }
 
+  a {
+    color: $light-green;
+  }
+
   label {
     font-weight: $light-weight;
+  }
+
+  .checkbox {
+    margin-top: 70px;
+
+    input[type="checkbox"] {
+      height: auto;
+      margin: 0;
+      width: 25%;
+    }
   }
 
   .authform {

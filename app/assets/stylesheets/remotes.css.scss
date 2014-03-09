@@ -78,6 +78,67 @@ canvas#drawing-surface {
   z-index: 9999;
 }
 
+#remote {
+  max-width: 960px;
+  margin: 0 auto;
+
+  h3 {
+    font-weight: 300;
+  }
+  a {
+    color: white;
+  }
+
+  ul {
+    background-color: $light-green;
+
+    li {
+      padding: 10px;
+    }
+  }
+
+  h4 {
+    padding: 10px;
+  }
+
+  .list-border {
+    border-bottom: $border $medium-green;
+    border-right: $border $medium-green;
+  }
+
+  .btn {
+    border: none;
+    background-color: $dark-gold;
+    border-bottom: $border $light-gold;
+    font-weight: 300;
+  }
+
+  input, textarea {
+    border-radius: 0;
+    border-bottom: $border $light-gray;
+    width: 100%;
+    margin: 5px 0;
+  }
+
+
+  table {
+    background-color: rgba(128, 128, 128, 0.5);
+    margin: 10px 0;
+  }
+
+  thead, tbody td:first-child {
+    background-color: $medium-green;
+  }
+
+  tbody tr:hover {
+    background-color: $light-green;
+  }
+
+  td {
+    width: 15%;
+  }
+}
+
 #landing {
   max-width: 960px;
   margin: 0 auto;
@@ -264,7 +325,7 @@ canvas#drawing-surface {
   color: #999;
 }
 
-input[type="text"] {
+input[type="text"], textarea {
   border-bottom: $border $light-gray;
 }
 
@@ -295,8 +356,11 @@ input[type="submit"] {
   float: right;
 }
 
+.full-width {
+  width: 100%;
+}
+
 .alert {
   border-radius: 0;
   margin: 0 auto;
-  max-width: 960px;
 }

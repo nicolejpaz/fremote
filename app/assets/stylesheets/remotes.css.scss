@@ -38,6 +38,19 @@ nav {
   p.navbar-text {
     font-size: 1em;
   }
+
+  .navbar-toggle {
+    background-color: white;
+    border-radius: 0;
+
+    .icon-bar {
+      background-color: $dark-green;
+    }
+  }
+
+  .navbar-toggle:hover {
+    background-color: $medium-green
+  }
 }
 
 div#footer {
@@ -56,7 +69,7 @@ div#footer {
   }
 
   a {
-    color: $dark-green;
+    color: $minty-green;
     font-weight: 600;
   }
 }

@@ -61,6 +61,10 @@ class Remote
       self.description = params[:description]
     end
 
+    if params[:member] != nil && params[:member] != ''
+      self.member_list.members << User.find_by({name: params[:member]}).id if User.find_by({name: params[:member]})
+    end
+
     self.authorization.update_permissions(params)
 
     self.save

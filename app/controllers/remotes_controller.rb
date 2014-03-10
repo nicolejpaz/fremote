@@ -19,9 +19,9 @@ class RemotesController < ApplicationController
 		@remote.name = params[:name] unless params[:name] == '' || params[:name] == nil
 		@remote.description = params[:description] unless params[:description] == '' || params[:description] == nil
 		@remote.admin_only = to_boolean(params[:admin_only]) || false
+		@remote.member_list.members << @user.id if @user
 		@remote.save
     flash[:notice] = "Congratulations!  Take control of your remote."
-		# flash[dispatch[:status]] = dispatch[:message]
     redirect_to remote_path(@remote.remote_id)
 	end
 

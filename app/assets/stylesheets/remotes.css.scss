@@ -10,6 +10,7 @@ $light-gray: #ccc;
 $dark-green: #006c51;
 $medium-green: #1f7c65;
 $light-green: #00a67c;
+$minty-green: #bceade;
 $default-font: 'Open Sans', sans-serif;
 
 body {
@@ -31,7 +32,7 @@ nav {
   }
 
   a {
-    color: $dark-green;
+    color: $minty-green;
   }
 
   p.navbar-text {

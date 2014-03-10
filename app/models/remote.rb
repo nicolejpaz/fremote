@@ -16,6 +16,7 @@ class Remote
   embeds_one :playlist
   embeds_one :drawing
   embeds_one :authorization
+  embeds_one :member_list
   validates_presence_of :status
   validates_presence_of :start_at
 
@@ -94,6 +95,7 @@ class Remote
     self.playlist = Playlist.new if self.playlist == nil
     self.drawing = Drawing.new if self.drawing == nil
     self.authorization = Authorization.new if self.authorization == nil 
+    self.member_list = MemberList.new if self.member_list == nil
   end
 
   def generate_remote_id

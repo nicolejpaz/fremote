@@ -66,7 +66,7 @@ function updateDescription(e, self) {
 }
 
 function returnName(text) {
-  return '<h3 class="panel-title">' + text + '</h3>'
+  return '<h3 class="panel-title inline">' + text + '</h3>'
 }
 
 function returnDescription(text) {

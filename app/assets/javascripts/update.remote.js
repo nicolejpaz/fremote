@@ -1,8 +1,10 @@
 $(document).ready(function() {
-  var endOfFormString = '<span class="input-group-edit"><button class="btn btn-edit" type="submit">Edit</button></span></div></form>'
+  var endOfFormString = '<span class="input-group-btn"><button class="btn btn-edit" type="submit">Edit</button><button class="btn btn-edit btn-red" type="button">Cancel</button></span></div></form>'
 
-  $('#remote_name').on('click', function() {
-    getNameForm($(this).find('h3'), endOfFormString)
+  $('#remote_name').on('click', function(e) {
+    if (e.target.tagName === "H3") {
+      getNameForm($(e.target), endOfFormString)
+    }
   })
 
   $('#remote_description').on('click', function() {
@@ -20,6 +22,11 @@ function getDescriptionForm(self, endOfFormString) {
 
 function getNameForm(self, endOfFormString) {
   $(self).replaceWith('<form id="edit_remote_name" action="' + Remote.remote_id + '" method="PATCH"><div class="input-group input-group-sm"><input class="form-control" type="text" value="' + self.html() + '">' + endOfFormString)
+
+  $('#remote_name form button[type="button"]').on('click', function(e) {
+    $(e.target).closest('form').replaceWith('<h3 class="panel-title">' + self.html() + '</h3>')
+  })
+
   $('#remote_name form').on('submit', function(e) {
     updateName(e, this)
   })

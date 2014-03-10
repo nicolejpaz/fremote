@@ -2,14 +2,16 @@
   .video-heading
     -if @remote.authorization.is_authorized?('settings', current_user)
       #remote_name
-        %h3.panel-title= @remote.name
+        %span.glyphicon.glyphicon-edit.left
+        %h3.panel-title.inline= @remote.name
     - else
       %h3.panel-title= @remote.name
   .video-body
     -if @remote.authorization.is_authorized?('settings', current_user)
       = link_to 'Edit Remote', edit_remote_path(@remote.remote_id), class: "btn btn-edit right"
       #remote_description
-        %p= @remote.description
+        %span.glyphicon.glyphicon-edit.left
+        %p.inline= @remote.description
     - else
       %p= @remote.description
     %p

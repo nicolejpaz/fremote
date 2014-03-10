@@ -1,16 +1,26 @@
 $(document).ready(function() {
-  var endOfFormString = '<span class="input-group-btn"><button class="btn btn-success" type="submit">Edit</button></span></div></form>'
-  $('#remote_name h3').on('click', function() {
-    getNameForm(this, endOfFormString)
+  var endOfFormString = '<span class="input-group-btn"><button class="btn btn-edit" type="submit">Edit</button><button class="btn btn-edit btn-red" type="button">Cancel</button></span></div></form>'
+
+  $('#remote_name').on('click', function(e) {
+    if (e.target.tagName === "H3") {
+      getNameForm($(e.target), endOfFormString)
+    }
   })
 
-  $('#remote_description p').on('click', function() {
-    getDescriptionForm(this, endOfFormString)
+  $('#remote_description').on('click', function(e) {
+    if (e.target.tagName === "P") {
+      getDescriptionForm($(this).find('p'), endOfFormString)
+    }
   })
 })
 
 function getDescriptionForm(self, endOfFormString) {
-  $(self).replaceWith('<form id="edit_remote_description" action="' + Remote.remote_id + '" method="PATCH"><div class="input-group input-group-sm"><textarea class="form-control">' + self.innerHTML + '</textarea>' + endOfFormString)
+  $(self).replaceWith('<form id="edit_remote_description" action="' + Remote.remote_id + '" method="PATCH"><div class="input-group input-group-sm"><textarea class="form-control">' + self.html() + '</textarea>' + endOfFormString)
+  $('#remote_description form').addClass('edit-description')
+
+  $('#remote_description form button[type="button"]').on('click', function(e) {
+    $(e.target).closest('form').replaceWith(returnDescription(self.html()))
+  })
 
   $('#remote_description form').on('submit', function(e) {
     updateDescription(e, this)
@@ -18,7 +28,11 @@ function getDescriptionForm(self, endOfFormString) {
 }
 
 function getNameForm(self, endOfFormString) {
-  $(self).replaceWith('<form id="edit_remote_name" action="' + Remote.remote_id + '" method="PATCH"><div class="input-group input-group-sm"><input class="form-control" type="text" value="' + self.innerHTML + '">' + endOfFormString)
+  $(self).replaceWith('<form id="edit_remote_name" action="' + Remote.remote_id + '" method="PATCH"><div class="input-group input-group-sm"><input class="form-control" type="text" value="' + self.html() + '">' + endOfFormString)
+
+  $('#remote_name form button[type="button"]').on('click', function(e) {
+    $(e.target).closest('form').replaceWith(returnName(self.html()))
+  })
 
   $('#remote_name form').on('submit', function(e) {
     updateName(e, this)
@@ -34,7 +48,7 @@ function updateName(e, self) {
     data: { _method: 'PATCH', name: data, type: 'name' }
   }).done(function(e, status, data, xhr) {
     var response_name = data.responseJSON.remote.name
-    $(self).replaceWith('<h3 class="panel-title">' + response_name + '</h3>')
+    $(self).replaceWith(returnName(response_name))
   })
 }
 
@@ -47,6 +61,14 @@ function updateDescription(e, self) {
     data: { _method: 'PATCH', description: data, type: 'description' }
   }).done(function(e, status, data, xhr) {
     var response_description = data.responseJSON.remote.description
-    $(self).replaceWith('<p>' + response_description + '</p>')
+    $(self).replaceWith(returnDescription(response_description))
   })
+}
+
+function returnName(text) {
+  return '<h3 class="panel-title inline">' + text + '</h3>'
+}
+
+function returnDescription(text) {
+  return '<p>' + text + '</p>'
 }

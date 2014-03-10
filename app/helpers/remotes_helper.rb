@@ -30,4 +30,7 @@ module RemotesHelper
     end
   end
 
+  def return_user(member)
+    User.find(member)
+  end
 end

@@ -59,7 +59,19 @@
               = remote_authorization_checkbox(@remote, "_member", "draw")
             %td
               = remote_authorization_checkbox(@remote, "_member", "settings")
-
+      .input-group.full-width
+        = text_field_tag :member, '', :class => 'form-control', placeholder: 'Optional: add other members to the remote'
+        %span.glyphicon.glyphicon-plus
+        - if @members
+          %ul.unstyled.opacity
+            - @members.each do |member|
+              %li
+                = "#{return_user(member).name}"
+                - if current_user == return_user(member)
+                  %span.tooltip-wrap
+                    %span.glyphicon.glyphicon-user
+                    %span.tooltip-content
+                      %p you!
       .input-group
         %span.input-group-btn
           = submit_tag "Update Remote", class: "btn btn-success"

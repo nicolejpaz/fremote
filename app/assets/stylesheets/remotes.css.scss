@@ -349,7 +349,32 @@ input[type="submit"] {
   background-color: #9b001c;
 }
 
-.input-group-sm > .input-group-btn > .btn {
+.display-table {
+  display: table;
+}
+
+.edit-description {
+  width: 400px;
+  height: 60px;
+
+  button[type="button"] {
+    display: table;
+    border-bottom: $border #f73e5f;
+    border-right: $border #f73e5f;
+  }
+
+  button[type="submit"] {
+    border-right: $border $light-gold;
+    width: 100%;
+  }
+
+  textarea {
+    height: 60px !important;
+    border-bottom: $border $light-gray;
+  }
+}
+
+.input-group-sm > .input-group-btn > .btn, .input-group-sm > .form-control {
   border-radius: 0;
 }
 

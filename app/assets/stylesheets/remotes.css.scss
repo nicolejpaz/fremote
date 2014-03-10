@@ -204,6 +204,10 @@ canvas#drawing-surface {
 
   #video_info {
     width: 630px;
+
+    .glyphicon {
+      margin-right: 10px;
+    }
   }
 
   .video-heading {
@@ -391,6 +395,10 @@ input[type="submit"] {
 
 .right {
   float: right;
+}
+
+.inline {
+  display:inline;
 }
 
 .full-width {

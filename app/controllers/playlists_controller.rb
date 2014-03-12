@@ -23,8 +23,8 @@ class PlaylistsController < ApplicationController
     @remote = Remote.find_by({remote_id: params[:remote_id]})
     @playlist = @remote.playlist
     if @remote.authorization.is_authorized?("playlist", @user)
-      new_media = Media.new(params[:url])
       Notify.new("playlist_block:#{@remote.remote_id}", {"block" => true}.to_json)
+      new_media = Media.new(params[:url])
       @playlist.add_list_item(new_media)
       Notify.new("playlist_block:#{@remote.remote_id}", {"block" => false}.to_json)
     end

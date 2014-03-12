@@ -61,7 +61,7 @@ class Remote
       self.description = params[:description]
     end
 
-    add_members_to_remote(params)
+    check_if_params_has_members(params)
     self.authorization.update_permissions(params)
 
     self.save
@@ -71,7 +71,7 @@ class Remote
     self.name = params[:name] unless params[:name] == '' || params[:name] == nil
     self.description = params[:description] unless params[:description] == '' || params[:description] == nil
     self.admin_only = to_boolean(params[:admin_only]) || false
-    add_members_to_remote(params, user)
+    check_if_params_has_members(params, user)
     self.save
   end
 
@@ -149,23 +149,27 @@ class Remote
     Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.selection]["url"]))  })
   end
 
-  def add_members_to_remote(params, user = nil)
+  def check_if_params_has_members(params, user = nil)
     if params[:member] != nil && params[:member] != []
-      if user
-        self.member_list.members << user.id if user
-        user.membership.remote_ids << self.remote_id
-        user.save
-      end
+      add_remote_owner_to_member_list(user) if user
+      
       params[:member].each do |member|
-        new_member = User.find_by({name: member})
-        if new_member
-          self.member_list.members << new_member.id if new_member
-          unless new_member.membership.remote_ids.include? self.remote_id
-            new_member.membership.remote_ids << self.remote_id
-            new_member.save
-          end
-        end
+        check_if_member_exists(member)
       end
+    end
+  end
+
+  def add_remote_owner_to_member_list(user)
+    self.member_list.members << user.id if user
+    user.membership.remote_ids << self.remote_id
+    user.save
+  end
+
+  def check_if_member_exists(member)
+    new_member = User.find_by({name: member})
+    if new_member
+      self.member_list.members << new_member.id
+      new_member.add_to_membership(self)
     end
   end
 end

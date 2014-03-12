@@ -53,6 +53,13 @@ class User
     end
   end
 
+  def add_to_membership(remote)
+    unless self.membership.remote_ids.include? remote.remote_id
+      self.membership.remote_ids << remote.remote_id
+      self.save
+    end
+  end
+
   private
   def spawn_memberships
     self.membership = Membership.new if self.membership == nil

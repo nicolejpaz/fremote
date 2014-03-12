@@ -61,12 +61,27 @@ class Remote
       self.description = params[:description]
     end
 
-    if params[:member] != nil && params[:member] != ''
-      self.member_list.members << User.find_by({name: params[:member]}).id if User.find_by({name: params[:member]})
+    if params[:member] != nil && params[:member] != []
+      params[:member].each do |member|
+        self.member_list.members << User.find_by({name: member}).id if User.find_by({name: member})
+      end
     end
 
     self.authorization.update_permissions(params)
 
+    self.save
+  end
+
+  def populate_with_options_and_save(params, user = nil)
+    self.name = params[:name] unless params[:name] == '' || params[:name] == nil
+    self.description = params[:description] unless params[:description] == '' || params[:description] == nil
+    self.admin_only = to_boolean(params[:admin_only]) || false
+    self.member_list.members << user.id if user
+    if params[:member] != nil && params[:member] != []
+      params[:member].each do |member|
+        self.member_list.members << User.find_by({name: member}).id if User.find_by({name: member})
+      end
+    end
     self.save
   end
 

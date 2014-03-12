@@ -444,6 +444,10 @@ input[type="submit"] {
   float: right;
 }
 
+.no-margin {
+  margin: 0 -30px;
+}
+
 .inline {
   display:inline;
 }
@@ -457,6 +461,20 @@ input[type="submit"] {
   margin: 0 auto;
 }
 
-#remote_name, #remote_description {
+#remote_name, #remote_description, #add_members {
   cursor: pointer;
+}
+
+#added_members {
+  display: none;
+}
+
+.inside-member-list {
+  background: transparent !important;
+  padding-top: 0 !important;
+  padding-left: 20px;
+}
+
+.show {
+  display: block !important;
 }

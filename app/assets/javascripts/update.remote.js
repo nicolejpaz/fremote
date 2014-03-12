@@ -40,13 +40,27 @@ $(document).on('click', function(e) {
   var target = $(e.target)
   if (target[0].id === "add_members") {
     addToMemberList()
-  } else if ($(e.target).hasClass('user-remove')) {
-    removeFromMemberList(target, e)
+  } else if (target.hasClass('user-remove')) {
+    e.preventDefault()
+    removeFromMemberList(target)
+  } else if (target.hasClass('user-delete')) {
+    e.preventDefault()
+    target.parent().addClass('to-delete')
+    target.parent().append('<input type="hidden" name="delete[]" value="' + target.parent()[0].innerText.replace(/ [X]$/, '') + '" >')
+    target.removeClass('user-delete')
+    target.addClass('user-add')
+    target.text('+')
+  } else if (target.hasClass('user-add')) {
+    e.preventDefault()
+    target.parent().removeClass('to-delete')
+    target.parent().find('input').remove()
+    target.removeClass('user-add')
+    target.addClass('user-delete')
+    target.text('X')
   }
 })
 
-function removeFromMemberList(target, e) {
-  e.preventDefault()
+function removeFromMemberList(target) {
   if ($(target.parents()[1]).find('li').length === 1) {
     $(target.parents()[2]).hide()
   }

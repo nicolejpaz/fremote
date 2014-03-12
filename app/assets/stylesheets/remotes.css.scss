@@ -10,6 +10,7 @@ $light-gray: #ccc;
 $dark-green: #006c51;
 $medium-green: #1f7c65;
 $light-green: #00a67c;
+$minty-green: #bceade;
 $default-font: 'Open Sans', sans-serif;
 
 body {
@@ -31,11 +32,24 @@ nav {
   }
 
   a {
-    color: $dark-green;
+    color: $minty-green;
   }
 
   p.navbar-text {
     font-size: 1em;
+  }
+
+  .navbar-toggle {
+    background-color: white;
+    border-radius: 0;
+
+    .icon-bar {
+      background-color: $dark-green;
+    }
+  }
+
+  .navbar-toggle:hover {
+    background-color: $medium-green
   }
 }
 
@@ -55,7 +69,7 @@ div#footer {
   }
 
   a {
-    color: $dark-green;
+    color: $minty-green;
     font-weight: 600;
   }
 }
@@ -136,6 +150,39 @@ canvas#drawing-surface {
 
   td {
     width: 15%;
+  }
+
+  .glyphicon-plus {
+    font-size: 28px;
+    margin-left: 5px;
+    margin-top: 5px;
+    position:absolute;
+    right: 2px;
+    color: $dark-green;
+    z-index: 999
+  }
+
+  .tooltip-wrap {
+    position: relative;
+  }
+
+  .tooltip-wrap .tooltip-content {
+    display: none;
+    position: absolute;
+    top: 0;
+    padding-left: 20px;
+  }
+
+  .tooltip-wrap:hover .tooltip-content {
+    display: block;
+  }
+
+  .opacity {
+    background-color: rgba(128, 128, 128, 0.5);
+  }
+
+  ul {
+    padding-top: 50px;
   }
 }
 
@@ -397,6 +444,10 @@ input[type="submit"] {
   float: right;
 }
 
+.no-margin {
+  margin: 0 -30px;
+}
+
 .inline {
   display:inline;
 }
@@ -410,6 +461,20 @@ input[type="submit"] {
   margin: 0 auto;
 }
 
-#remote_name, #remote_description {
+#remote_name, #remote_description, #add_members {
   cursor: pointer;
+}
+
+#added_members {
+  display: none;
+}
+
+.inside-member-list {
+  background: transparent !important;
+  padding-top: 0 !important;
+  padding-left: 20px;
+}
+
+.show {
+  display: block !important;
 }

@@ -61,6 +61,8 @@ class Remote
       self.description = params[:description]
     end
 
+    delete_members(params) if params[:delete]
+
     check_if_params_has_members(params)
     self.authorization.update_permissions(params)
 
@@ -162,6 +164,14 @@ class Remote
     if new_member
       self.member_list.members << new_member.id
       new_member.add_to_membership(self)
+    end
+  end
+
+  def delete_members(params)
+    params[:delete].each do |delete_name|
+      member = User.find_by({name: delete_name})
+      self.member_list.members.delete(member.id)
+      member.delete_remote_from_user_memberships(self)
     end
   end
 end

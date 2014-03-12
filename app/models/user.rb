@@ -60,6 +60,11 @@ class User
     end
   end
 
+  def delete_remote_from_user_memberships(remote)
+    self.membership.remote_ids.delete(remote.remote_id)
+    self.save
+  end
+
   private
   def spawn_memberships
     self.membership = Membership.new if self.membership == nil

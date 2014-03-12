@@ -60,6 +60,21 @@
                 = check_box_tag '_member[draw]', 1, 'active'
               %td
                 = check_box_tag '_member[settings]', 1
+        .input-group.full-width
+          = text_field_tag 'member[]', '', :class => 'form-control', placeholder: 'Optional: add other members to the remote'
+          %span#add_members.glyphicon.glyphicon-plus
+          %ul#members.opacity.list-unstyled
+            %li#added_members.show
+              Members to Add:
+              %ul.inside-member-list
+                %li
+                  = "#{current_user.name}"
+                  %span.tooltip-wrap
+                    %span.glyphicon.glyphicon-user
+                    %span.tooltip-content
+                      %p remote owner
+            %li#added_members 
+              %ul.inside-member-list
 
         .input-group
           %span.input-group-btn

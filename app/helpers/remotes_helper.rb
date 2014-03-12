@@ -17,6 +17,18 @@ module RemotesHelper
     end
   end
 
+  def user_type(remote, user = nil)
+    if user
+      if remote.member_list.members.include? user.id
+        return 'member'
+      elsif user
+        return 'user'
+      end
+    else
+      return 'guest'
+    end
+  end
+
   def sanitized_name(user)
     user_name = user.name.split(' ')
     return user_name.join('_')

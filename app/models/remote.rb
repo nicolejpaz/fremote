@@ -71,8 +71,7 @@ class Remote
     self.name = params[:name] unless params[:name] == '' || params[:name] == nil
     self.description = params[:description] unless params[:description] == '' || params[:description] == nil
     self.admin_only = to_boolean(params[:admin_only]) || false
-    self.member_list.members << user.id if user
-    add_members_to_remote(params)
+    add_members_to_remote(params, user)
     self.save
   end
 
@@ -150,10 +149,22 @@ class Remote
     Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.selection]["url"]))  })
   end
 
-  def add_members_to_remote(params)
+  def add_members_to_remote(params, user = nil)
     if params[:member] != nil && params[:member] != []
+      if user
+        self.member_list.members << user.id if user
+        user.membership.remote_ids << self.remote_id
+        user.save
+      end
       params[:member].each do |member|
-        self.member_list.members << User.find_by({name: member}).id if User.find_by({name: member})
+        new_member = User.find_by({name: member})
+        if new_member
+          self.member_list.members << new_member.id if new_member
+          unless new_member.membership.remote_ids.include? self.remote_id
+            new_member.membership.remote_ids << self.remote_id
+            new_member.save
+          end
+        end
       end
     end
   end

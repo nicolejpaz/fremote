@@ -28,7 +28,6 @@ class Playlist
   end
 
   def delete_list_item(index, user = nil)
-
     self.list.delete_at(index.to_i)
     if index.to_i == self.selection  
       self.selection = (self.selection + 1) unless ((self.selection + 1) > (self.list.count - 1))
@@ -43,7 +42,12 @@ class Playlist
     self.remote.save
     self.save
     Notify.new("playlist_delete:#{self.remote.remote_id}", {'index' => index}.to_json)
-      
   end
 
+  def delete_all
+    self.list = []
+    self.save
+    self.remote.save
+    Notify.new("playlist_clear:#{self.remote.remote_id}")
+  end
 end

@@ -37,7 +37,11 @@ class PlaylistsController < ApplicationController
     @playlist = @remote.playlist
     if @remote.authorization.is_authorized?("playlist", @user)
       Notify.new("playlist_block:#{@remote.remote_id}", {"block" => true}.to_json)
-      @playlist.delete_list_item(params[:index])
+      if params[:clear]
+        @playlist.delete_all
+      else
+        @playlist.delete_list_item(params[:index])
+      end
       Notify.new("playlist_block:#{@remote.remote_id}", {"block" => false}.to_json)
     end
     render nothing: true

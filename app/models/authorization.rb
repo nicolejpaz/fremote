@@ -16,6 +16,16 @@ class Authorization
     end
   end
 
+  def permissions_by_user_type(permission)
+    authorized = {}
+    authorized[:guest] = to_boolean(self[:_guest][permission])
+    authorized[:user] = to_boolean(self[:_user][permission])
+    authorized[:member] = to_boolean(self[:_member][permission])
+    authorized[:owner] = to_boolean("1")
+
+    return authorized
+  end
+
   def update_permissions(params)
     default_permissions = {"control" => "0", "chat" => "0", "playlist" => "0", "draw" => "0", "settings" => "0"}
     # new_guest_settings = {} unless params["_guest"]
@@ -32,7 +42,9 @@ class Authorization
   private
 
   def kind_of_entity(user = nil)
-    if user.is_a?(User)
+    if self.remote.member_list.members.include?(user)
+      return :_member
+    elsif user.is_a?(User)
       return :_user
     else
       return :_guest

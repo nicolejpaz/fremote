@@ -488,6 +488,23 @@ input[type="submit"] {
   padding-left: 20px;
 }
 
+.grey-text {
+  color: grey;
+}
+
+.padding {
+  padding: 10px
+}
+
 .show {
   display: block !important;
+}
+
+#clear_playlist {
+  margin-top: -32px;
+  border-radius: 0;
+  font-weight: 300;
+  background: $dark-gold;
+  border-bottom: $border $light-gold;
+  font-size: 12px;
 }

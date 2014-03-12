@@ -73,11 +73,7 @@
                 - @members.each do |member|
                   %li
                     = "#{return_user(member).name}"
-                    - if current_user == return_user(member)
-                      %span.tooltip-wrap
-                        %span.glyphicon.glyphicon-user
-                        %span.tooltip-content
-                          %p remote owner
+
       .input-group
         %span.input-group-btn
           = submit_tag "Update Remote", class: "btn btn-success"

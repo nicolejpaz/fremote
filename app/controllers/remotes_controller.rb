@@ -29,7 +29,6 @@ class RemotesController < ApplicationController
 	end
 
 	def update
-		p params
 		@user = current_user if current_user
 		@remote = Remote.find_by({remote_id: params[:id]})
     @remote.update(params) if @remote.authorization.is_authorized?("settings", @user)

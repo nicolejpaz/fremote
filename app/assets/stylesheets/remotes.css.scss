@@ -134,8 +134,19 @@ canvas#drawing-surface {
     margin: 5px 0;
   }
 
-  .user-remove {
+  .user-remove, .user-delete {
     border: none;
+  }
+
+  .user-add {
+    border: none;
+    font-weight: 600;
+    background: $dark-green;
+  }
+
+  .to-delete {
+    text-decoration: line-through;
+    color: #9b001c;
   }
 
   table {

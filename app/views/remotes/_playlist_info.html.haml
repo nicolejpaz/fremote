@@ -17,5 +17,3 @@
     %p
       %a{href: remote.url}
         Watch video on its own site.
-    -if @remote.authorization.is_authorized?('settings', current_user)
-      %span.label.label-success You are allowed to use this remote!

@@ -134,6 +134,9 @@ canvas#drawing-surface {
     margin: 5px 0;
   }
 
+  .user-remove {
+    border: none;
+  }
 
   table {
     background-color: rgba(128, 128, 128, 0.5);
@@ -279,14 +282,14 @@ canvas#drawing-surface {
     a {
       font-size: 12px;
     }
-
-    .btn-danger {
-      width: 20px;
-      height: 20px;
-      padding: 0;
-      border-radius: 0;
-    }
   }
+}
+
+.btn-danger {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border-radius: 0;
 }
 
 #registration {

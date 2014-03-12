@@ -1,6 +1,7 @@
 %ul#playlist_group.list-group.panel
   %li.list-group-item.video-heading
     %h3.panel-title Playlist
+    %button.btn.btn-landing.right#clear_playlist Clear Playlist
   - if remote.authorization.is_authorized?("playlist", current_user)
     %li.list-group-item
       = form_for :playlist, url: remote_playlist_path(remote.remote_id), remote: true, html: { id: "playlist_form" } do |f|
@@ -9,8 +10,6 @@
           = text_field_tag :url, "", :class => 'form-control', placeholder: 'add a url to the playlist here...', html: {:autocomplete => "off"}, id: "playlist_url_field"
           %span.input-group-btn
             = submit_tag "Add", class: "btn btn-landing"
-    %li.list-group-item
-      %button.btn.btn-landing#clear_playlist Clear Playlist
   - else
     %p.small.grey-text.padding
       = "You are a #{user_type(remote, @user)} of this remote, so you do not have permission to add to this playlist."

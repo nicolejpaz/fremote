@@ -1,5 +1,5 @@
 %ul#chat.list-group
-  - if is_authorized?(remote, @user)
+  - if remote.authorization.is_authorized?("chat", @user)
     %li#chat_title.list-group-item
       = form_for :remote, :url => remote_chat_path(remote), remote: true do |f|
         .input-group.input-group-sm
@@ -12,4 +12,12 @@
     %table#chat_table.table
       %tbody#chat_table_body
         %tr
-          %td.small.grey-text Welcome to Fremote chat.  If you would like a dedicated username for the chat, sign up for an account!
+          %td.small.grey-text 
+            - if remote.authorization.is_authorized?("chat", @user)
+              Welcome to Fremote chat.  If you would like a dedicated username for the chat, sign up for an account!
+            - else
+              = "Welcome to Fremote chat. You are a #{user_type(remote, @user)} of this remote, so you do not have permission to chat."
+              You must be any of these to use the chat: 
+              - remote.authorization.permissions_by_user_type('chat').each do |user_type, permitted|
+                - if permitted
+                  = "#{user_type} " 

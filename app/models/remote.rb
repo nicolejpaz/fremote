@@ -61,12 +61,7 @@ class Remote
       self.description = params[:description]
     end
 
-    if params[:member] != nil && params[:member] != []
-      params[:member].each do |member|
-        self.member_list.members << User.find_by({name: member}).id if User.find_by({name: member})
-      end
-    end
-
+    check_if_params_has_members(params)
     self.authorization.update_permissions(params)
 
     self.save
@@ -76,12 +71,7 @@ class Remote
     self.name = params[:name] unless params[:name] == '' || params[:name] == nil
     self.description = params[:description] unless params[:description] == '' || params[:description] == nil
     self.admin_only = to_boolean(params[:admin_only]) || false
-    self.member_list.members << user.id if user
-    if params[:member] != nil && params[:member] != []
-      params[:member].each do |member|
-        self.member_list.members << User.find_by({name: member}).id if User.find_by({name: member})
-      end
-    end
+    check_if_params_has_members(params)
     self.save
   end
 
@@ -159,4 +149,19 @@ class Remote
     Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.selection]["url"]))  })
   end
 
+  def check_if_params_has_members(params)
+    if params[:member] != nil && params[:member] != []
+      params[:member].each do |member|
+        check_if_member_exists(member)
+      end
+    end
+  end
+
+  def check_if_member_exists(member)
+    new_member = User.find_by({name: member})
+    if new_member
+      self.member_list.members << new_member.id
+      new_member.add_to_membership(self)
+    end
+  end
 end

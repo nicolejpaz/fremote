@@ -37,16 +37,27 @@ $(document).on('keypress', function(e) {
 })
 
 $(document).on('click', function(e) {
-  if (e.target.id === "add_members") {
+  var target = $(e.target)
+  if (target[0].id === "add_members") {
     addToMemberList()
+  } else if ($(e.target).hasClass('user-remove')) {
+    removeFromMemberList(target, e)
   }
 })
+
+function removeFromMemberList(target, e) {
+  e.preventDefault()
+  if ($(target.parents()[1]).find('li').length === 1) {
+    $(target.parents()[2]).hide()
+  }
+  target.parent().remove()
+}
 
 function addToMemberList() {
   var member = $('input#member_').val()
   if (member !== '') {
     $('#added_members').show()
-    $('#added_members').find('ul').append('<li><input type="hidden" name="member[]" value="' + member + '">' + member + '</li>')
+    $('#added_members').find('ul').append('<li><input type="hidden" name="member[]" value="' + member + '">' + member + '<button class="right btn-xfs btn-danger user-remove">X</button></li>')
     $('input#member_').val('')
   }
 }

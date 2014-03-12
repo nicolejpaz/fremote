@@ -37,16 +37,49 @@ $(document).on('keypress', function(e) {
 })
 
 $(document).on('click', function(e) {
-  if (e.target.id === "add_members") {
+  var target = $(e.target)
+  if (target[0].id === "add_members") {
     addToMemberList()
+  } else if (target.hasClass('user-remove')) {
+    e.preventDefault()
+    removeFromMemberList(target)
+  } else if (target.hasClass('user-delete')) {
+    e.preventDefault()
+    setFlagToRemoveMember(target)
+  } else if (target.hasClass('user-add')) {
+    e.preventDefault()
+    removeFlagToRemoveMember(target)
   }
 })
+
+function removeFlagToRemoveMember(target) {
+  target.parent().removeClass('to-delete')
+  target.parent().find('input').remove()
+  target.removeClass('user-add')
+  target.addClass('user-delete')
+  target.text('X')
+}
+
+function setFlagToRemoveMember(target) {
+  target.parent().addClass('to-delete')
+  target.parent().append('<input type="hidden" name="delete[]" value="' + target.parent()[0].innerText.replace(/ [X]$/, '') + '" >')
+  target.removeClass('user-delete')
+  target.addClass('user-add')
+  target.text('+')
+}
+
+function removeFromMemberList(target) {
+  if ($(target.parents()[1]).find('li').length === 1) {
+    $(target.parents()[2]).hide()
+  }
+  target.parent().remove()
+}
 
 function addToMemberList() {
   var member = $('input#member_').val()
   if (member !== '') {
     $('#added_members').show()
-    $('#added_members').find('ul').append('<li><input type="hidden" name="member[]" value="' + member + '">' + member + '</li>')
+    $('#added_members').find('ul').append('<li><input type="hidden" name="member[]" value="' + member + '">' + member + '<button class="right btn-xfs btn-danger user-remove">X</button></li>')
     $('input#member_').val('')
   }
 }

@@ -35,9 +35,6 @@ Remote.ping = function(){
     } else {
       Remote.toggle(data)
     }
-    // $.each(data.watchers, function(index, watcher){
-    //   $('#watchers').append('<li id="' + watcher.toLowerCase() + '">' + watcher + '</li>')
-    // })
   })
 }
 
@@ -146,7 +143,7 @@ player.ready(function(){
     var data = JSON.parse(event.data)
     data = JSON.parse(data)
     if(data.block == true){
-      $('#playlist_group').block()
+      $('#playlist_group').block({ css: { backgroundColor: '#006c51', color: '#fff', border: 'none' }, message: '<h3>modifying playlist</h3>' })
     } else {
       $('#playlist_group').unblock()
     }

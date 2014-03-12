@@ -114,7 +114,6 @@ player.ready(function(){
       $('#watchers').append('<li id="' + watcher.username.toLowerCase() + '" class="' + watcher.user_kind + '">' + watcher.username + '<span class="glyphicon glyphicon-star member"></span><span class="glyphicon glyphicon-user owner"></span></li>')
     })
     $('#playlist').sortable()
-    // $('li#' + data.username.toLowerCase()).remove()
   })
 
   source.addEventListener("control:" + Remote.remote_id, function(event){
@@ -168,9 +167,11 @@ player.ready(function(){
 
     var list_item = $('#playlist .playlist_item')[index]
     $(list_item).remove()
-
   })
 
+  source.addEventListener("playlist_clear:" + Remote.remote_id, function(event) {
+    $('#playlist li').remove()    
+  })
 
   source.addEventListener("chat:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)

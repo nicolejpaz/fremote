@@ -181,7 +181,7 @@ canvas#drawing-surface {
     background-color: rgba(128, 128, 128, 0.5);
   }
 
-  ul {
+  ul.padded {
     padding-top: 50px;
   }
 }
@@ -471,7 +471,6 @@ input[type="submit"] {
 
 .inside-member-list {
   background: transparent !important;
-  padding-top: 0 !important;
   padding-left: 20px;
 }
 

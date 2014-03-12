@@ -39,7 +39,9 @@ class User
   # field :failed_attempts, :type => Integer, :default => 0 # Only if lock strategy is :failed_attempts
   # field :unlock_token,    :type => String # Only if unlock strategy is :email or :both
   # field :locked_at,       :type => Time
+  after_initialize :spawn_memberships
   has_many :remotes
+  embeds_one :membership
   attr_accessor :login
 
   def self.find_first_by_auth_conditions(warden_conditions)
@@ -49,5 +51,10 @@ class User
     else
       super
     end
+  end
+
+  private
+  def spawn_memberships
+    self.membership = Membership.new if self.membership == nil
   end
 end

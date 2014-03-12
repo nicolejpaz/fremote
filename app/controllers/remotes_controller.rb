@@ -16,11 +16,7 @@ class RemotesController < ApplicationController
 		@remote = Remote.make(@user)
     @remote.authorization.update_permissions(params)
 		dispatch = @remote.populate(params[:video_url])
-		@remote.name = params[:name] unless params[:name] == '' || params[:name] == nil
-		@remote.description = params[:description] unless params[:description] == '' || params[:description] == nil
-		@remote.admin_only = to_boolean(params[:admin_only]) || false
-		@remote.member_list.members << @user.id if @user
-		@remote.save
+		@remote.populate_with_options_and_save(params, @user)
     flash[:notice] = "Congratulations!  Take control of your remote."
     redirect_to remote_path(@remote.remote_id)
 	end
@@ -33,6 +29,7 @@ class RemotesController < ApplicationController
 	end
 
 	def update
+		p params
 		@user = current_user if current_user
 		@remote = Remote.find_by({remote_id: params[:id]})
     @remote.update(params) if @remote.authorization.is_authorized?("settings", @user)

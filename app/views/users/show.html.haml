@@ -1,15 +1,35 @@
 #center_column
   #remote
     %h3
-      List of #{@user_viewed.name}'s' remotes:
-    - if @remotes != []
-      - @remotes.each do |remote|
-        %ul.list-unstyled.list-border
-          %li
-            %h4
-              %span.glyphicon.glyphicon-link
-              = link_to "#{remote.name}", remote_path(remote.remote_id)
-            %ul
-              %li #{remote.description}
-    - else
-      %p This user has no remotes.
+      #{@user_viewed.name}
+    .container
+      .row.clearfix
+        .col-md-12.column
+          .row.clearfix
+            .col-md-6.column
+              %h4 Remotes
+              - if @remotes != []
+                - @remotes.each do |remote|
+                  %ul.list-unstyled.list-border
+                    %li
+                      %h5
+                        %span.glyphicon.glyphicon-link
+                        = link_to "#{remote.name}", remote_path(remote.remote_id)
+                      %ul
+                        %li #{remote.description}
+              - else
+                %p This user has no remotes.
+                
+            .col-md-6.column
+              %h4 Memberships
+              - if @memberships != []
+                - @memberships.each do |remote|
+                  %ul.list-unstyled.list-border
+                    %li
+                      %h5
+                        %span.glyphicon.glyphicon-link
+                        = link_to "#{remote.name}", remote_path(remote.remote_id)
+                      %ul
+                        %li #{remote.description}   
+              - else
+                %p This user is not a member of any remotes.

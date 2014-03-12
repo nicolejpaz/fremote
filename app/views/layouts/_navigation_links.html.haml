@@ -7,7 +7,7 @@
     |
     = link_to 'New Remote', new_remote_path, :class => 'navbar-link'
     |
-    = link_to 'View remotes', user_path(sanitized_name(current_user)), :class => 'navbar-link'
+    = link_to 'View remotes and memberships', user_path(sanitized_name(current_user)), :class => 'navbar-link'
     |
     \#{link_to "Logout", destroy_user_session_path, method: :delete, :class => 'navbar-link'}
   - else

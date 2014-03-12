@@ -16,6 +16,7 @@ class Remote
   embeds_one :playlist
   embeds_one :drawing
   embeds_one :authorization
+  embeds_one :member_list
   validates_presence_of :status
   validates_presence_of :start_at
 
@@ -60,8 +61,27 @@ class Remote
       self.description = params[:description]
     end
 
+    if params[:member] != nil && params[:member] != []
+      params[:member].each do |member|
+        self.member_list.members << User.find_by({name: member}).id if User.find_by({name: member})
+      end
+    end
+
     self.authorization.update_permissions(params)
 
+    self.save
+  end
+
+  def populate_with_options_and_save(params, user = nil)
+    self.name = params[:name] unless params[:name] == '' || params[:name] == nil
+    self.description = params[:description] unless params[:description] == '' || params[:description] == nil
+    self.admin_only = to_boolean(params[:admin_only]) || false
+    self.member_list.members << user.id if user
+    if params[:member] != nil && params[:member] != []
+      params[:member].each do |member|
+        self.member_list.members << User.find_by({name: member}).id if User.find_by({name: member})
+      end
+    end
     self.save
   end
 
@@ -94,6 +114,7 @@ class Remote
     self.playlist = Playlist.new if self.playlist == nil
     self.drawing = Drawing.new if self.drawing == nil
     self.authorization = Authorization.new if self.authorization == nil 
+    self.member_list = MemberList.new if self.member_list == nil
   end
 
   def generate_remote_id

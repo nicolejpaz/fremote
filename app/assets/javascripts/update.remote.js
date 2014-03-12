@@ -27,6 +27,30 @@ function getDescriptionForm(self, endOfFormString) {
   })
 }
 
+$(document).on('keypress', function(e) {
+  if (e.target.id === "member_") {
+    if (e.keyCode === 13) {
+      e.preventDefault()
+      addToMemberList()         
+    }
+  }
+})
+
+$(document).on('click', function(e) {
+  if (e.target.id === "add_members") {
+    addToMemberList()
+  }
+})
+
+function addToMemberList() {
+  var member = $('input#member_').val()
+  if (member !== '') {
+    $('#added_members').show()
+    $('#added_members').find('ul').append('<li><input type="hidden" name="member[]" value="' + member + '">' + member + '</li>')
+    $('input#member_').val('')
+  }
+}
+
 function getNameForm(self, endOfFormString) {
   $(self).replaceWith('<form id="edit_remote_name" action="' + Remote.remote_id + '" method="PATCH"><div class="input-group input-group-sm"><input class="form-control" type="text" value="' + self.html() + '">' + endOfFormString)
 

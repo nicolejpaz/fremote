@@ -92,21 +92,11 @@ player.ready(function(){
   }
 
   source.addEventListener("watch:" + Remote.remote_id, function(event){
-    var data = JSON.parse(event.data)
-    $('#watchers').html('')
-    $.each(data.watchers, function(index, watcher){
-      displayWatcher(watcher)
-    })
-    $('#playlist').sortable()
+    getWatchers(event)
   })
 
   source.addEventListener("unwatch:" + Remote.remote_id, function(event){
-    var data = JSON.parse(event.data)
-    $('#watchers').html('')
-    $.each(data.watchers, function(index, watcher){
-      displayWatcher(watcher)
-    })
-    $('#playlist').sortable()
+    resetWatchers(event)
   })
 
   source.addEventListener("control:" + Remote.remote_id, function(event){

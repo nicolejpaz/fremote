@@ -7,3 +7,27 @@ function displayWatcher(watcher) {
     $('#watchers').append('<li id="' + watcher.username.toLowerCase() + '" class="' + watcher.user_kind + '">' + watcher.username + '</li>')
   }
 }
+
+function getWatchers(event) {
+  var data = JSON.parse(event.data)
+
+  $('#watchers').html('')
+
+  $.each(data.watchers, function(index, watcher){
+    displayWatcher(watcher)
+  })
+
+  $('#playlist').sortable()
+}
+
+function resetWatchers(event) {
+  var data = JSON.parse(event.data)
+
+  $('#watchers').html('')
+  
+  $.each(data.watchers, function(index, watcher){
+    displayWatcher(watcher)
+  })
+  
+  $('#playlist').sortable()
+}

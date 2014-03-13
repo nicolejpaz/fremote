@@ -35,9 +35,6 @@ Remote.ping = function(){
     } else {
       Remote.toggle(data)
     }
-    // $.each(data.watchers, function(index, watcher){
-    //   $('#watchers').append('<li id="' + watcher.toLowerCase() + '">' + watcher + '</li>')
-    // })
   })
 }
 
@@ -102,7 +99,7 @@ player.ready(function(){
     console.log(data)
     $('#watchers').html('')
     $.each(data.watchers, function(index, watcher){
-      $('#watchers').append('<li id="' + watcher.username.toLowerCase() + '" class="' + watcher.user_kind + '">' + watcher.username + '<span class="glyphicon glyphicon-star member"></span><span class="glyphicon glyphicon-user owner"></span></li>')
+      displayWatcher(watcher)
     })
     $('#playlist').sortable()
   })
@@ -111,7 +108,7 @@ player.ready(function(){
     var data = JSON.parse(event.data)
     $('#watchers').html('')
     $.each(data.watchers, function(index, watcher){
-      $('#watchers').append('<li id="' + watcher.username.toLowerCase() + '" class="' + watcher.user_kind + '">' + watcher.username + '<span class="glyphicon glyphicon-star member"></span><span class="glyphicon glyphicon-user owner"></span></li>')
+      displayWatcher(watcher)
     })
     $('#playlist').sortable()
   })
@@ -146,7 +143,7 @@ player.ready(function(){
     var data = JSON.parse(event.data)
     data = JSON.parse(data)
     if(data.block == true){
-      $('#playlist_group').block()
+      $('#playlist_group').block({ css: { backgroundColor: '#006c51', color: '#fff', border: 'none' }, message: '<h3>modifying playlist</h3>' })
     } else {
       $('#playlist_group').unblock()
     }
@@ -229,3 +226,13 @@ player.ready(function(){
 player.ready(function(){
   Remote.ping()
 })
+
+function displayWatcher(watcher) {
+  if (watcher.user_kind === 'owner') {
+    $('#watchers').append('<li id="' + watcher.username.toLowerCase() + '" class="' + watcher.user_kind + '">' + watcher.username + '<span class="glyphicon glyphicon-star owner"></span></li>')
+  } else if (watcher.user_kind === 'member') {
+    $('#watchers').append('<li id="' + watcher.username.toLowerCase() + '" class="' + watcher.user_kind + '">' + watcher.username + '<span class="glyphicon glyphicon-user member"></span></li>')
+  } else {
+    $('#watchers').append('<li id="' + watcher.username.toLowerCase() + '" class="' + watcher.user_kind + '">' + watcher.username + '</li>')
+  }
+}

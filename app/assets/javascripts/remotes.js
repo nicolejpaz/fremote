@@ -16,7 +16,6 @@ Remote.ping = function(){
     type: 'GET',
     url: '/remotes/' + Remote.remote_id + "/playlist"
   }).done(function(response){
-    console.log(response)
     $.each(response, function(index, item){
       $('#playlist').append(playlistItemHead + item.title + playlistItemFoot)
     })
@@ -58,7 +57,6 @@ Remote.toggle = function(data){
   }
 }
 
-
 // Synchronize time with server.  Use this instead of Date.now().
 $.ajax({
   type: 'GET',
@@ -96,7 +94,6 @@ player.ready(function(){
 
   source.addEventListener("watch:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)
-    console.log(data)
     $('#watchers').html('')
     $.each(data.watchers, function(index, watcher){
       displayWatcher(watcher)
@@ -115,7 +112,6 @@ player.ready(function(){
 
   source.addEventListener("control:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)
-    console.log(data)
     if (data.stream_url != undefined){
       player.src(data.stream_url)
       player.one('loadedmetadata', function(){
@@ -128,7 +124,6 @@ player.ready(function(){
 
   source.addEventListener("playlist_sort:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)
-    console.log(data)
 
     $('#playlist').html('')
 
@@ -151,7 +146,6 @@ player.ready(function(){
 
   source.addEventListener("playlist_add:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)
-    console.log(data)
 
     $('#playlist').append(playlistItemHead + JSON.parse(data).title + playlistItemFoot)
     $('#playlist').sortable()
@@ -159,7 +153,6 @@ player.ready(function(){
 
   source.addEventListener("playlist_delete:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)
-    console.log(data)
     var index = parseInt(JSON.parse(data).index)
 
     var list_item = $('#playlist .playlist_item')[index]
@@ -172,7 +165,6 @@ player.ready(function(){
 
   source.addEventListener("chat:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)
-    console.log(data)
     $('#chat_message').val('')
     $('#chat_table_body').prepend('<tr>' + '<td>' + data.message + '</td>' + '<td class="grey-text">' + data.name + '</td>' + '</tr>')
   })

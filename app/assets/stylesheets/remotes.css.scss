@@ -500,11 +500,14 @@ input[type="submit"] {
   display: block !important;
 }
 
+.sortable {
+  cursor: pointer;
+}
+
 #clear_playlist {
-  margin-top: -32px;
+  margin-top: -25px;
   border-radius: 0;
   font-weight: 300;
   background: $dark-gold;
-  border-bottom: $border $light-gold;
   font-size: 12px;
 }

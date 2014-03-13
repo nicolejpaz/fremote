@@ -21,6 +21,29 @@ $(document).on('ready', function(){
   $('#playlist_group form').on('ajax:success', function(){
     $('#playlist_url_field').val('')
   })
+
+  $('ol.sortable').sortable()
+
+  $('ol.sortable').sortable().bind('sortupdate', function(e, ui) {
+    $('#playlist_group').block()
+    $.ajax({
+      url: "/remotes/" + Remote.remote_id + "/playlist",
+      type: "POST",
+      data: {old_position: ui.oldindex, new_position: ui.item.index(), _method: "patch"}
+    }).done(function(){
+      $('#playlist_group').unblock()
+    })
+  })
+
+  $('#playlist').on('click', ".playlist-delete", function(e){
+    e.preventDefault()
+    var index = $(this).parent().index()
+    $.ajax({
+      url: "/remotes/" + Remote.remote_id + "/playlist",
+      type: "POST",
+      data: {index: index, _method: "delete"}
+    })
+  })
 })
 
 var Playlist = {

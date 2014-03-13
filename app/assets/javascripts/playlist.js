@@ -44,12 +44,12 @@ $(document).on('ready', function(){
       data: {index: index, _method: "delete"}
     })
   })
-})
 
-var Playlist = {
-  selectedListItem: 0
-}
+  var Playlist = {
+    selectedListItem: 0
+  }
 
-$('#playlist li').on('mousedown', function(){
-  Playlist.selectedListItem = $('#playlist li').index(self)
+  $('#playlist li').on('mousedown', function(){
+    Playlist.selectedListItem = $('#playlist li').index(self)
+  })
 })

@@ -170,3 +170,21 @@ function getMousePos(drawing_canvas, e) {
     y: e.clientY - rect.top
   }
 }
+
+function initiateDrawingOnEventListener(event, canvas) {
+  var data = JSON.parse(event.data)
+  var previous_coordinates = []
+
+  $.each(data['coordinates'], function(index, coordinate) {
+    if (previous_coordinates.length >= 1) {
+      canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
+    }
+
+    previous_coordinates.push(coordinate)
+  })
+  previous_coordinates = []
+}
+
+function clearCanvas(canvas) {
+  canvas.clear()
+}

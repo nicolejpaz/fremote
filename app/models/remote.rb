@@ -118,7 +118,6 @@ class Remote
     if new_media != nil
       self.playlist.list << new_media
       self.save
-      # return { message: "Congratulations!  Take control of your remote.", status: :notice, path: remote_path(self.remote_id)}
     else
       return { message: "The video URL you provided is invalid.  Try again using a valid YouTube, Vimeo, Veoh, Blip, or Soundcloud URL.", status: :alert, path: root_path }
     end

@@ -53,3 +53,45 @@ $(document).on('ready', function(){
     Playlist.selectedListItem = $('#playlist li').index(self)
   })
 })
+
+function sortPlaylist(event) {
+  var data = JSON.parse(event.data)
+
+  $('#playlist').html('')
+
+  $.each(data.playlist, function(index, item){
+    $('#playlist').append(playlistItemHead + item.title + playlistItemFoot)
+  })
+
+  $('#playlist').sortable()
+}
+
+function blockPlaylist(event) {
+  var data = JSON.parse(event.data)
+  data = JSON.parse(data)
+
+  if(data.block == true){
+    $('#playlist_group').block({ css: { backgroundColor: '#006c51', color: '#fff', border: 'none' }, message: '<h3>modifying playlist</h3>' })
+  } else {
+    $('#playlist_group').unblock()
+  }
+}
+
+function addToPlaylist(event) {
+  var data = JSON.parse(event.data)
+
+  $('#playlist').append(playlistItemHead + JSON.parse(data).title + playlistItemFoot)
+  $('#playlist').sortable()
+}
+
+function deleteFromPlaylist(event) {
+  var data = JSON.parse(event.data)
+  var index = parseInt(JSON.parse(data).index)
+
+  var list_item = $('#playlist .playlist_item')[index]
+  $(list_item).remove()
+}
+
+function clearPlaylist(event) {
+  $('#playlist li').remove() 
+}

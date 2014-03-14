@@ -112,68 +112,35 @@ player.ready(function(){
   })
 
   source.addEventListener("playlist_sort:" + Remote.remote_id, function(event){
-    var data = JSON.parse(event.data)
-
-    $('#playlist').html('')
-
-    $.each(data.playlist, function(index, item){
-      $('#playlist').append(playlistItemHead + item.title + playlistItemFoot)
-    })
-    $('#playlist').sortable()
-
+    sortPlaylist(event)
   })
 
   source.addEventListener("playlist_block:" + Remote.remote_id, function(event){
-    var data = JSON.parse(event.data)
-    data = JSON.parse(data)
-    if(data.block == true){
-      $('#playlist_group').block({ css: { backgroundColor: '#006c51', color: '#fff', border: 'none' }, message: '<h3>modifying playlist</h3>' })
-    } else {
-      $('#playlist_group').unblock()
-    }
+    blockPlaylist(event)
   })
 
   source.addEventListener("playlist_add:" + Remote.remote_id, function(event){
-    var data = JSON.parse(event.data)
-
-    $('#playlist').append(playlistItemHead + JSON.parse(data).title + playlistItemFoot)
-    $('#playlist').sortable()
+    addToPlaylist(event)
   })
 
   source.addEventListener("playlist_delete:" + Remote.remote_id, function(event){
-    var data = JSON.parse(event.data)
-    var index = parseInt(JSON.parse(data).index)
-
-    var list_item = $('#playlist .playlist_item')[index]
-    $(list_item).remove()
+    deleteFromPlaylist(event)
   })
 
   source.addEventListener("playlist_clear:" + Remote.remote_id, function(event) {
-    $('#playlist li').remove()    
+    clearPlaylist(event)   
   })
 
   source.addEventListener("chat:" + Remote.remote_id, function(event){
-    var data = JSON.parse(event.data)
-    $('#chat_message').val('')
-    $('#chat_table_body').prepend('<tr>' + '<td>' + data.message + '</td>' + '<td class="grey-text">' + data.name + '</td>' + '</tr>')
+    sendChatMessage(event)
   })
 
   source.addEventListener("drawing:" + Remote.remote_id, function(event){
-    var data = JSON.parse(event.data)
-    var previous_coordinates = []
-
-    $.each(data['coordinates'], function(index, coordinate) {
-      if (previous_coordinates.length >= 1) {
-        canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
-      }
-
-      previous_coordinates.push(coordinate)
-    })
-    previous_coordinates = []
+    initiateDrawingOnEventListener(event, canvas)
   })
 
   source.addEventListener("clear:" + Remote.remote_id, function(event){
-    canvas.clear()
+    clearCanvas(canvas)
   })
 
   window.onunload = function() {

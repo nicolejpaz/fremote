@@ -1,6 +1,3 @@
-var playlistItemHead = '<li class="playlist_item sortable" draggable="true"><a class="playlist-title">'
-var playlistItemFoot = '</a><button style="float: right;" class="btn btn-xfs btn-danger playlist-delete">X</button></li>'
-
 Remote.update = function(){
   $.ajax({
     type: 'POST',
@@ -11,15 +8,7 @@ Remote.update = function(){
 }
 
 Remote.ping = function(){
-  $.ajax({
-    type: 'GET',
-    url: '/remotes/' + Remote.remote_id + "/playlist"
-  }).done(function(response){
-    $.each(response, function(index, item){
-      $('#playlist').append(playlistItemHead + item.title + playlistItemFoot)
-    })
-      $('#playlist').sortable()
-  })
+  createPlaylist()
 
   $.ajax({
     type: 'GET',
@@ -56,16 +45,7 @@ Remote.toggle = function(data){
   }
 }
 
-// Synchronize time with server.  Use this instead of Date.now().
-$.ajax({
-  type: 'GET',
-  url: '/time',
-  async: false,
-  dataType: 'JSON'
-}).done(function(response){
-  Remote.date = Date.parse(response.time)
-  setInterval(function(){Remote.date = Remote.date + 1000},1000);
-})
+synchronizeTime()
 
 var player = videojs('player')
 

@@ -1,41 +1,9 @@
-var playlistItemHead = '<li class="playlist_item sortable" draggable="true"><a class="playlist-title">'
-var playlistItemFoot = '</a><button style="float: right;" class="btn btn-xfs btn-danger playlist-delete">X</button></li>'
-
-
 Remote.update = function(){
-  $.ajax({
-    type: 'POST',
-    url: '/remotes/' + Remote.remote_id + '/control',
-    data: { _method:'PUT', status: Remote.status, start_at: Remote.start_at, sender_id: user },
-    dataType: 'JSON'
-  })
+  updateRemote()
 }
 
 Remote.ping = function(){
-  $.ajax({
-    type: 'GET',
-    url: '/remotes/' + Remote.remote_id + "/playlist"
-  }).done(function(response){
-    console.log(response)
-    $.each(response, function(index, item){
-      $('#playlist').append(playlistItemHead + item.title + playlistItemFoot)
-    })
-      $('#playlist').sortable()
-  })
-
-  $.ajax({
-    type: 'GET',
-    url: '/remotes/' + Remote.remote_id + "/ping"
-  }).done(function(data){
-    if (data.stream_url != undefined){
-      player.src(data.stream_url)
-      player.one('loadedmetadata', function(){
-        Remote.toggle(data)
-      })
-    } else {
-      Remote.toggle(data)
-    }
-  })
+  pingRemote()
 }
 
 Remote.pause = function(start_at){
@@ -58,17 +26,7 @@ Remote.toggle = function(data){
   }
 }
 
-
-// Synchronize time with server.  Use this instead of Date.now().
-$.ajax({
-  type: 'GET',
-  url: '/time',
-  async: false,
-  dataType: 'JSON'
-}).done(function(response){
-  Remote.date = Date.parse(response.time)
-  setInterval(function(){Remote.date = Remote.date + 1000},1000);
-})
+synchronizeTime()
 
 var player = videojs('player')
 
@@ -95,27 +53,15 @@ player.ready(function(){
   }
 
   source.addEventListener("watch:" + Remote.remote_id, function(event){
-    var data = JSON.parse(event.data)
-    console.log(data)
-    $('#watchers').html('')
-    $.each(data.watchers, function(index, watcher){
-      displayWatcher(watcher)
-    })
-    $('#playlist').sortable()
+    getWatchers(event)
   })
 
   source.addEventListener("unwatch:" + Remote.remote_id, function(event){
-    var data = JSON.parse(event.data)
-    $('#watchers').html('')
-    $.each(data.watchers, function(index, watcher){
-      displayWatcher(watcher)
-    })
-    $('#playlist').sortable()
+    resetWatchers(event)
   })
 
   source.addEventListener("control:" + Remote.remote_id, function(event){
     var data = JSON.parse(event.data)
-    console.log(data)
     if (data.stream_url != undefined){
       player.src(data.stream_url)
       player.one('loadedmetadata', function(){
@@ -127,72 +73,35 @@ player.ready(function(){
   })
 
   source.addEventListener("playlist_sort:" + Remote.remote_id, function(event){
-    var data = JSON.parse(event.data)
-    console.log(data)
-
-    $('#playlist').html('')
-
-    $.each(data.playlist, function(index, item){
-      $('#playlist').append(playlistItemHead + item.title + playlistItemFoot)
-    })
-    $('#playlist').sortable()
-
+    sortPlaylist(event)
   })
 
   source.addEventListener("playlist_block:" + Remote.remote_id, function(event){
-    var data = JSON.parse(event.data)
-    data = JSON.parse(data)
-    if(data.block == true){
-      $('#playlist_group').block({ css: { backgroundColor: '#006c51', color: '#fff', border: 'none' }, message: '<h3>modifying playlist</h3>' })
-    } else {
-      $('#playlist_group').unblock()
-    }
+    blockPlaylist(event)
   })
 
   source.addEventListener("playlist_add:" + Remote.remote_id, function(event){
-    var data = JSON.parse(event.data)
-    console.log(data)
-
-    $('#playlist').append(playlistItemHead + JSON.parse(data).title + playlistItemFoot)
-    $('#playlist').sortable()
+    addToPlaylist(event)
   })
 
   source.addEventListener("playlist_delete:" + Remote.remote_id, function(event){
-    var data = JSON.parse(event.data)
-    console.log(data)
-    var index = parseInt(JSON.parse(data).index)
-
-    var list_item = $('#playlist .playlist_item')[index]
-    $(list_item).remove()
+    deleteFromPlaylist(event)
   })
 
   source.addEventListener("playlist_clear:" + Remote.remote_id, function(event) {
-    $('#playlist li').remove()    
+    clearPlaylist(event)   
   })
 
   source.addEventListener("chat:" + Remote.remote_id, function(event){
-    var data = JSON.parse(event.data)
-    console.log(data)
-    $('#chat_message').val('')
-    $('#chat_table_body').prepend('<tr>' + '<td>' + data.message + '</td>' + '<td class="grey-text">' + data.name + '</td>' + '</tr>')
+    sendChatMessage(event)
   })
 
   source.addEventListener("drawing:" + Remote.remote_id, function(event){
-    var data = JSON.parse(event.data)
-    var previous_coordinates = []
-
-    $.each(data['coordinates'], function(index, coordinate) {
-      if (previous_coordinates.length >= 1) {
-        canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
-      }
-
-      previous_coordinates.push(coordinate)
-    })
-    previous_coordinates = []
+    initiateDrawingOnEventListener(event, canvas)
   })
 
   source.addEventListener("clear:" + Remote.remote_id, function(event){
-    canvas.clear()
+    clearCanvas(canvas)
   })
 
   window.onunload = function() {
@@ -226,13 +135,3 @@ player.ready(function(){
 player.ready(function(){
   Remote.ping()
 })
-
-function displayWatcher(watcher) {
-  if (watcher.user_kind === 'owner') {
-    $('#watchers').append('<li id="' + watcher.username.toLowerCase() + '" class="' + watcher.user_kind + '">' + watcher.username + '<span class="glyphicon glyphicon-star owner"></span></li>')
-  } else if (watcher.user_kind === 'member') {
-    $('#watchers').append('<li id="' + watcher.username.toLowerCase() + '" class="' + watcher.user_kind + '">' + watcher.username + '<span class="glyphicon glyphicon-user member"></span></li>')
-  } else {
-    $('#watchers').append('<li id="' + watcher.username.toLowerCase() + '" class="' + watcher.user_kind + '">' + watcher.username + '</li>')
-  }
-}

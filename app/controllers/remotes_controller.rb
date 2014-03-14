@@ -71,7 +71,4 @@ class RemotesController < ApplicationController
 	def time
 		render json: {time: Time.now}.to_json
 	end
-
-	private
-
 end

@@ -25,3 +25,4 @@
 //= require update.remote
 //= require landing.ui
 //= require sync.time
+//= require remote.controls

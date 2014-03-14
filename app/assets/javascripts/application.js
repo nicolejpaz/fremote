@@ -18,9 +18,11 @@
 //= require video.dev
 //= require html.sortable.0.1.1
 //= require playlist
-//= require ui
 // require_directory .
+//= require watchers
 //= require canvas
 //= require chat
 //= require update.remote
 //= require landing.ui
+//= require sync.time
+//= require remote.controls

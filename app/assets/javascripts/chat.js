@@ -33,3 +33,9 @@ function removeError(chatForm, chatBox, chatBtn) {
 function getCharactersRemaining(chatLength) {
   return 500 - chatLength
 }
+
+function sendChatMessage(event) {
+  var data = JSON.parse(event.data)
+  $('#chat_message').val('')
+  $('#chat_table_body').prepend('<tr>' + '<td>' + data.message + '</td>' + '<td class="grey-text">' + data.name + '</td>' + '</tr>')
+}

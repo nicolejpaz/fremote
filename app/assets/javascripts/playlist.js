@@ -1,3 +1,6 @@
+var playlistItemHead = '<li class="playlist_item sortable" draggable="true"><a class="playlist-title">'
+var playlistItemFoot = '</a><button style="float: right;" class="btn btn-xfs btn-danger playlist-delete">X</button></li>'
+
 $(document).on('ready', function(){
 	$('#playlist').on('click', '.playlist-title', function(){
 		var self = $(this)
@@ -94,4 +97,16 @@ function deleteFromPlaylist(event) {
 
 function clearPlaylist(event) {
   $('#playlist li').remove() 
+}
+
+function createPlaylist() {
+  $.ajax({
+    type: 'GET',
+    url: '/remotes/' + Remote.remote_id + "/playlist"
+  }).done(function(response){
+    $.each(response, function(index, item){
+      $('#playlist').append(playlistItemHead + item.title + playlistItemFoot)
+    })
+    $('#playlist').sortable()
+  })
 }

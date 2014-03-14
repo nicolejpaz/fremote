@@ -13,7 +13,7 @@
   - else
     %p.small.grey-text.padding
       = "You are a #{user_type(remote, @user)} of this remote, so you do not have permission to add to this playlist."
-      You must be any of these to use the chat: 
+      You must be any of these to use the playlist: 
       - remote.authorization.permissions_by_user_type('chat').each do |user_type, permitted|
         - if permitted
           = "#{user_type} " 

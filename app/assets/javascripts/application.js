@@ -29,4 +29,5 @@
 //= require stream
 //= require playlist
 //= require player
+//= require chat
 //= require fremote

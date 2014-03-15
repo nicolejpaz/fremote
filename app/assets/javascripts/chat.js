@@ -1,16 +1,16 @@
 // class Chat
-function Chat(){
+function Chat(source,remote){
   var self = this
   var chatInput = $('input#chat_message')
-  var chatTableBody = $('#chat_table_body'
-  self.characterLimitElement = $('div#chat_character_limit')
+  var chatTableBody = $('#chat_table_body')
+  var characterLimitElement = $('div#chat_character_limit')
 
-  self.chatInput.on('keyup', function() {
-    checkCharacterLimit(this.value)
+  chatInput.on('keyup', function() {
+    self.checkCharacterLimit(this.value)
   })
 
   source.addEventListener("chat:" + remote.remoteId, function(event){
-    sendChatMessage(event)
+    self.sendChatMessage(event)
   })
 
   self.checkCharacterLimit = function(chatValue) {
@@ -19,7 +19,7 @@ function Chat(){
     var chatBtn = $('input.btn[name="commit"]')
     var chatForm = $('form').first()
 
-    self.characterLimitELement.html(charactersRemaining + ' characters left')
+    characterLimitELement.html(charactersRemaining + ' characters left')
 
     if (charactersRemaining < 0) {
       self.addError(chatForm, chatBox, chatBtn)

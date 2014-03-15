@@ -3,4 +3,5 @@ $(document).on('ready', function(){
   var playlist = new Playlist(stream.source)
   var remote = new Remote(stream.source, playlist)
   var player = new Player(stream.source, remote)
+  var chat = new Chat(stream.source, remote)
 })

@@ -9,18 +9,6 @@ function Remote(source,playlist){
   self.startAt = 0
   self.remoteId = remote_id
 
-  // source.addEventListener("control:" + self.remoteId, function(event){
-  //   var data = JSON.parse(event.data)
-  //   if (data.stream_url != undefined){
-  //     self.player.element.src(data.stream_url)
-  //     self.player.element.one('loadedmetadata', function(){
-  //       self.toggle(data)
-  //     })
-  //   } else {
-  //     self.toggle(data)
-  //   }
-  // })
-
   source.addEventListener("playlist_sort:" + self.remoteId, function(event){
     sortPlaylist(event)
   })
@@ -39,10 +27,6 @@ function Remote(source,playlist){
 
   source.addEventListener("playlist_clear:" + self.remoteId, function(event) {
     clearPlaylist(event)   
-  })
-
-  source.addEventListener("chat:" + self.remoteId, function(event){
-    sendChatMessage(event)
   })
 
   source.addEventListener("drawing:" + self.remoteId, function(event){

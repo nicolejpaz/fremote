@@ -31,3 +31,4 @@
 //= require player
 //= require chat
 //= require fremote
+//= require canvas

@@ -1,4 +1,4 @@
-//class
+//class Playlist
 function Playlist(source, remote){
   var self = this
   self.element = $('#playlist')
@@ -23,7 +23,6 @@ function Playlist(source, remote){
 
     source.addEventListener("playlist_delete:" + remote.remoteId, function(event){
       self.deleteFromPlaylist(event)
-
     })
 
     source.addEventListener("playlist_clear:" + remote.remoteId, function(event) {

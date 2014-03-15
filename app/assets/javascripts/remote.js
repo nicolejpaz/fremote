@@ -1,5 +1,5 @@
 // class Remote
-function Remote(source,playlist){
+function Remote(source){
   var self = this
   var endOfFormString = '<span class="input-group-btn"><button class="btn btn-edit" type="submit">Edit</button><button class="btn btn-edit btn-red" type="button">Cancel</button></span></div></form>'
   var remoteNameElement = $('#remote_name')
@@ -8,26 +8,6 @@ function Remote(source,playlist){
   self.status = 0
   self.startAt = 0
   self.remoteId = remote_id
-
-  source.addEventListener("playlist_sort:" + self.remoteId, function(event){
-    sortPlaylist(event)
-  })
-
-  source.addEventListener("playlist_block:" + self.remoteId, function(event){
-    blockPlaylist(event)
-  })
-
-  source.addEventListener("playlist_add:" + self.remoteId, function(event){
-    addToPlaylist(event)
-  })
-
-  source.addEventListener("playlist_delete:" + self.remoteId, function(event){
-    deleteFromPlaylist(event)
-  })
-
-  source.addEventListener("playlist_clear:" + self.remoteId, function(event) {
-    clearPlaylist(event)   
-  })
 
   source.addEventListener("drawing:" + self.remoteId, function(event){
     initiateDrawingOnEventListener(event, canvas)
@@ -62,7 +42,7 @@ function Remote(source,playlist){
   }
 
   self.ping = function(){
-    playlist.createPlaylist()
+    // playlist.createPlaylist()
     $.ajax({
       type: 'GET',
       url: '/remotes/' + self.remoteId + "/ping"

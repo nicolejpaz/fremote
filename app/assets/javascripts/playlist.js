@@ -114,7 +114,11 @@ function Playlist(source, remote){
     data = JSON.parse(data)
 
     if(data.block == true){
-      playlistGroup.block({ css: { backgroundColor: '#006c51', color: '#fff', border: 'none' }, message: '<h3>modifying playlist</h3>' })
+      if(data.add == true){
+        playlistGroup.block({ css: { backgroundColor: '#fff', color: '#006c51', border: 'none' }, message: 'preparing playlist video' })
+      } else {
+        playlistGroup.block({ css: { backgroundColor: '#fff', color: '#006c51', border: 'none' }, message: 'modifying playlist' })
+      }
     } else {
       playlistGroup.unblock()
     }

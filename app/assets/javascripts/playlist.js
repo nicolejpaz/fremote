@@ -2,8 +2,8 @@
 function Playlist(source, remote){
   var self = this
   self.element = $('#playlist')
-  self.playlistGroup = $('#playlist_group')
-  self.listItems = $('#playlist li')
+  var playlistGroup = $('#playlist_group')
+  var listItems = $('#playlist li')
   var playlistClearButton = $('#clear_playlist')
   self.playlistItemHead = '<li class="playlist_item sortable" draggable="true"><a class="playlist-title">'
   self.playlistItemFoot = '</a><button style="float: right;" class="btn btn-xfs btn-danger playlist-delete">X</button></li>'
@@ -70,13 +70,13 @@ function Playlist(source, remote){
 
     // Update playlist item position on drag
     $('ol.sortable').sortable().bind('sortupdate', function(e, ui) {
-      self.playlistGroup.block()
+      playlistGroup.block()
       $.ajax({
         url: "/remotes/" + remote.remoteId + "/playlist",
         type: "POST",
         data: {old_position: ui.oldindex, new_position: ui.item.index(), _method: "patch"}
       }).done(function(){
-        self.playlistGroup.unblock()
+        playlistGroup.unblock()
       })
     })
 
@@ -84,9 +84,6 @@ function Playlist(source, remote){
     $('#playlist li').on('mousedown', function(){
       Playlist.selectedListItem = $('#playlist li').index(self)
     })
-
-
-
 
   self.refresh = function(){
     $.ajax({
@@ -99,7 +96,6 @@ function Playlist(source, remote){
       self.element.sortable()
     })    
   }
-
 
   self.sortPlaylist = function(event) {
     var data = JSON.parse(event.data)
@@ -118,9 +114,9 @@ function Playlist(source, remote){
     data = JSON.parse(data)
 
     if(data.block == true){
-      self.playlistGroup.block({ css: { backgroundColor: '#006c51', color: '#fff', border: 'none' }, message: '<h3>modifying playlist</h3>' })
+      playlistGroup.block({ css: { backgroundColor: '#006c51', color: '#fff', border: 'none' }, message: '<h3>modifying playlist</h3>' })
     } else {
-      self.playlistGroup.unblock()
+      playlistGroup.unblock()
     }
   }
 

@@ -1,5 +1,5 @@
 // class Remote
-function Remote(source){
+function Remote(source, canvas){
   var self = this
   var endOfFormString = '<span class="input-group-btn"><button class="btn btn-edit" type="submit">Edit</button><button class="btn btn-edit btn-red" type="button">Cancel</button></span></div></form>'
   var remoteNameElement = $('#remote_name')
@@ -8,14 +8,6 @@ function Remote(source){
   self.status = 0
   self.startAt = 0
   self.remoteId = remote_id
-
-  source.addEventListener("drawing:" + self.remoteId, function(event){
-    initiateDrawingOnEventListener(event, canvas)
-  })
-
-  source.addEventListener("clear:" + self.remoteId, function(event){
-    clearCanvas(canvas)
-  })
 
   remoteNameElement.on('click', function(e) {
     if (e.target.tagName === "H3") {

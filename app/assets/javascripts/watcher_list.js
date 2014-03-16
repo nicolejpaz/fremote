@@ -1,6 +1,7 @@
 function WatcherList(source, remote){
 
   var watchersElement = $('#watchers')
+
   source.addEventListener("watch:" + remote.remoteId, function(event){
     self.getWatchers(event)
   })

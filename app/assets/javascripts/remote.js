@@ -19,15 +19,74 @@ function Remote(source){
 
   remoteNameElement.on('click', function(e) {
     if (e.target.tagName === "H3") {
-      getNameForm($(e.target), endOfFormString)
+      self.getNameForm($(e.target), endOfFormString)
     }
   })
 
   remoteDescriptionElement.on('click', function(e) {
     if (e.target.tagName === "P") {
-      getDescriptionForm($(this).find('p'), endOfFormString)
+      self.getDescriptionForm($(this).find('p'), endOfFormString)
     }
   })
+
+  self.getNameForm = function(thisSelf, endOfFormString) {
+    $(thisSelf).replaceWith('<form id="edit_remote_name" action="' + self.remoteId + '" method="PATCH"><div class="input-group input-group-sm"><input class="form-control" type="text" value="' + thisSelf.html() + '">' + endOfFormString)
+
+    $('#remote_name form button[type="button"]').on('click', function(e) {
+      $(e.target).closest('form').replaceWith(self.returnName(thisSelf.html()))
+    })
+
+    $('#remote_name form').on('submit', function(e) {
+      self.updateName(e, this)
+    })
+  }
+
+  self.updateName = function(e, thisSelf) {
+    e.preventDefault()
+    var data = $('#remote_name input').val()
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + self.remoteId,
+      data: { _method: 'PATCH', name: data, type: 'name' }
+    }).done(function(e, status, data, xhr) {
+      var response_name = data.responseJSON.remote.name
+      $(thisSelf).replaceWith(self.returnName(response_name))
+    })
+  }
+
+  self.returnName = function(text) {
+    return '<h3 class="panel-title inline">' + text + '</h3>'
+  }
+
+  self.getDescriptionForm = function(thisSelf, endOfFormString) {
+    $(thisSelf).replaceWith('<form id="edit_remote_description" action="' + self.remoteId + '" method="PATCH"><div class="input-group input-group-sm"><textarea class="form-control">' + thisSelf.html() + '</textarea>' + endOfFormString)
+    $('#remote_description form').addClass('edit-description')
+
+    $('#remote_description form button[type="button"]').on('click', function(e) {
+      $(e.target).closest('form').replaceWith(self.returnDescription(thisSelf.html()))
+    })
+
+    $('#remote_description form').on('submit', function(e) {
+      self.updateDescription(e, this)
+    })
+  }
+
+  self.updateDescription = function(e, thisSelf) {
+    e.preventDefault()
+    var data = $('#remote_description textarea').val()
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + self.remoteId,
+      data: { _method: 'PATCH', description: data, type: 'description' }
+    }).done(function(e, status, data, xhr) {
+      var response_description = data.responseJSON.remote.description
+      $(thisSelf).replaceWith(self.returnDescription(response_description))
+    })
+  }
+
+  self.returnDescription = function(text) {
+    return '<p>' + text + '</p>'
+  }
 
   self.getServerTime = function(){
     $.ajax({

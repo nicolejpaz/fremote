@@ -289,6 +289,10 @@ canvas#drawing-surface {
     color: #999;
   }
 
+  #watchers_group .video-body {
+    min-height: 40px;
+  }
+
   #playlist {
     a {
       font-size: 12px;

@@ -81,3 +81,6 @@
       .input-group
         %span.input-group-btn
           = submit_tag "Update Remote", class: "btn btn-success"
+
+  :javascript
+    var remote_id = '#{@remote.remote_id}'

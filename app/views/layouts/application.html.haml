@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!!!
 %html
   %head
     %meta{content: "width=device-width, initial-scale=1.0", name: "viewport"}/
@@ -6,6 +6,7 @@
     %meta{content: content_for?(:description) ? yield(:description) : "Fremote", name: "description"}/
     = stylesheet_link_tag "application", media: "all"
     = javascript_include_tag "application"
+    = javascript_pluggable_tag
     = csrf_meta_tags
   %body
     %header= render 'layouts/navigation'

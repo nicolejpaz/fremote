@@ -17,7 +17,6 @@
 //= require eventsource
 //= require video.dev
 //= require html.sortable.0.1.1
-//= require landing.ui
 //= require remote
 //= require stream
 //= require playlist

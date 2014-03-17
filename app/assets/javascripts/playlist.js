@@ -5,12 +5,13 @@ function Playlist(source, remote){
   var playlistGroup = $('#playlist_group')
   var listItems = $('#playlist li')
   var playlistClearButton = $('#clear_playlist')
-  self.playlistItemHead = '<li class="playlist_item sortable" draggable="true"><a class="playlist-title">'
   self.selectedListItem = 0
 
   if (authorized === 'true') {
+    self.playlistItemHead = '<li class="playlist_item sortable" draggable="true"><a class="playlist-title">'
     self.playlistItemFoot = '</a><button class="btn btn-xfs btn-danger right playlist-delete">X</button></li>'
   } else {
+    self.playlistItemHead = '<li class="playlist_item"><a>'
     self.playlistItemFoot = '</a></li>'
   }
 

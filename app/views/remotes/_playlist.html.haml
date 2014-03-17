@@ -1,7 +1,8 @@
 %ul#playlist_group.list-group.panel
   %li.list-group-item.video-heading
     %h3.panel-title Playlist
-    %button.btn.btn-landing.right#clear_playlist Clear Playlist
+    - if remote.authorization.is_authorized?("playlist", current_user)
+      %button.btn.btn-landing.right#clear_playlist Clear Playlist
   - if remote.authorization.is_authorized?("playlist", current_user)
     %li.list-group-item
       = form_for :playlist, url: remote_playlist_path(remote.remote_id), remote: true, html: { id: "playlist_form" } do |f|

@@ -21,6 +21,67 @@ function Remote(){
     }
   })
 
+  $(document).on('keypress', function(e) {
+    if (e.target.id === "member_") {
+      if (e.keyCode === 13) {
+        e.preventDefault()
+        self.addToMemberList()         
+      }
+    }
+  })
+
+  $(document).on('click', function(e) {
+    var target = $(e.target)
+    if (target[0].id === "add_members") {
+      self.addToMemberList()
+    } else if (target.hasClass('user-remove')) {
+      e.preventDefault()
+      self.removeFromMemberList(target)
+    } else if (target.hasClass('user-delete')) {
+      e.preventDefault()
+      self.setFlagToRemoveMember(target)
+    } else if (target.hasClass('user-add')) {
+      e.preventDefault()
+      self.removeFlagToRemoveMember(target)
+    }
+  })
+
+  self.addedMemberListItem = function(member) {
+    return '<li><input type="hidden" name="member[]" value="' + member + '">' + member + '<button class="right btn-xfs btn-danger user-remove">X</button></li>'
+  }
+
+  self.addToMemberList = function() {
+    var member = $('input#member_').val()
+    if (member !== '') {
+      $('#added_members').show()
+      $('#added_members').find('ul').append(self.addedMemberListItem(member))
+      $('input#member_').val('')
+    }
+  }
+
+  self.removeFlagToRemoveMember = function(target) {
+    target.parent().removeClass('to-delete')
+    target.parent().find('input').remove()
+    target.removeClass('user-add')
+    target.addClass('user-delete')
+    target.text('X')
+  }
+
+  self.setFlagToRemoveMember = function(target) {
+    target.parent().addClass('to-delete')
+    target.parent().append('<input type="hidden" name="delete[]" value="' + target.parent()[0].innerText.replace(/ [X]$/, '') + '" >')
+    target.removeClass('user-delete')
+    target.addClass('user-add')
+    target.text('+')
+  }
+
+  self.removeFromMemberList = function(target) {
+    if ($(target.parents()[1]).find('li').length === 1) {
+      $(target.parents()[2]).hide()
+    }
+    target.parent().remove()
+  }
+
   self.getNameForm = function(thisSelf, endOfFormString) {
     $(thisSelf).replaceWith('<form id="edit_remote_name" action="' + self.remoteId + '" method="PATCH"><div class="input-group input-group-sm"><input class="form-control" type="text" value="' + thisSelf.html() + '">' + endOfFormString)
 

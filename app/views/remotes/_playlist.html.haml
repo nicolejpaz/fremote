@@ -21,3 +21,6 @@
 
   %li.list-group-item.video-body
     %ol#playlist.sortable.list
+
+  :javascript
+    var authorized = "#{remote.authorization.is_authorized?("playlist", current_user)}"

@@ -23,25 +23,22 @@ module Stream
     heartbeat = Thread.new do
       begin
           remote = remote.reload
-          remote.watchers << {username: username, user_kind: user_kind}
-          remote.watchers = remote.watchers.uniq
+          watcher_record = {"username" => username, "user_kind" => user_kind}
+          remote.watchers << watcher_record
           remote.save
-          ActiveSupport::Notifications.instrument("watch:#{remote.remote_id}", {watchers: remote.watchers, username: username}.to_json)
+          ActiveSupport::Notifications.instrument("watch:#{remote.remote_id}", {watchers: remote.watchers.uniq, username: username}.to_json)
         loop do
           sleep heartrate.seconds
           response.stream.write "event: heartbeat\n"
         end
         ensure
           remote = remote.reload
-          remote.watchers.delete(remote.watchers.select{ |i| i["username"] == username}.first)
+          watcher_index = remote.watchers.index(remote.watchers.select{ |i| i["username"] == username}.first)
+          remote.watchers.delete_at(watcher_index)
           remote.save
-          ActiveSupport::Notifications.instrument("unwatch:#{remote.remote_id}", {watchers: remote.watchers, username: username}.to_json)
+          ActiveSupport::Notifications.instrument("unwatch:#{remote.remote_id}", {watchers: remote.watchers.uniq, username: username}.to_json)
       end
     end
-
-    # Send the most recent remote information first.
-    # ActiveSupport::Notifications.instrument("control:#{remote.remote_id}", {'start_at' => remote.start_at, 'status' => remote.status, 'updated_at' => remote.updated_at, 'sender_id' => 'fremote_server' }.to_json)
-
 
     # Loop until the heartbeat dies.
     while heartbeat.alive? && response.stream.closed? == false

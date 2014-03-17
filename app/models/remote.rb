@@ -91,14 +91,11 @@ class Remote
   end
 
   def kind_of_user(user = nil)
-    return "guest" if user == nil
-
-    if user == self.user
-      return "owner"
+    if user
+      determine_user_type(user)
     else
-      return "user"
+      return 'guest'
     end
-
   end
 
   private
@@ -173,6 +170,16 @@ class Remote
       member = User.find_by({name: delete_name})
       self.member_list.members.delete(member.id)
       member.delete_remote_from_user_memberships(self)
+    end
+  end
+
+  def determine_user_type(user)
+    if self.member_list.members.include? user.id
+      return 'member'
+    elsif self.user.id == user.id
+      return 'owner'
+    else
+      return 'user'
     end
   end
 end

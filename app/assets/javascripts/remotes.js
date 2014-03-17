@@ -16,6 +16,12 @@ window['remotes#edit'] = function(data) {
   })
 }
 
+window['remotes#new'] = function(data) {
+  $(document).on('ready', function() {
+    var remote = new Remote()
+  })
+}
+
 window['remotes#index'] = function(data) {
   window.onload = function() {
     changeWindowHeight()

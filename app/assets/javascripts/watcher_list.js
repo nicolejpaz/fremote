@@ -29,6 +29,4 @@ function WatcherList(source, remote){
       self.displayWatcher(watcher)
     })
   }
-
-
 }

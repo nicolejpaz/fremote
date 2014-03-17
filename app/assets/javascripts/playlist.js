@@ -6,8 +6,13 @@ function Playlist(source, remote){
   var listItems = $('#playlist li')
   var playlistClearButton = $('#clear_playlist')
   self.playlistItemHead = '<li class="playlist_item sortable" draggable="true"><a class="playlist-title">'
-  self.playlistItemFoot = '</a><button style="float: right;" class="btn btn-xfs btn-danger playlist-delete">X</button></li>'
   self.selectedListItem = 0
+
+  if (authorized === 'true') {
+    self.playlistItemFoot = '</a><button class="btn btn-xfs btn-danger right playlist-delete">X</button></li>'
+  } else {
+    self.playlistItemFoot = '</a></li>'
+  }
 
   source.addEventListener("playlist_sort:" + remote.remoteId, function(event){
     self.sortPlaylist(event)

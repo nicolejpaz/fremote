@@ -3,11 +3,11 @@ function WatcherList(source, remote){
   var watchersElement = $('#watchers')
 
   source.addEventListener("watch:" + remote.remoteId, function(event){
-    self.getWatchers(event)
+    self.updateWatchers(event)
   })
 
   source.addEventListener("unwatch:" + remote.remoteId, function(event){
-    self.resetWatchers(event)
+    self.updateWatchers(event)
   })
 
   self.displayWatcher = function(watcher) {
@@ -20,7 +20,7 @@ function WatcherList(source, remote){
     }
   }
 
-  self.getWatchers = function(event) {
+  self.updateWatchers = function(event) {
     var data = JSON.parse(event.data)
 
     watchersElement.html('')
@@ -30,15 +30,5 @@ function WatcherList(source, remote){
     })
   }
 
-  self.resetWatchers = function(event) {
-    var data = JSON.parse(event.data)
-
-    watchersElement.html('')
-    
-    $.each(data.watchers, function(index, watcher){
-      self.displayWatcher(watcher)
-    })
-    
-  }
 
 }

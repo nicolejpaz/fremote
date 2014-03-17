@@ -14,7 +14,7 @@ class RemotesController < ApplicationController
 	def create
 		@user = current_user if current_user
 		@remote = Remote.make(@user)
-    @remote.authorization.update_permissions(params)
+    @remote.authorization.update_permissions(params) if @user
 		dispatch = @remote.populate(params[:video_url])
 		@remote.populate_with_options_and_save(params, @user)
     flash[:notice] = "Congratulations!  Take control of your remote."

@@ -91,14 +91,17 @@ class Remote
   end
 
   def kind_of_user(user = nil)
-    return "guest" if user == nil
-
-    if user == self.user
-      return "owner"
+    if user
+      if self.member_list.members.include? user.id
+        return 'member'
+      elsif self.user.id == user.id
+        return 'owner'
+      else
+        return 'user'
+      end
     else
-      return "user"
+      return 'guest'
     end
-
   end
 
   private

@@ -15,3 +15,19 @@ window['remotes#edit'] = function(data) {
     var remote = new Remote()
   })
 }
+
+window['remotes#index'] = function(data) {
+  window.onload = function() {
+    changeWindowHeight()
+  }
+
+  window.onresize = function() {
+    changeWindowHeight()
+  }
+
+  function changeWindowHeight() {
+    var windowHeight = $(window).height()
+    console.log('changing')
+    $('#on_landing').css('padding-top', windowHeight / 3)
+  }
+}

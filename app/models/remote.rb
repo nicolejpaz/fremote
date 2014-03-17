@@ -135,11 +135,13 @@ class Remote
   end
 
   def change_playlist_selection_if_selection_key_exists(params)
+    Notify.new("playlist_block:#{self.remote_id}", {"block" => true, "add" => true}.to_json)
     self.playlist.selection = params["selection"].to_i
     self.start_at = 0
     self.status = 1
     self.save
     Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.selection]["url"])) })
+    Notify.new("playlist_block:#{self.remote_id}", {"block" => false}.to_json)
   end
 
   def change_status_if_status_is_zero(params)

@@ -24,5 +24,5 @@
 //= require player
 //= require chat
 //= require watcher_list
-//= require fremote
 //= require canvas
+//= require remotes

@@ -21,7 +21,9 @@ module RemotesHelper
     if user
       if remote.member_list.members.include? user.id
         return 'member'
-      elsif user
+      elsif remote.user.id == user.id
+        return 'owner'
+      else
         return 'user'
       end
     else

@@ -1,5 +1,5 @@
 // class Remote
-function Remote(source, canvas){
+function Remote(){
   var self = this
   var endOfFormString = '<span class="input-group-btn"><button class="btn btn-edit" type="submit">Edit</button><button class="btn btn-edit btn-red" type="button">Cancel</button></span></div></form>'
   var remoteNameElement = $('#remote_name')
@@ -110,7 +110,6 @@ function Remote(source, canvas){
   }
 
   self.update = function(){
-    console.log(self.startAt)
     $.ajax({
       type: 'POST',
       url: '/remotes/' + self.remoteId + '/control',

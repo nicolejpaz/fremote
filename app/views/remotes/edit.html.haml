@@ -74,7 +74,7 @@
                   - @members.each do |member|
                     %li
                       = "#{return_user(member).name}"
-                      - unless is_member?(@remote, current_user)
+                      - unless return_user(member) == current_user
                         %button.right.btn-xfs.btn-danger.user-delete X
                 - else
                   %li.list-unstyled There are no members assigned to this remote.

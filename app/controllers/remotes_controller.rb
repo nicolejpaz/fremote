@@ -14,7 +14,7 @@ class RemotesController < ApplicationController
 	def create
 		@user = current_user if current_user
 		@remote = Remote.make(@user)
-    @remote.authorization.update_permissions(params)
+    @remote.authorization.update_permissions(params) if @user
 		dispatch = @remote.populate(params[:video_url])
 		@remote.populate_with_options_and_save(params, @user)
     flash[:notice] = "Congratulations!  Take control of your remote."
@@ -54,18 +54,18 @@ class RemotesController < ApplicationController
 	end
 
 	def show
-		@user = current_user if current_user
-		@remote = Remote.find_by({remote_id: params[:id]})
-		@remote_owner = @user if @user == @remote.user
-		@remote_json = @remote.json
-		@identifier = (Time.now.strftime('%Y%m%d%H%M%S%L%N') + rand(400).to_s).to_s
-		@username = Chat.guest_display_name(@user, params[:guest_name])
-		cookies[:username] = @username
-		@playlist = Playlist.new
-		@remote_name = @remote.name
-		@remote_description = @remote.description
+    @user = current_user if current_user
+    @remote = Remote.find_by({remote_id: params[:id]})
+    @remote_owner = @user if @user == @remote.user
+    @remote_json = @remote.json
+    @identifier = (Time.now.strftime('%Y%m%d%H%M%S%L%N') + rand(400).to_s).to_s
+    @username = Chat.guest_display_name(@user, params[:guest_name])
+    cookies[:username] = @username
+    @playlist = Playlist.new
+    @remote_name = @remote.name
+    @remote_description = @remote.description
     @guest_name = Object.new
-		render Remotes.what_to_render(@user, params[:guest_name])
+    render Remotes.what_to_render(@user, params[:guest_name])
 	end
 
 	def time

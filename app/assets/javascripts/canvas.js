@@ -1,190 +1,175 @@
-$(document).ready(function() {
-  var localCanvas = $('canvas')
-  var canvas = new Canvas(localCanvas)
+function Canvas(source, remote){
+  var canvas = $('canvas')
   var video = $('#player')[0]
-
-  canvas.draw()
+  var self = this
+  var mousedown = false
+  var currentCoordinates = []
+  var saveCoordinates = []
+  self.canvas = canvas[0]
+  self.context = self.canvas.getContext('2d')
 
   $('button#clear').on('click', function(e) {
     $.ajax({
       type: 'POST',
-      url: '/remotes/' + Remote.remote_id + '/clear'
+      url: '/remotes/' + remote.remoteId + '/clear'
     })
   })
-})
 
-var Canvas = function(canvas) {
-  this.canvas = canvas[0]
-  this.context = this.canvas.getContext('2d')
-}
+  self.drawOnRemoteCanvas = function(previousCoordinates, x_coordinate, y_coordinate) {
+    var length = previousCoordinates.length - 1,
+        prevX = parseInt(previousCoordinates[length]['x_coordinate']),
+        prevY = parseInt(previousCoordinates[length]['y_coordinate']),
+        x = parseInt(x_coordinate),
+        y = parseInt(y_coordinate)
 
-Canvas.prototype.color = function() {
-  var color = $('input#color').val()
-
-  return color
-}
-
-Canvas.prototype.line = function() {
-  var line = $('input#line').val()
-  return line
-}
-
-var mousedown = false
-var currentCoordinates = []
-var saveCoordinates = []
-
-function onMouseDown(targetCanvas) {
-  targetCanvas.onmousedown = function(e) {
-    var pos = getMousePos(targetCanvas, e)
-    mousedown = true
-    return false
+    self.context.beginPath()
+    self.context.moveTo(prevX, prevY)
+    self.context.lineTo(x, y)
+    self.context.stroke()
   }
-}
 
-function onMouseMove(targetCanvas, color, line) {
-  targetCanvas.onmousemove = function(e) {
-    e.preventDefault()
-    var pos = getMousePos(targetCanvas, e)
+  self.remoteDraw = function(previousCoordinates, x_coordinate, y_coordinate, color, line) {
+    self.context.strokeStyle = color
+    self.context.lineWidth = line
 
-    $('input#color').on('change', function(e) {
-      color = $('input#color').val()
-    })
-    $('input#line').on('change', function(e) {
-      line = $('input#line').val()
-    })
-    if (mousedown) {
-      currentCoordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y, 'color': color, 'line': line})
-      sendCoordinatesIfCorrectLength()
+    if (x_coordinate != null) {
+      self.drawOnRemoteCanvas(previousCoordinates, x_coordinate, y_coordinate, color, line)
     }
   }
-}
 
-function sendCoordinatesIfCorrectLength() {
-  if (currentCoordinates.length >= 10) {
-    sendCoordinates(currentCoordinates)
+  self.initiateDrawingOnEventListener = function(e) {
+    var data = JSON.parse(e.data)
+    var previousCoordinates = []
 
-    var newCurrent = [currentCoordinates[currentCoordinates.length-1]]
-    currentCoordinates = newCurrent
+    $.each(data['coordinates'], function(index, coordinate) {
+      if (previousCoordinates.length >= 1) {
+        self.remoteDraw(previousCoordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
+      }
+
+      previousCoordinates.push(coordinate)
+    })
+    previousCoordinates = []
   }
-}
 
-function onMouseUp(targetCanvas) {
-  targetCanvas.onmouseup = function(e) {
-    mousedown = false
-    
-    sendCoordinates(currentCoordinates)
-    sendToSaveCoordinates(saveCoordinates)
-    
-    currentCoordinates = []
-  }
-}
-
-function drawOnLoad(canvas) {
-  $.ajax({
-    type: 'GET',
-    url: '/remotes/' + Remote.remote_id + '/read'
-  }).done(function(data){
-    parseDrawingData(data, canvas)
+  source.addEventListener("drawing:" + remote.remoteId, function(e){
+    self.initiateDrawingOnEventListener(e)
   })
-}
 
-function parseDrawingData(data, canvas) {
-  var previous_coordinates = []
+  self.clear = function() {
+    self.canvas.width = self.canvas.width
+  }
 
-  if (data.length > 1) {
-    $.each(data, function(index, setOfCoordinates) {
-      $.each(setOfCoordinates, function(index, coordinate) {
-        if (previous_coordinates.length >= 1) {
-          canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
-        }
+  source.addEventListener("clear:" + remote.remoteId, function(event){
+    self.clear()
+  })
 
-        previous_coordinates.push(coordinate)
+  self.color = function(){
+    var color = $('input#color').val()
+    return color
+  }
+
+  self.line = function() {
+    var line = $('input#line').val()
+    return line
+  }
+
+  self.getMousePos = function(e) {
+    var rect = self.canvas.getBoundingClientRect()
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    }
+  }
+
+  self.onMouseDown = function() {
+    self.canvas.onmousedown = function(e) {
+      var pos = self.getMousePos(e)
+      mousedown = true
+      return false
+    }
+  }
+
+  self.sendCoordinates = function(currentCoordinates) {
+    saveCoordinates.push(currentCoordinates)
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + remote.remoteId + '/drawings',
+      data: {_method: 'PUT', 'coordinates': currentCoordinates}
+    })
+  }
+
+  self.sendCoordinatesIfCorrectLength = function() {
+    if (currentCoordinates.length >= 10) {
+      self.sendCoordinates(currentCoordinates)
+
+      var newCurrent = [currentCoordinates[currentCoordinates.length-1]]
+      currentCoordinates = newCurrent
+    }
+  }
+
+  self.onMouseMove = function() {
+    self.canvas.onmousemove = function(e) {
+      e.preventDefault()
+      var pos = self.getMousePos(e)
+
+      if (mousedown) {
+        currentCoordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y, 'color': self.color(), 'line': self.line()})
+        self.sendCoordinatesIfCorrectLength()
+      }
+    }
+  }
+
+  self.sendToSaveCoordinates = function(saveCoordinates) {
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + remote.remoteId + '/write',
+      data: {'coordinates': saveCoordinates}
+    })
+  }
+
+  self.onMouseUp = function() {
+    self.canvas.onmouseup = function(e) {
+      mousedown = false
+      
+      self.sendCoordinates(currentCoordinates)
+      self.sendToSaveCoordinates(saveCoordinates)
+      
+      currentCoordinates = []
+    }
+  }
+
+  self.parseDrawingData = function(data) {
+    var previousCoordinates = []
+
+    if (data.length > 1) {
+      $.each(data, function(index, setOfCoordinates) {
+        $.each(setOfCoordinates, function(index, coordinate) {
+          if (previousCoordinates.length >= 1) {
+            self.remoteDraw(previousCoordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
+          }
+
+          previousCoordinates.push(coordinate)
+        })
+        previousCoordinates = []
       })
-      previous_coordinates = []
+    }
+  }
+
+  self.drawOnLoad = function() {
+    $.ajax({
+      type: 'GET',
+      url: '/remotes/' + remote.remoteId + '/read'
+    }).done(function(data){
+      self.parseDrawingData(data)
     })
   }
-}
 
-Canvas.prototype.draw = function() {
-  var color = this.color()
-  var line = this.line()
-  var targetCanvas = this.canvas
-
-  drawOnLoad(this)
-  onMouseDown(targetCanvas)
-  onMouseMove(targetCanvas, color, line)
-  onMouseUp(targetCanvas)
-}
-
-Canvas.prototype.clear = function() {
-  var canvas = this.canvas
-  canvas.width = canvas.width
-}
-
-Canvas.prototype.remoteDraw = function(previous_coordinates, x_coordinate, y_coordinate, color, line) {
-  var remote_canvas = this.canvas
-  var context = remote_canvas.getContext('2d')
-
-  context.strokeStyle = color
-  context.lineWidth = line
-
-  if (x_coordinate != null) {
-    drawOnRemoteCanvas(previous_coordinates, x_coordinate, y_coordinate, context, color, line)
+  self.draw = function() {
+    self.drawOnLoad()
+    self.onMouseDown()
+    self.onMouseMove()
+    self.onMouseUp()
   }
-}
 
-function drawOnRemoteCanvas(previous_coordinates, x_coordinate, y_coordinate, context, color, line) {
-  var length = previous_coordinates.length - 1,
-      prev_x = parseInt(previous_coordinates[length]['x_coordinate']),
-      prev_y = parseInt(previous_coordinates[length]['y_coordinate']),
-      x = parseInt(x_coordinate),
-      y = parseInt(y_coordinate)
-
-  context.beginPath()
-  context.moveTo(prev_x, prev_y)
-  context.lineTo(x, y)
-  context.stroke()
-}
-
-function sendCoordinates(currentCoordinates) {
-  saveCoordinates.push(currentCoordinates)
-  $.ajax({
-    type: 'POST',
-    url: '/remotes/' + Remote.remote_id + '/drawings',
-    data: {_method: 'PUT', 'coordinates': currentCoordinates}
-  })
-}
-
-function sendToSaveCoordinates(saveCoordinates) {
-  $.ajax({
-    type: 'POST',
-    url: '/remotes/' + Remote.remote_id + '/write',
-    data: {'coordinates': saveCoordinates}
-  })
-}
-
-function getMousePos(drawing_canvas, e) {
-  var rect = drawing_canvas.getBoundingClientRect()
-  return {
-    x: e.clientX - rect.left,
-    y: e.clientY - rect.top
-  }
-}
-
-function initiateDrawingOnEventListener(event, canvas) {
-  var data = JSON.parse(event.data)
-  var previous_coordinates = []
-
-  $.each(data['coordinates'], function(index, coordinate) {
-    if (previous_coordinates.length >= 1) {
-      canvas.remoteDraw(previous_coordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
-    }
-
-    previous_coordinates.push(coordinate)
-  })
-  previous_coordinates = []
-}
-
-function clearCanvas(canvas) {
-  canvas.clear()
-}
+  self.draw()
+} // END CANVAS CONSTRUCTOR

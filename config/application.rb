@@ -26,9 +26,5 @@ module Fremote
     # config.i18n.default_locale = :de
     config.assets.initialize_on_precompile = false
     config.i18n.enforce_available_locales = false
-    config.opal.method_missing      = true
-    config.opal.optimized_operators = true
-    config.opal.arity_check         = false
-    config.opal.const_missing       = true
   end
 end

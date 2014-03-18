@@ -519,3 +519,7 @@ input[type="submit"] {
   background: $dark-gold;
   font-size: 12px;
 }
+
+.tooltip-inner {
+  max-width: 480px;
+}

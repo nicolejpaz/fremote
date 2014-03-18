@@ -23,6 +23,8 @@ window['remotes#new'] = function(data) {
 }
 
 window['remotes#index'] = function(data) {
+  $('#owner_only_tooltip').tooltip()
+
   window.onload = function() {
     changeWindowHeight()
   }

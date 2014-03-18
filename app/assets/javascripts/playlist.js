@@ -5,85 +5,91 @@ function Playlist(source, remote){
   var playlistGroup = $('#playlist_group')
   var listItems = $('#playlist li')
   var playlistClearButton = $('#clear_playlist')
-  self.playlistItemHead = '<li class="playlist_item sortable" draggable="true"><a class="playlist-title">'
-  self.playlistItemFoot = '</a><button style="float: right;" class="btn btn-xfs btn-danger playlist-delete">X</button></li>'
   self.selectedListItem = 0
 
-    source.addEventListener("playlist_sort:" + remote.remoteId, function(event){
-      self.sortPlaylist(event)
-    })
+  if (authorized === 'true') {
+    self.playlistItemHead = '<li class="playlist_item sortable" draggable="true"><a class="playlist-title">'
+    self.playlistItemFoot = '</a><button class="btn btn-xfs btn-danger right playlist-delete">X</button></li>'
+  } else {
+    self.playlistItemHead = '<li class="playlist_item"><a>'
+    self.playlistItemFoot = '</a></li>'
+  }
 
-    source.addEventListener("playlist_block:" + remote.remoteId, function(event){
-      self.blockPlaylist(event)
-    })
+  source.addEventListener("playlist_sort:" + remote.remoteId, function(event){
+    self.sortPlaylist(event)
+  })
 
-    source.addEventListener("playlist_add:" + remote.remoteId, function(event){
-      self.addToPlaylist(event)
-    })
+  source.addEventListener("playlist_block:" + remote.remoteId, function(event){
+    self.blockPlaylist(event)
+  })
 
-    source.addEventListener("playlist_delete:" + remote.remoteId, function(event){
-      self.deleteFromPlaylist(event)
-    })
+  source.addEventListener("playlist_add:" + remote.remoteId, function(event){
+    self.addToPlaylist(event)
+  })
 
-    source.addEventListener("playlist_clear:" + remote.remoteId, function(event) {
-      self.clearPlaylist(event)   
-    })
+  source.addEventListener("playlist_delete:" + remote.remoteId, function(event){
+    self.deleteFromPlaylist(event)
+  })
 
-    // Click event for playlist items.
-    self.element.on('click', '.playlist-title', function(){
-      var thisSelf = $(this)
-      $.ajax({
-        type: 'POST',
-        url: '/remotes/' + remote.remoteId + '/control',
-        data: { _method:'PUT', status: 0, start_at: remote.startAt, sender_id: user, selection: $('#playlist li').index(thisSelf.parent())},
-        dataType: 'JSON'
-      })
-    })
+  source.addEventListener("playlist_clear:" + remote.remoteId, function(event) {
+    self.clearPlaylist(event)   
+  })
 
-    // Playlist clear button click event
-    playlistClearButton.on('click', function() {
-      $.ajax({
-        type: 'POST',
-        url: '/remotes/' + remote.remoteId + '/playlist',
-        data: { _method: 'DELETE', clear: $('#playlist li').length },
-        dataType: 'JSON'
-      })
+  // Click event for playlist items.
+  self.element.on('click', '.playlist-title', function(){
+    var thisSelf = $(this)
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + remote.remoteId + '/control',
+      data: { _method:'PUT', status: 0, start_at: remote.startAt, sender_id: user, selection: $('#playlist li').index(thisSelf.parent())},
+      dataType: 'JSON'
     })
+  })
 
-    // Playlist item delete click event
-    self.element.on('click', ".playlist-delete", function(e){
-      e.preventDefault()
-      var index = $(this).parent().index()
-      $.ajax({
-        url: "/remotes/" + remote.remoteId + "/playlist",
-        type: "POST",
-        data: {index: index, _method: "delete"}
-      })
+  // Playlist clear button click event
+  playlistClearButton.on('click', function() {
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + remote.remoteId + '/playlist',
+      data: { _method: 'DELETE', clear: $('#playlist li').length },
+      dataType: 'JSON'
     })
+  })
 
-    $('#playlist_group form').on('ajax:success', function(){
-      $('#playlist_url_field').val('')
+  // Playlist item delete click event
+  self.element.on('click', ".playlist-delete", function(e){
+    e.preventDefault()
+    var index = $(this).parent().index()
+    $.ajax({
+      url: "/remotes/" + remote.remoteId + "/playlist",
+      type: "POST",
+      data: {index: index, _method: "delete"}
     })
+  })
 
-    // Ivoke sortable method for playlist ordered list
-    $('ol.sortable').sortable()
+  $('#playlist_group form').on('ajax:success', function(){
+    $('#playlist_url_field').val('')
+  })
 
-    // Update playlist item position on drag
-    $('ol.sortable').sortable().bind('sortupdate', function(e, ui) {
-      playlistGroup.block()
-      $.ajax({
-        url: "/remotes/" + remote.remoteId + "/playlist",
-        type: "POST",
-        data: {old_position: ui.oldindex, new_position: ui.item.index(), _method: "patch"}
-      }).done(function(){
-        playlistGroup.unblock()
-      })
+  // Ivoke sortable method for playlist ordered list
+  $('ol.sortable').sortable()
+
+  // Update playlist item position on drag
+  $('ol.sortable').sortable().bind('sortupdate', function(e, ui) {
+    playlistGroup.block()
+    $.ajax({
+      url: "/remotes/" + remote.remoteId + "/playlist",
+      type: "POST",
+      data: {old_position: ui.oldindex, new_position: ui.item.index(), _method: "patch"}
+    }).done(function(){
+      playlistGroup.unblock()
     })
+  })
 
-    // Update selected list item index on mousedown
-    $('#playlist li').on('mousedown', function(){
-      Playlist.selectedListItem = $('#playlist li').index(self)
-    })
+  // Update selected list item index on mousedown
+  $('#playlist li').on('mousedown', function(){
+    Playlist.selectedListItem = $('#playlist li').index(self)
+  })
 
   self.refresh = function(){
     $.ajax({

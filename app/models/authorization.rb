@@ -41,7 +41,7 @@ class Authorization
   private
 
   def kind_of_entity(user = nil)
-    if self.remote.member_list.members.include?(user)
+    if self.remote.member_list.members.include?(user.id)
       return :_member
     elsif user.is_a?(User)
       return :_user

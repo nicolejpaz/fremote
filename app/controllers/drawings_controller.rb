@@ -46,7 +46,4 @@ class DrawingsController < ApplicationController
 
     render nothing: true
   end
-
-  private 
-
 end

@@ -33,7 +33,6 @@ window['remotes#index'] = function(data) {
 
   function changeWindowHeight() {
     var windowHeight = $(window).height()
-    console.log('changing')
     $('#on_landing').css('padding-top', windowHeight / 3)
   }
 }

@@ -30,9 +30,9 @@ class Playlist
   def delete(params)
     Notify.new("playlist_block:#{self.remote.remote_id}", {"block" => true}.to_json)
     if params[:clear]
-      @playlist.delete_all
+      self.delete_all
     else
-      @playlist.delete_list_item(params[:index])
+      self.delete_list_item(params[:index])
     end
     Notify.new("playlist_block:#{self.remote.remote_id}", {"block" => false}.to_json)
   end

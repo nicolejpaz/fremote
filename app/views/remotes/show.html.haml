@@ -19,5 +19,5 @@
               = render :partial => 'playlist', :locals => { :remote => @remote, :username => @username }
 
   :javascript
-    var Remote = #{@remote.to_json}
     var user = '#{@identifier}'
+    var remote_id = '#{@remote.remote_id}'

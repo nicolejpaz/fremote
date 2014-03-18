@@ -91,14 +91,11 @@ class Remote
   end
 
   def kind_of_user(user = nil)
-    return "guest" if user == nil
-
-    if user == self.user
-      return "owner"
+    if user
+      determine_user_type(user)
     else
-      return "user"
+      return 'guest'
     end
-
   end
 
   private
@@ -135,11 +132,13 @@ class Remote
   end
 
   def change_playlist_selection_if_selection_key_exists(params)
+    Notify.new("playlist_block:#{self.remote_id}", {"block" => true, "add" => true}.to_json)
     self.playlist.selection = params["selection"].to_i
     self.start_at = 0
     self.status = 1
     self.save
     Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.selection]["url"])) })
+    Notify.new("playlist_block:#{self.remote_id}", {"block" => false}.to_json)
   end
 
   def change_status_if_status_is_zero(params)
@@ -171,6 +170,16 @@ class Remote
       member = User.find_by({name: delete_name})
       self.member_list.members.delete(member.id)
       member.delete_remote_from_user_memberships(self)
+    end
+  end
+
+  def determine_user_type(user)
+    if self.member_list.members.include? user.id
+      return 'member'
+    elsif self.user.id == user.id
+      return 'owner'
+    else
+      return 'user'
     end
   end
 end

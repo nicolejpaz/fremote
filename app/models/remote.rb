@@ -176,8 +176,8 @@ class Remote
   def determine_user_type(user)
     if self.member_list.members.include? user.id
       return 'member'
-    elsif self.user.id == user.id
-      return 'owner'
+    elsif self.user
+      return 'owner' if self.user.id == user.id
     else
       return 'user'
     end

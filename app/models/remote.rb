@@ -56,15 +56,17 @@ class Remote
     if params[:name] != nil && params[:name] != ''
       self.name = params[:name]
     end
-
+    
     if params[:description] != nil && params[:description] != ''
       self.description = params[:description]
     end
 
     delete_members(params) if params[:delete]
 
-    check_if_params_has_members(params)
-    self.authorization.update_permissions(params)
+    if params[:member]
+      check_if_params_has_members(params)
+      self.authorization.update_permissions(params)
+    end
 
     self.save
   end
@@ -150,7 +152,7 @@ class Remote
   end
 
   def check_if_params_has_members(params)
-    if params[:member] != nil && params[:member] != []
+    if params[:member] != []
       params[:member].each do |member|
         check_if_member_exists(member)
       end

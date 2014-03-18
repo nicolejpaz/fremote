@@ -11,7 +11,7 @@ module Stream
     # Subscribe the current user to notifications.
     notifications.each do |notification|
       ActiveSupport::Notifications.subscribe("#{notification}:#{remote.remote_id}") do |name, start, finish, id, payload|
-          queue << {name: name, payload: payload}
+        queue << {name: name, payload: payload}
       end
     end
 
@@ -22,21 +22,21 @@ module Stream
     # This thread also notifies the server and clients whether or not a person is viewing a remote.
     heartbeat = Thread.new do
       begin
-          remote = remote.reload
-          watcher_record = {"username" => username, "user_kind" => user_kind}
-          remote.watchers << watcher_record
-          remote.save
-          ActiveSupport::Notifications.instrument("watch:#{remote.remote_id}", {watchers: remote.watchers.uniq, username: username}.to_json)
+        remote = remote.reload
+        watcher_record = {"username" => username, "user_kind" => user_kind}
+        remote.watchers << watcher_record
+        remote.save
+        ActiveSupport::Notifications.instrument("watch:#{remote.remote_id}", {watchers: remote.watchers.uniq, username: username}.to_json)
         loop do
           sleep heartrate.seconds
           response.stream.write "event: heartbeat\n"
         end
-        ensure
-          remote = remote.reload
-          watcher_index = remote.watchers.index(remote.watchers.select{ |i| i["username"] == username}.first)
-          remote.watchers.delete_at(watcher_index)
-          remote.save
-          ActiveSupport::Notifications.instrument("unwatch:#{remote.remote_id}", {watchers: remote.watchers.uniq, username: username}.to_json)
+      ensure
+        remote = remote.reload
+        watcher_index = remote.watchers.index(remote.watchers.select{ |i| i["username"] == username}.first)
+        remote.watchers.delete_at(watcher_index)
+        remote.save
+        ActiveSupport::Notifications.instrument("unwatch:#{remote.remote_id}", {watchers: remote.watchers.uniq, username: username}.to_json)
       end
     end
 
@@ -48,13 +48,13 @@ module Stream
     end
 
     # Make sure that the stream is closed and the current process is unsubscribed.
-    rescue IOError
-    ensure
-      notifications.each do |notification|
-        ActiveSupport::Notifications.unsubscribe("#{notification}:#{remote.id}")
-      end
-      response.stream.close
-      p "stream closed"
+  rescue IOError
+  ensure
+    notifications.each do |notification|
+      ActiveSupport::Notifications.unsubscribe("#{notification}:#{remote.id}")
+    end
+    response.stream.close
+    p "stream closed"
   end
 
   def watch(remote, username, user_kind)

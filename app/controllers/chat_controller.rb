@@ -8,7 +8,4 @@ class ChatController < ApplicationController
     end
     render nothing: true
   end
-
-  private
-
 end

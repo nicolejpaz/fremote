@@ -27,6 +27,16 @@ class Playlist
     end
   end
 
+  def delete(params)
+    Notify.new("playlist_block:#{self.remote.remote_id}", {"block" => true}.to_json)
+    if params[:clear]
+      @playlist.delete_all
+    else
+      @playlist.delete_list_item(params[:index])
+    end
+    Notify.new("playlist_block:#{self.remote.remote_id}", {"block" => false}.to_json)
+  end
+
   def delete_list_item(index, user = nil)
     self.list.delete_at(index.to_i)
     if index.to_i == self.selection  

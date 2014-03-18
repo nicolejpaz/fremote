@@ -35,15 +35,7 @@ class PlaylistsController < ApplicationController
     @user = current_user if current_user
     @remote = Remote.find_by({remote_id: params[:remote_id]})
     @playlist = @remote.playlist
-    if @remote.authorization.is_authorized?("playlist", @user)
-      Notify.new("playlist_block:#{@remote.remote_id}", {"block" => true}.to_json)
-      if params[:clear]
-        @playlist.delete_all
-      else
-        @playlist.delete_list_item(params[:index])
-      end
-      Notify.new("playlist_block:#{@remote.remote_id}", {"block" => false}.to_json)
-    end
+    @playlist.delete(params) if @remote.authorization.is_authorized?("playlist", @user)
     render nothing: true
   end
 
@@ -53,5 +45,4 @@ class PlaylistsController < ApplicationController
     new_media = Media.new(url)
     self.list << new_media unless nil
   end
-
 end

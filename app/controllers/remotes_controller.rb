@@ -32,7 +32,6 @@ class RemotesController < ApplicationController
 		@user = current_user if current_user
 		@remote = Remote.find_by({remote_id: params[:id]})
     @remote.update(params) if @remote.authorization.is_authorized?("settings", @user)
-
     respond_to do |format|
       format.json { render json: {'remote' => @remote}.to_json }
       format.html { redirect_to remote_path(@remote) }
@@ -50,7 +49,8 @@ class RemotesController < ApplicationController
 	def ping
 		@remote = Remote.find_by({remote_id: params[:id]})
 		@playlist = @remote.playlist
-		render json: {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.updated_at, 'dispatched_at' => Time.now, 'sender_id' => 'fremote_server', 'selection' => @playlist.selection, 'stream_url' => URI::encode(Media.link(@playlist.list[@playlist.selection]["url"])), 'playlist' => @playlist.list, 'watchers' => @remote.watchers }.to_json
+    result = {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.last_controlled_at.to_s, 'dispatched_at' => Time.now, 'sender_id' => 'fremote_server', 'selection' => @playlist.selection, 'stream_url' => URI::encode(Media.link(@playlist.list[@playlist.selection]["url"])), 'playlist' => @playlist.list, 'watchers' => @remote.watchers }
+    render json: result.to_json
 	end
 
 	def show
@@ -69,6 +69,6 @@ class RemotesController < ApplicationController
 	end
 
 	def time
-		render json: {time: Time.now}.to_json
+		render json: {time: Time.now.utc.to_s}.to_json
 	end
 end

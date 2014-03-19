@@ -12,6 +12,7 @@ class Remote
   field :start_at, type: Integer, default: 0
   field :admin_only, type: Boolean, default: false
   field :watchers, type: Array, default: []
+  field :last_controlled_at, type: DateTime, default: Time.now.utc
   belongs_to :user
   embeds_one :playlist
   embeds_one :drawing
@@ -84,6 +85,7 @@ class Remote
 
       self.status = params["status"] if params["status"]
       self.start_at = params["start_at"].to_i if params["start_at"]
+      self.last_controlled_at = Time.now.utc
       if remote_owner == self.user && params.has_key?("remote") && params["remote"].has_key?("admin_only")
         self.admin_only = to_boolean(params["remote"]["admin_only"])
       end
@@ -129,7 +131,7 @@ class Remote
       change_status_if_status_is_zero(params)
     else
       self.save
-      Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now })
+      Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.last_controlled_at, 'dispatched_at' => Time.now })
     end
   end
 

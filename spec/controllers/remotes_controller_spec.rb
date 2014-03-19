@@ -9,7 +9,7 @@ describe RemotesController do
       name: "Test name",
       alternate_name: "Alternate name",
       description: "Test description",
-      video_url: "http://www.youtube.com/watch?v=zoO0s1ukcqQ"
+      video_url: "https://www.youtube.com/watch?v=NX_23r7vYak"
     }
 
     @sample_remote = Remote.make

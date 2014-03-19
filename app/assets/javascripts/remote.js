@@ -149,7 +149,7 @@ function Remote(){
       dataType: 'JSON'
     }).done(function(response){
       self.serverTime = Date.parse(response.time)
-      setInterval(function(){self.date = self.date + 1000},1000);
+      setInterval(function(){self.serverTime = self.serverTime + 1000},1000);
     })
   }
 

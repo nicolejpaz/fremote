@@ -9136,7 +9136,7 @@ return jQuery;
     // Link elements bound by jquery-ujs
     linkClickSelector: 'a[data-confirm], a[data-method], a[data-remote], a[data-disable-with]',
 
-    // Button elements boud jquery-ujs
+    // Button elements bound by jquery-ujs
     buttonClickSelector: 'button[data-remote]',
 
     // Select elements bound by jquery-ujs
@@ -9167,6 +9167,13 @@ return jQuery;
     CSRFProtection: function(xhr) {
       var token = $('meta[name="csrf-token"]').attr('content');
       if (token) xhr.setRequestHeader('X-CSRF-Token', token);
+    },
+
+    // making sure that all forms have actual up-to-date token(cached forms contain old one)
+    refreshCSRFTokens: function(){
+      var csrfToken = $('meta[name=csrf-token]').attr('content');
+      var csrfParam = $('meta[name=csrf-param]').attr('content');
+      $('form input[name="' + csrfParam + '"]').val(csrfToken);
     },
 
     // Triggers an event on an element and returns false if the event result is false
@@ -9273,18 +9280,18 @@ return jQuery;
       var href = rails.href(link),
         method = link.data('method'),
         target = link.attr('target'),
-        csrf_token = $('meta[name=csrf-token]').attr('content'),
-        csrf_param = $('meta[name=csrf-param]').attr('content'),
+        csrfToken = $('meta[name=csrf-token]').attr('content'),
+        csrfParam = $('meta[name=csrf-param]').attr('content'),
         form = $('<form method="post" action="' + href + '"></form>'),
-        metadata_input = '<input name="_method" value="' + method + '" type="hidden" />';
+        metadataInput = '<input name="_method" value="' + method + '" type="hidden" />';
 
-      if (csrf_param !== undefined && csrf_token !== undefined) {
-        metadata_input += '<input name="' + csrf_param + '" value="' + csrf_token + '" type="hidden" />';
+      if (csrfParam !== undefined && csrfToken !== undefined) {
+        metadataInput += '<input name="' + csrfParam + '" value="' + csrfToken + '" type="hidden" />';
       }
 
       if (target) { form.attr('target', target); }
 
-      form.hide().append(metadata_input).appendTo('body');
+      form.hide().append(metadataInput).appendTo('body');
       form.submit();
     },
 
@@ -9401,13 +9408,13 @@ return jQuery;
     });
 
     $document.delegate(rails.linkClickSelector, 'click.rails', function(e) {
-      var link = $(this), method = link.data('method'), data = link.data('params');
+      var link = $(this), method = link.data('method'), data = link.data('params'), metaClick = e.metaKey || e.ctrlKey;
       if (!rails.allowAction(link)) return rails.stopEverything(e);
 
-      if (link.is(rails.linkDisableSelector)) rails.disableElement(link);
+      if (!metaClick && link.is(rails.linkDisableSelector)) rails.disableElement(link);
 
       if (link.data('remote') !== undefined) {
-        if ( (e.metaKey || e.ctrlKey) && (!method || method === 'GET') && !data ) { return true; }
+        if (metaClick && (!method || method === 'GET') && !data) { return true; }
 
         var handleRemote = rails.handleRemote(link);
         // response from rails.handleRemote() will either be false or a deferred object promise.
@@ -9496,550 +9503,643 @@ return jQuery;
     });
 
     $(function(){
-      // making sure that all forms have actual up-to-date token(cached forms contain old one)
-      var csrf_token = $('meta[name=csrf-token]').attr('content');
-      var csrf_param = $('meta[name=csrf-param]').attr('content');
-      $('form input[name="' + csrf_param + '"]').val(csrf_token);
+      rails.refreshCSRFTokens();
     });
   }
 
 })( jQuery );
-(function() {
-  var CSRFToken, allowLinkExtensions, anchoredLink, browserCompatibleDocumentParser, browserIsntBuggy, browserSupportsCustomEvents, browserSupportsPushState, browserSupportsTurbolinks, cacheCurrentPage, cacheSize, changePage, constrainPageCacheTo, createDocument, crossOriginLink, currentState, enableTransitionCache, executeScriptTags, extractLink, extractTitleAndBody, fetch, fetchHistory, fetchReplacement, handleClick, historyStateIsDefined, htmlExtensions, ignoreClick, initializeTurbolinks, installClickHandlerLast, installDocumentReadyPageEventTriggers, installHistoryChangeHandler, installJqueryAjaxSuccessPageUpdateTrigger, loadedAssets, noTurbolink, nonHtmlLink, nonStandardClick, pageCache, pageChangePrevented, pagesCached, popCookie, processResponse, recallScrollPosition, referer, reflectNewUrl, reflectRedirectedUrl, rememberCurrentState, rememberCurrentUrl, rememberReferer, removeHash, removeHashForIE10compatiblity, removeNoscriptTags, requestMethodIsSafe, resetScrollPosition, targetLink, transitionCacheEnabled, transitionCacheFor, triggerEvent, visit, xhr, _ref,
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
-    __slice = [].slice;
+/*!
+ * jQuery blockUI plugin
+ * Version 2.66.0-2013.10.09
+ * Requires jQuery v1.7 or later
+ *
+ * Examples at: http://malsup.com/jquery/block/
+ * Copyright (c) 2007-2013 M. Alsup
+ * Dual licensed under the MIT and GPL licenses:
+ * http://www.opensource.org/licenses/mit-license.php
+ * http://www.gnu.org/licenses/gpl.html
+ *
+ * Thanks to Amir-Hossein Sobhi for some excellent contributions!
+ */
 
-  pageCache = {};
 
-  cacheSize = 10;
+;(function() {
+/*jshint eqeqeq:false curly:false latedef:false */
+"use strict";
 
-  transitionCacheEnabled = false;
+	function setup($) {
+		$.fn._fadeIn = $.fn.fadeIn;
 
-  currentState = null;
+		var noOp = $.noop || function() {};
 
-  loadedAssets = null;
+		// this bit is to ensure we don't call setExpression when we shouldn't (with extra muscle to handle
+		// confusing userAgent strings on Vista)
+		var msie = /MSIE/.test(navigator.userAgent);
+		var ie6  = /MSIE 6.0/.test(navigator.userAgent) && ! /MSIE 8.0/.test(navigator.userAgent);
+		var mode = document.documentMode || 0;
+		var setExpr = $.isFunction( document.createElement('div').style.setExpression );
 
-  htmlExtensions = ['html'];
+		// global $ methods for blocking/unblocking the entire page
+		$.blockUI   = function(opts) { install(window, opts); };
+		$.unblockUI = function(opts) { remove(window, opts); };
 
-  referer = null;
+		// convenience method for quick growl-like notifications  (http://www.google.com/search?q=growl)
+		$.growlUI = function(title, message, timeout, onClose) {
+			var $m = $('<div class="growlUI"></div>');
+			if (title) $m.append('<h1>'+title+'</h1>');
+			if (message) $m.append('<h2>'+message+'</h2>');
+			if (timeout === undefined) timeout = 3000;
 
-  createDocument = null;
+			// Added by konapun: Set timeout to 30 seconds if this growl is moused over, like normal toast notifications
+			var callBlock = function(opts) {
+				opts = opts || {};
 
-  xhr = null;
+				$.blockUI({
+					message: $m,
+					fadeIn : typeof opts.fadeIn  !== 'undefined' ? opts.fadeIn  : 700,
+					fadeOut: typeof opts.fadeOut !== 'undefined' ? opts.fadeOut : 1000,
+					timeout: typeof opts.timeout !== 'undefined' ? opts.timeout : timeout,
+					centerY: false,
+					showOverlay: false,
+					onUnblock: onClose,
+					css: $.blockUI.defaults.growlCSS
+				});
+			};
 
-  fetch = function(url) {
-    var cachedPage;
-    rememberReferer();
-    cacheCurrentPage();
-    reflectNewUrl(url);
-    if (transitionCacheEnabled && (cachedPage = transitionCacheFor(url))) {
-      fetchHistory(cachedPage);
-      return fetchReplacement(url);
-    } else {
-      return fetchReplacement(url, resetScrollPosition);
-    }
-  };
+			callBlock();
+			var nonmousedOpacity = $m.css('opacity');
+			$m.mouseover(function() {
+				callBlock({
+					fadeIn: 0,
+					timeout: 30000
+				});
 
-  transitionCacheFor = function(url) {
-    var cachedPage;
-    cachedPage = pageCache[url];
-    if (cachedPage && !cachedPage.transitionCacheDisabled) {
-      return cachedPage;
-    }
-  };
+				var displayBlock = $('.blockMsg');
+				displayBlock.stop(); // cancel fadeout if it has started
+				displayBlock.fadeTo(300, 1); // make it easier to read the message by removing transparency
+			}).mouseout(function() {
+				$('.blockMsg').fadeOut(1000);
+			});
+			// End konapun additions
+		};
 
-  enableTransitionCache = function(enable) {
-    if (enable == null) {
-      enable = true;
-    }
-    return transitionCacheEnabled = enable;
-  };
+		// plugin method for blocking element content
+		$.fn.block = function(opts) {
+			if ( this[0] === window ) {
+				$.blockUI( opts );
+				return this;
+			}
+			var fullOpts = $.extend({}, $.blockUI.defaults, opts || {});
+			this.each(function() {
+				var $el = $(this);
+				if (fullOpts.ignoreIfBlocked && $el.data('blockUI.isBlocked'))
+					return;
+				$el.unblock({ fadeOut: 0 });
+			});
 
-  fetchReplacement = function(url, onLoadFunction) {
-    var _this = this;
-    if (onLoadFunction == null) {
-      onLoadFunction = function() {};
-    }
-    triggerEvent('page:fetch', {
-      url: url
-    });
-    if (xhr != null) {
-      xhr.abort();
-    }
-    xhr = new XMLHttpRequest;
-    xhr.open('GET', removeHashForIE10compatiblity(url), true);
-    xhr.setRequestHeader('Accept', 'text/html, application/xhtml+xml, application/xml');
-    xhr.setRequestHeader('X-XHR-Referer', referer);
-    xhr.onload = function() {
-      var doc;
-      triggerEvent('page:receive');
-      if (doc = processResponse()) {
-        changePage.apply(null, extractTitleAndBody(doc));
-        reflectRedirectedUrl();
-        onLoadFunction();
-        return triggerEvent('page:load');
-      } else {
-        return document.location.href = url;
-      }
-    };
-    xhr.onloadend = function() {
-      return xhr = null;
-    };
-    xhr.onerror = function() {
-      return document.location.href = url;
-    };
-    return xhr.send();
-  };
+			return this.each(function() {
+				if ($.css(this,'position') == 'static') {
+					this.style.position = 'relative';
+					$(this).data('blockUI.static', true);
+				}
+				this.style.zoom = 1; // force 'hasLayout' in ie
+				install(this, opts);
+			});
+		};
 
-  fetchHistory = function(cachedPage) {
-    if (xhr != null) {
-      xhr.abort();
-    }
-    changePage(cachedPage.title, cachedPage.body);
-    recallScrollPosition(cachedPage);
-    return triggerEvent('page:restore');
-  };
+		// plugin method for unblocking element content
+		$.fn.unblock = function(opts) {
+			if ( this[0] === window ) {
+				$.unblockUI( opts );
+				return this;
+			}
+			return this.each(function() {
+				remove(this, opts);
+			});
+		};
 
-  cacheCurrentPage = function() {
-    pageCache[currentState.url] = {
-      url: document.location.href,
-      body: document.body,
-      title: document.title,
-      positionY: window.pageYOffset,
-      positionX: window.pageXOffset,
-      cachedAt: new Date().getTime(),
-      transitionCacheDisabled: document.querySelector('[data-no-transition-cache]') != null
-    };
-    return constrainPageCacheTo(cacheSize);
-  };
+		$.blockUI.version = 2.66; // 2nd generation blocking at no extra cost!
 
-  pagesCached = function(size) {
-    if (size == null) {
-      size = cacheSize;
-    }
-    if (/^[\d]+$/.test(size)) {
-      return cacheSize = parseInt(size);
-    }
-  };
+		// override these in your code to change the default behavior and style
+		$.blockUI.defaults = {
+			// message displayed when blocking (use null for no message)
+			message:  '<h1>Please wait...</h1>',
 
-  constrainPageCacheTo = function(limit) {
-    var cacheTimesRecentFirst, key, pageCacheKeys, _i, _len, _results;
-    pageCacheKeys = Object.keys(pageCache);
-    cacheTimesRecentFirst = pageCacheKeys.map(function(url) {
-      return pageCache[url].cachedAt;
-    }).sort(function(a, b) {
-      return b - a;
-    });
-    _results = [];
-    for (_i = 0, _len = pageCacheKeys.length; _i < _len; _i++) {
-      key = pageCacheKeys[_i];
-      if (!(pageCache[key].cachedAt <= cacheTimesRecentFirst[limit])) {
-        continue;
-      }
-      triggerEvent('page:expire', pageCache[key]);
-      _results.push(delete pageCache[key]);
-    }
-    return _results;
-  };
+			title: null,		// title string; only used when theme == true
+			draggable: true,	// only used when theme == true (requires jquery-ui.js to be loaded)
 
-  changePage = function(title, body, csrfToken, runScripts) {
-    document.title = title;
-    document.documentElement.replaceChild(body, document.body);
-    if (csrfToken != null) {
-      CSRFToken.update(csrfToken);
-    }
-    if (runScripts) {
-      executeScriptTags();
-    }
-    currentState = window.history.state;
-    triggerEvent('page:change');
-    return triggerEvent('page:update');
-  };
+			theme: false, // set to true to use with jQuery UI themes
 
-  executeScriptTags = function() {
-    var attr, copy, nextSibling, parentNode, script, scripts, _i, _j, _len, _len1, _ref, _ref1;
-    scripts = Array.prototype.slice.call(document.body.querySelectorAll('script:not([data-turbolinks-eval="false"])'));
-    for (_i = 0, _len = scripts.length; _i < _len; _i++) {
-      script = scripts[_i];
-      if (!((_ref = script.type) === '' || _ref === 'text/javascript')) {
-        continue;
-      }
-      copy = document.createElement('script');
-      _ref1 = script.attributes;
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        attr = _ref1[_j];
-        copy.setAttribute(attr.name, attr.value);
-      }
-      copy.appendChild(document.createTextNode(script.innerHTML));
-      parentNode = script.parentNode, nextSibling = script.nextSibling;
-      parentNode.removeChild(script);
-      parentNode.insertBefore(copy, nextSibling);
-    }
-  };
+			// styles for the message when blocking; if you wish to disable
+			// these and use an external stylesheet then do this in your code:
+			// $.blockUI.defaults.css = {};
+			css: {
+				padding:	0,
+				margin:		0,
+				width:		'30%',
+				top:		'40%',
+				left:		'35%',
+				textAlign:	'center',
+				color:		'#000',
+				border:		'3px solid #aaa',
+				backgroundColor:'#fff',
+				cursor:		'wait'
+			},
 
-  removeNoscriptTags = function(node) {
-    node.innerHTML = node.innerHTML.replace(/<noscript[\S\s]*?<\/noscript>/ig, '');
-    return node;
-  };
+			// minimal style set used when themes are used
+			themedCSS: {
+				width:	'30%',
+				top:	'40%',
+				left:	'35%'
+			},
 
-  reflectNewUrl = function(url) {
-    if (url !== referer) {
-      return window.history.pushState({
-        turbolinks: true,
-        url: url
-      }, '', url);
-    }
-  };
+			// styles for the overlay
+			overlayCSS:  {
+				backgroundColor:	'#000',
+				opacity:			0.6,
+				cursor:				'wait'
+			},
 
-  reflectRedirectedUrl = function() {
-    var location, preservedHash;
-    if (location = xhr.getResponseHeader('X-XHR-Redirected-To')) {
-      preservedHash = removeHash(location) === location ? document.location.hash : '';
-      return window.history.replaceState(currentState, '', location + preservedHash);
-    }
-  };
+			// style to replace wait cursor before unblocking to correct issue
+			// of lingering wait cursor
+			cursorReset: 'default',
 
-  rememberReferer = function() {
-    return referer = document.location.href;
-  };
+			// styles applied when using $.growlUI
+			growlCSS: {
+				width:		'350px',
+				top:		'10px',
+				left:		'',
+				right:		'10px',
+				border:		'none',
+				padding:	'5px',
+				opacity:	0.6,
+				cursor:		'default',
+				color:		'#fff',
+				backgroundColor: '#000',
+				'-webkit-border-radius':'10px',
+				'-moz-border-radius':	'10px',
+				'border-radius':		'10px'
+			},
 
-  rememberCurrentUrl = function() {
-    return window.history.replaceState({
-      turbolinks: true,
-      url: document.location.href
-    }, '', document.location.href);
-  };
+			// IE issues: 'about:blank' fails on HTTPS and javascript:false is s-l-o-w
+			// (hat tip to Jorge H. N. de Vasconcelos)
+			/*jshint scripturl:true */
+			iframeSrc: /^https/i.test(window.location.href || '') ? 'javascript:false' : 'about:blank',
 
-  rememberCurrentState = function() {
-    return currentState = window.history.state;
-  };
+			// force usage of iframe in non-IE browsers (handy for blocking applets)
+			forceIframe: false,
 
-  recallScrollPosition = function(page) {
-    return window.scrollTo(page.positionX, page.positionY);
-  };
+			// z-index for the blocking overlay
+			baseZ: 1000,
 
-  resetScrollPosition = function() {
-    if (document.location.hash) {
-      return document.location.href = document.location.href;
-    } else {
-      return window.scrollTo(0, 0);
-    }
-  };
+			// set these to true to have the message automatically centered
+			centerX: true, // <-- only effects element blocking (page block controlled via css above)
+			centerY: true,
 
-  removeHashForIE10compatiblity = function(url) {
-    return removeHash(url);
-  };
+			// allow body element to be stetched in ie6; this makes blocking look better
+			// on "short" pages.  disable if you wish to prevent changes to the body height
+			allowBodyStretch: true,
 
-  removeHash = function(url) {
-    var link;
-    link = url;
-    if (url.href == null) {
-      link = document.createElement('A');
-      link.href = url;
-    }
-    return link.href.replace(link.hash, '');
-  };
+			// enable if you want key and mouse events to be disabled for content that is blocked
+			bindEvents: true,
 
-  popCookie = function(name) {
-    var value, _ref;
-    value = ((_ref = document.cookie.match(new RegExp(name + "=(\\w+)"))) != null ? _ref[1].toUpperCase() : void 0) || '';
-    document.cookie = name + '=; expires=Thu, 01-Jan-70 00:00:01 GMT; path=/';
-    return value;
-  };
+			// be default blockUI will supress tab navigation from leaving blocking content
+			// (if bindEvents is true)
+			constrainTabKey: true,
 
-  triggerEvent = function(name, data) {
-    var event;
-    event = document.createEvent('Events');
-    if (data) {
-      event.data = data;
-    }
-    event.initEvent(name, true, true);
-    return document.dispatchEvent(event);
-  };
+			// fadeIn time in millis; set to 0 to disable fadeIn on block
+			fadeIn:  200,
 
-  pageChangePrevented = function() {
-    return !triggerEvent('page:before-change');
-  };
+			// fadeOut time in millis; set to 0 to disable fadeOut on unblock
+			fadeOut:  400,
 
-  processResponse = function() {
-    var assetsChanged, clientOrServerError, doc, extractTrackAssets, intersection, validContent;
-    clientOrServerError = function() {
-      var _ref;
-      return (400 <= (_ref = xhr.status) && _ref < 600);
-    };
-    validContent = function() {
-      return xhr.getResponseHeader('Content-Type').match(/^(?:text\/html|application\/xhtml\+xml|application\/xml)(?:;|$)/);
-    };
-    extractTrackAssets = function(doc) {
-      var node, _i, _len, _ref, _results;
-      _ref = doc.head.childNodes;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        node = _ref[_i];
-        if ((typeof node.getAttribute === "function" ? node.getAttribute('data-turbolinks-track') : void 0) != null) {
-          _results.push(node.getAttribute('src') || node.getAttribute('href'));
-        }
-      }
-      return _results;
-    };
-    assetsChanged = function(doc) {
-      var fetchedAssets;
-      loadedAssets || (loadedAssets = extractTrackAssets(document));
-      fetchedAssets = extractTrackAssets(doc);
-      return fetchedAssets.length !== loadedAssets.length || intersection(fetchedAssets, loadedAssets).length !== loadedAssets.length;
-    };
-    intersection = function(a, b) {
-      var value, _i, _len, _ref, _results;
-      if (a.length > b.length) {
-        _ref = [b, a], a = _ref[0], b = _ref[1];
-      }
-      _results = [];
-      for (_i = 0, _len = a.length; _i < _len; _i++) {
-        value = a[_i];
-        if (__indexOf.call(b, value) >= 0) {
-          _results.push(value);
-        }
-      }
-      return _results;
-    };
-    if (!clientOrServerError() && validContent()) {
-      doc = createDocument(xhr.responseText);
-      if (doc && !assetsChanged(doc)) {
-        return doc;
-      }
-    }
-  };
+			// time in millis to wait before auto-unblocking; set to 0 to disable auto-unblock
+			timeout: 0,
 
-  extractTitleAndBody = function(doc) {
-    var title;
-    title = doc.querySelector('title');
-    return [title != null ? title.textContent : void 0, removeNoscriptTags(doc.body), CSRFToken.get(doc).token, 'runScripts'];
-  };
+			// disable if you don't want to show the overlay
+			showOverlay: true,
 
-  CSRFToken = {
-    get: function(doc) {
-      var tag;
-      if (doc == null) {
-        doc = document;
-      }
-      return {
-        node: tag = doc.querySelector('meta[name="csrf-token"]'),
-        token: tag != null ? typeof tag.getAttribute === "function" ? tag.getAttribute('content') : void 0 : void 0
-      };
-    },
-    update: function(latest) {
-      var current;
-      current = this.get();
-      if ((current.token != null) && (latest != null) && current.token !== latest) {
-        return current.node.setAttribute('content', latest);
-      }
-    }
-  };
+			// if true, focus will be placed in the first available input field when
+			// page blocking
+			focusInput: true,
 
-  browserCompatibleDocumentParser = function() {
-    var createDocumentUsingDOM, createDocumentUsingParser, createDocumentUsingWrite, e, testDoc, _ref;
-    createDocumentUsingParser = function(html) {
-      return (new DOMParser).parseFromString(html, 'text/html');
-    };
-    createDocumentUsingDOM = function(html) {
-      var doc;
-      doc = document.implementation.createHTMLDocument('');
-      doc.documentElement.innerHTML = html;
-      return doc;
-    };
-    createDocumentUsingWrite = function(html) {
-      var doc;
-      doc = document.implementation.createHTMLDocument('');
-      doc.open('replace');
-      doc.write(html);
-      doc.close();
-      return doc;
-    };
-    try {
-      if (window.DOMParser) {
-        testDoc = createDocumentUsingParser('<html><body><p>test');
-        return createDocumentUsingParser;
-      }
-    } catch (_error) {
-      e = _error;
-      testDoc = createDocumentUsingDOM('<html><body><p>test');
-      return createDocumentUsingDOM;
-    } finally {
-      if ((testDoc != null ? (_ref = testDoc.body) != null ? _ref.childNodes.length : void 0 : void 0) !== 1) {
-        return createDocumentUsingWrite;
-      }
-    }
-  };
+            // elements that can receive focus
+            focusableElements: ':input:enabled:visible',
 
-  installClickHandlerLast = function(event) {
-    if (!event.defaultPrevented) {
-      document.removeEventListener('click', handleClick, false);
-      return document.addEventListener('click', handleClick, false);
-    }
-  };
+			// suppresses the use of overlay styles on FF/Linux (due to performance issues with opacity)
+			// no longer needed in 2012
+			// applyPlatformOpacityRules: true,
 
-  handleClick = function(event) {
-    var link;
-    if (!event.defaultPrevented) {
-      link = extractLink(event);
-      if (link.nodeName === 'A' && !ignoreClick(event, link)) {
-        if (!pageChangePrevented()) {
-          visit(link.href);
-        }
-        return event.preventDefault();
-      }
-    }
-  };
+			// callback method invoked when fadeIn has completed and blocking message is visible
+			onBlock: null,
 
-  extractLink = function(event) {
-    var link;
-    link = event.target;
-    while (!(!link.parentNode || link.nodeName === 'A')) {
-      link = link.parentNode;
-    }
-    return link;
-  };
+			// callback method invoked when unblocking has completed; the callback is
+			// passed the element that has been unblocked (which is the window object for page
+			// blocks) and the options that were passed to the unblock call:
+			//	onUnblock(element, options)
+			onUnblock: null,
 
-  crossOriginLink = function(link) {
-    return location.protocol !== link.protocol || location.host !== link.host;
-  };
+			// callback method invoked when the overlay area is clicked.
+			// setting this will turn the cursor to a pointer, otherwise cursor defined in overlayCss will be used.
+			onOverlayClick: null,
 
-  anchoredLink = function(link) {
-    return ((link.hash && removeHash(link)) === removeHash(location)) || (link.href === location.href + '#');
-  };
+			// don't ask; if you really must know: http://groups.google.com/group/jquery-en/browse_thread/thread/36640a8730503595/2f6a79a77a78e493#2f6a79a77a78e493
+			quirksmodeOffsetHack: 4,
 
-  nonHtmlLink = function(link) {
-    var url;
-    url = removeHash(link);
-    return url.match(/\.[a-z]+(\?.*)?$/g) && !url.match(new RegExp("\\.(?:" + (htmlExtensions.join('|')) + ")?(\\?.*)?$", 'g'));
-  };
+			// class name of the message block
+			blockMsgClass: 'blockMsg',
 
-  noTurbolink = function(link) {
-    var ignore;
-    while (!(ignore || link === document)) {
-      ignore = link.getAttribute('data-no-turbolink') != null;
-      link = link.parentNode;
-    }
-    return ignore;
-  };
+			// if it is already blocked, then ignore it (don't unblock and reblock)
+			ignoreIfBlocked: false
+		};
 
-  targetLink = function(link) {
-    return link.target.length !== 0;
-  };
+		// private data and functions follow...
 
-  nonStandardClick = function(event) {
-    return event.which > 1 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
-  };
+		var pageBlock = null;
+		var pageBlockEls = [];
 
-  ignoreClick = function(event, link) {
-    return crossOriginLink(link) || anchoredLink(link) || nonHtmlLink(link) || noTurbolink(link) || targetLink(link) || nonStandardClick(event);
-  };
+		function install(el, opts) {
+			var css, themedCSS;
+			var full = (el == window);
+			var msg = (opts && opts.message !== undefined ? opts.message : undefined);
+			opts = $.extend({}, $.blockUI.defaults, opts || {});
 
-  allowLinkExtensions = function() {
-    var extension, extensions, _i, _len;
-    extensions = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    for (_i = 0, _len = extensions.length; _i < _len; _i++) {
-      extension = extensions[_i];
-      htmlExtensions.push(extension);
-    }
-    return htmlExtensions;
-  };
+			if (opts.ignoreIfBlocked && $(el).data('blockUI.isBlocked'))
+				return;
 
-  installDocumentReadyPageEventTriggers = function() {
-    return document.addEventListener('DOMContentLoaded', (function() {
-      triggerEvent('page:change');
-      return triggerEvent('page:update');
-    }), true);
-  };
+			opts.overlayCSS = $.extend({}, $.blockUI.defaults.overlayCSS, opts.overlayCSS || {});
+			css = $.extend({}, $.blockUI.defaults.css, opts.css || {});
+			if (opts.onOverlayClick)
+				opts.overlayCSS.cursor = 'pointer';
 
-  installJqueryAjaxSuccessPageUpdateTrigger = function() {
-    if (typeof jQuery !== 'undefined') {
-      return jQuery(document).on('ajaxSuccess', function(event, xhr, settings) {
-        if (!jQuery.trim(xhr.responseText)) {
-          return;
-        }
-        return triggerEvent('page:update');
-      });
-    }
-  };
+			themedCSS = $.extend({}, $.blockUI.defaults.themedCSS, opts.themedCSS || {});
+			msg = msg === undefined ? opts.message : msg;
 
-  installHistoryChangeHandler = function(event) {
-    var cachedPage, _ref;
-    if ((_ref = event.state) != null ? _ref.turbolinks : void 0) {
-      if (cachedPage = pageCache[event.state.url]) {
-        cacheCurrentPage();
-        return fetchHistory(cachedPage);
-      } else {
-        return visit(event.target.location.href);
-      }
-    }
-  };
+			// remove the current block (if there is one)
+			if (full && pageBlock)
+				remove(window, {fadeOut:0});
 
-  initializeTurbolinks = function() {
-    rememberCurrentUrl();
-    rememberCurrentState();
-    createDocument = browserCompatibleDocumentParser();
-    document.addEventListener('click', installClickHandlerLast, true);
-    return window.addEventListener('popstate', installHistoryChangeHandler, false);
-  };
+			// if an existing element is being used as the blocking content then we capture
+			// its current place in the DOM (and current display style) so we can restore
+			// it when we unblock
+			if (msg && typeof msg != 'string' && (msg.parentNode || msg.jquery)) {
+				var node = msg.jquery ? msg[0] : msg;
+				var data = {};
+				$(el).data('blockUI.history', data);
+				data.el = node;
+				data.parent = node.parentNode;
+				data.display = node.style.display;
+				data.position = node.style.position;
+				if (data.parent)
+					data.parent.removeChild(node);
+			}
 
-  historyStateIsDefined = window.history.state !== void 0 || navigator.userAgent.match(/Firefox\/26/);
+			$(el).data('blockUI.onUnblock', opts.onUnblock);
+			var z = opts.baseZ;
 
-  browserSupportsPushState = window.history && window.history.pushState && window.history.replaceState && historyStateIsDefined;
+			// blockUI uses 3 layers for blocking, for simplicity they are all used on every platform;
+			// layer1 is the iframe layer which is used to supress bleed through of underlying content
+			// layer2 is the overlay layer which has opacity and a wait cursor (by default)
+			// layer3 is the message content that is displayed while blocking
+			var lyr1, lyr2, lyr3, s;
+			if (msie || opts.forceIframe)
+				lyr1 = $('<iframe class="blockUI" style="z-index:'+ (z++) +';display:none;border:none;margin:0;padding:0;position:absolute;width:100%;height:100%;top:0;left:0" src="'+opts.iframeSrc+'"></iframe>');
+			else
+				lyr1 = $('<div class="blockUI" style="display:none"></div>');
 
-  browserIsntBuggy = !navigator.userAgent.match(/CriOS\//);
+			if (opts.theme)
+				lyr2 = $('<div class="blockUI blockOverlay ui-widget-overlay" style="z-index:'+ (z++) +';display:none"></div>');
+			else
+				lyr2 = $('<div class="blockUI blockOverlay" style="z-index:'+ (z++) +';display:none;border:none;margin:0;padding:0;width:100%;height:100%;top:0;left:0"></div>');
 
-  requestMethodIsSafe = (_ref = popCookie('request_method')) === 'GET' || _ref === '';
+			if (opts.theme && full) {
+				s = '<div class="blockUI ' + opts.blockMsgClass + ' blockPage ui-dialog ui-widget ui-corner-all" style="z-index:'+(z+10)+';display:none;position:fixed">';
+				if ( opts.title ) {
+					s += '<div class="ui-widget-header ui-dialog-titlebar ui-corner-all blockTitle">'+(opts.title || '&nbsp;')+'</div>';
+				}
+				s += '<div class="ui-widget-content ui-dialog-content"></div>';
+				s += '</div>';
+			}
+			else if (opts.theme) {
+				s = '<div class="blockUI ' + opts.blockMsgClass + ' blockElement ui-dialog ui-widget ui-corner-all" style="z-index:'+(z+10)+';display:none;position:absolute">';
+				if ( opts.title ) {
+					s += '<div class="ui-widget-header ui-dialog-titlebar ui-corner-all blockTitle">'+(opts.title || '&nbsp;')+'</div>';
+				}
+				s += '<div class="ui-widget-content ui-dialog-content"></div>';
+				s += '</div>';
+			}
+			else if (full) {
+				s = '<div class="blockUI ' + opts.blockMsgClass + ' blockPage" style="z-index:'+(z+10)+';display:none;position:fixed"></div>';
+			}
+			else {
+				s = '<div class="blockUI ' + opts.blockMsgClass + ' blockElement" style="z-index:'+(z+10)+';display:none;position:absolute"></div>';
+			}
+			lyr3 = $(s);
 
-  browserSupportsTurbolinks = browserSupportsPushState && browserIsntBuggy && requestMethodIsSafe;
+			// if we have a message, style it
+			if (msg) {
+				if (opts.theme) {
+					lyr3.css(themedCSS);
+					lyr3.addClass('ui-widget-content');
+				}
+				else
+					lyr3.css(css);
+			}
 
-  browserSupportsCustomEvents = document.addEventListener && document.createEvent;
+			// style the overlay
+			if (!opts.theme /*&& (!opts.applyPlatformOpacityRules)*/)
+				lyr2.css(opts.overlayCSS);
+			lyr2.css('position', full ? 'fixed' : 'absolute');
 
-  if (browserSupportsCustomEvents) {
-    installDocumentReadyPageEventTriggers();
-    installJqueryAjaxSuccessPageUpdateTrigger();
-  }
+			// make iframe layer transparent in IE
+			if (msie || opts.forceIframe)
+				lyr1.css('opacity',0.0);
 
-  if (browserSupportsTurbolinks) {
-    visit = fetch;
-    initializeTurbolinks();
-  } else {
-    visit = function(url) {
-      return document.location.href = url;
-    };
-  }
+			//$([lyr1[0],lyr2[0],lyr3[0]]).appendTo(full ? 'body' : el);
+			var layers = [lyr1,lyr2,lyr3], $par = full ? $('body') : $(el);
+			$.each(layers, function() {
+				this.appendTo($par);
+			});
 
-  this.Turbolinks = {
-    visit: visit,
-    pagesCached: pagesCached,
-    enableTransitionCache: enableTransitionCache,
-    allowLinkExtensions: allowLinkExtensions,
-    supported: browserSupportsTurbolinks
-  };
+			if (opts.theme && opts.draggable && $.fn.draggable) {
+				lyr3.draggable({
+					handle: '.ui-dialog-titlebar',
+					cancel: 'li'
+				});
+			}
 
-}).call(this);
+			// ie7 must use absolute positioning in quirks mode and to account for activex issues (when scrolling)
+			var expr = setExpr && (!$.support.boxModel || $('object,embed', full ? null : el).length > 0);
+			if (ie6 || expr) {
+				// give body 100% height
+				if (full && opts.allowBodyStretch && $.support.boxModel)
+					$('html,body').css('height','100%');
+
+				// fix ie6 issue when blocked element has a border width
+				if ((ie6 || !$.support.boxModel) && !full) {
+					var t = sz(el,'borderTopWidth'), l = sz(el,'borderLeftWidth');
+					var fixT = t ? '(0 - '+t+')' : 0;
+					var fixL = l ? '(0 - '+l+')' : 0;
+				}
+
+				// simulate fixed position
+				$.each(layers, function(i,o) {
+					var s = o[0].style;
+					s.position = 'absolute';
+					if (i < 2) {
+						if (full)
+							s.setExpression('height','Math.max(document.body.scrollHeight, document.body.offsetHeight) - (jQuery.support.boxModel?0:'+opts.quirksmodeOffsetHack+') + "px"');
+						else
+							s.setExpression('height','this.parentNode.offsetHeight + "px"');
+						if (full)
+							s.setExpression('width','jQuery.support.boxModel && document.documentElement.clientWidth || document.body.clientWidth + "px"');
+						else
+							s.setExpression('width','this.parentNode.offsetWidth + "px"');
+						if (fixL) s.setExpression('left', fixL);
+						if (fixT) s.setExpression('top', fixT);
+					}
+					else if (opts.centerY) {
+						if (full) s.setExpression('top','(document.documentElement.clientHeight || document.body.clientHeight) / 2 - (this.offsetHeight / 2) + (blah = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop) + "px"');
+						s.marginTop = 0;
+					}
+					else if (!opts.centerY && full) {
+						var top = (opts.css && opts.css.top) ? parseInt(opts.css.top, 10) : 0;
+						var expression = '((document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop) + '+top+') + "px"';
+						s.setExpression('top',expression);
+					}
+				});
+			}
+
+			// show the message
+			if (msg) {
+				if (opts.theme)
+					lyr3.find('.ui-widget-content').append(msg);
+				else
+					lyr3.append(msg);
+				if (msg.jquery || msg.nodeType)
+					$(msg).show();
+			}
+
+			if ((msie || opts.forceIframe) && opts.showOverlay)
+				lyr1.show(); // opacity is zero
+			if (opts.fadeIn) {
+				var cb = opts.onBlock ? opts.onBlock : noOp;
+				var cb1 = (opts.showOverlay && !msg) ? cb : noOp;
+				var cb2 = msg ? cb : noOp;
+				if (opts.showOverlay)
+					lyr2._fadeIn(opts.fadeIn, cb1);
+				if (msg)
+					lyr3._fadeIn(opts.fadeIn, cb2);
+			}
+			else {
+				if (opts.showOverlay)
+					lyr2.show();
+				if (msg)
+					lyr3.show();
+				if (opts.onBlock)
+					opts.onBlock();
+			}
+
+			// bind key and mouse events
+			bind(1, el, opts);
+
+			if (full) {
+				pageBlock = lyr3[0];
+				pageBlockEls = $(opts.focusableElements,pageBlock);
+				if (opts.focusInput)
+					setTimeout(focus, 20);
+			}
+			else
+				center(lyr3[0], opts.centerX, opts.centerY);
+
+			if (opts.timeout) {
+				// auto-unblock
+				var to = setTimeout(function() {
+					if (full)
+						$.unblockUI(opts);
+					else
+						$(el).unblock(opts);
+				}, opts.timeout);
+				$(el).data('blockUI.timeout', to);
+			}
+		}
+
+		// remove the block
+		function remove(el, opts) {
+			var count;
+			var full = (el == window);
+			var $el = $(el);
+			var data = $el.data('blockUI.history');
+			var to = $el.data('blockUI.timeout');
+			if (to) {
+				clearTimeout(to);
+				$el.removeData('blockUI.timeout');
+			}
+			opts = $.extend({}, $.blockUI.defaults, opts || {});
+			bind(0, el, opts); // unbind events
+
+			if (opts.onUnblock === null) {
+				opts.onUnblock = $el.data('blockUI.onUnblock');
+				$el.removeData('blockUI.onUnblock');
+			}
+
+			var els;
+			if (full) // crazy selector to handle odd field errors in ie6/7
+				els = $('body').children().filter('.blockUI').add('body > .blockUI');
+			else
+				els = $el.find('>.blockUI');
+
+			// fix cursor issue
+			if ( opts.cursorReset ) {
+				if ( els.length > 1 )
+					els[1].style.cursor = opts.cursorReset;
+				if ( els.length > 2 )
+					els[2].style.cursor = opts.cursorReset;
+			}
+
+			if (full)
+				pageBlock = pageBlockEls = null;
+
+			if (opts.fadeOut) {
+				count = els.length;
+				els.stop().fadeOut(opts.fadeOut, function() {
+					if ( --count === 0)
+						reset(els,data,opts,el);
+				});
+			}
+			else
+				reset(els, data, opts, el);
+		}
+
+		// move blocking element back into the DOM where it started
+		function reset(els,data,opts,el) {
+			var $el = $(el);
+			if ( $el.data('blockUI.isBlocked') )
+				return;
+
+			els.each(function(i,o) {
+				// remove via DOM calls so we don't lose event handlers
+				if (this.parentNode)
+					this.parentNode.removeChild(this);
+			});
+
+			if (data && data.el) {
+				data.el.style.display = data.display;
+				data.el.style.position = data.position;
+				if (data.parent)
+					data.parent.appendChild(data.el);
+				$el.removeData('blockUI.history');
+			}
+
+			if ($el.data('blockUI.static')) {
+				$el.css('position', 'static'); // #22
+			}
+
+			if (typeof opts.onUnblock == 'function')
+				opts.onUnblock(el,opts);
+
+			// fix issue in Safari 6 where block artifacts remain until reflow
+			var body = $(document.body), w = body.width(), cssW = body[0].style.width;
+			body.width(w-1).width(w);
+			body[0].style.width = cssW;
+		}
+
+		// bind/unbind the handler
+		function bind(b, el, opts) {
+			var full = el == window, $el = $(el);
+
+			// don't bother unbinding if there is nothing to unbind
+			if (!b && (full && !pageBlock || !full && !$el.data('blockUI.isBlocked')))
+				return;
+
+			$el.data('blockUI.isBlocked', b);
+
+			// don't bind events when overlay is not in use or if bindEvents is false
+			if (!full || !opts.bindEvents || (b && !opts.showOverlay))
+				return;
+
+			// bind anchors and inputs for mouse and key events
+			var events = 'mousedown mouseup keydown keypress keyup touchstart touchend touchmove';
+			if (b)
+				$(document).bind(events, opts, handler);
+			else
+				$(document).unbind(events, handler);
+
+		// former impl...
+		//		var $e = $('a,:input');
+		//		b ? $e.bind(events, opts, handler) : $e.unbind(events, handler);
+		}
+
+		// event handler to suppress keyboard/mouse events when blocking
+		function handler(e) {
+			// allow tab navigation (conditionally)
+			if (e.type === 'keydown' && e.keyCode && e.keyCode == 9) {
+				if (pageBlock && e.data.constrainTabKey) {
+					var els = pageBlockEls;
+					var fwd = !e.shiftKey && e.target === els[els.length-1];
+					var back = e.shiftKey && e.target === els[0];
+					if (fwd || back) {
+						setTimeout(function(){focus(back);},10);
+						return false;
+					}
+				}
+			}
+			var opts = e.data;
+			var target = $(e.target);
+			if (target.hasClass('blockOverlay') && opts.onOverlayClick)
+				opts.onOverlayClick(e);
+
+			// allow events within the message content
+			if (target.parents('div.' + opts.blockMsgClass).length > 0)
+				return true;
+
+			// allow events for content that is not being blocked
+			return target.parents().children().filter('div.blockUI').length === 0;
+		}
+
+		function focus(back) {
+			if (!pageBlockEls)
+				return;
+			var e = pageBlockEls[back===true ? pageBlockEls.length-1 : 0];
+			if (e)
+				e.focus();
+		}
+
+		function center(el, x, y) {
+			var p = el.parentNode, s = el.style;
+			var l = ((p.offsetWidth - el.offsetWidth)/2) - sz(p,'borderLeftWidth');
+			var t = ((p.offsetHeight - el.offsetHeight)/2) - sz(p,'borderTopWidth');
+			if (x) s.left = l > 0 ? (l+'px') : '0';
+			if (y) s.top  = t > 0 ? (t+'px') : '0';
+		}
+
+		function sz(el, p) {
+			return parseInt($.css(el,p),10)||0;
+		}
+
+	}
+
+
+	/*global define:true */
+	if (typeof define === 'function' && define.amd && define.amd.jQuery) {
+		define(['jquery'], setup);
+	} else {
+		setup(jQuery);
+	}
+
+})();
 /* ========================================================================
- * Bootstrap: affix.js v3.0.3
+ * Bootstrap: affix.js v3.1.1
  * http://getbootstrap.com/javascript/#affix
  * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
 
 
-+function ($) { "use strict";
++function ($) {
+  'use strict';
 
   // AFFIX CLASS DEFINITION
   // ======================
@@ -10050,9 +10150,10 @@ return jQuery;
       .on('scroll.bs.affix.data-api', $.proxy(this.checkPosition, this))
       .on('click.bs.affix.data-api',  $.proxy(this.checkPositionWithEventLoop, this))
 
-    this.$element = $(element)
-    this.affixed  =
-    this.unpin    = null
+    this.$element     = $(element)
+    this.affixed      =
+    this.unpin        =
+    this.pinnedOffset = null
 
     this.checkPosition()
   }
@@ -10061,6 +10162,14 @@ return jQuery;
 
   Affix.DEFAULTS = {
     offset: 0
+  }
+
+  Affix.prototype.getPinnedOffset = function () {
+    if (this.pinnedOffset) return this.pinnedOffset
+    this.$element.removeClass(Affix.RESET).addClass('affix')
+    var scrollTop = this.$window.scrollTop()
+    var position  = this.$element.offset()
+    return (this.pinnedOffset = position.top - scrollTop)
   }
 
   Affix.prototype.checkPositionWithEventLoop = function () {
@@ -10077,9 +10186,11 @@ return jQuery;
     var offsetTop    = offset.top
     var offsetBottom = offset.bottom
 
+    if (this.affixed == 'top') position.top += scrollTop
+
     if (typeof offset != 'object')         offsetBottom = offsetTop = offset
-    if (typeof offsetTop == 'function')    offsetTop    = offset.top()
-    if (typeof offsetBottom == 'function') offsetBottom = offset.bottom()
+    if (typeof offsetTop == 'function')    offsetTop    = offset.top(this.$element)
+    if (typeof offsetBottom == 'function') offsetBottom = offset.bottom(this.$element)
 
     var affix = this.unpin   != null && (scrollTop + this.unpin <= position.top) ? false :
                 offsetBottom != null && (position.top + this.$element.height() >= scrollHeight - offsetBottom) ? 'bottom' :
@@ -10088,13 +10199,23 @@ return jQuery;
     if (this.affixed === affix) return
     if (this.unpin) this.$element.css('top', '')
 
-    this.affixed = affix
-    this.unpin   = affix == 'bottom' ? position.top - scrollTop : null
+    var affixType = 'affix' + (affix ? '-' + affix : '')
+    var e         = $.Event(affixType + '.bs.affix')
 
-    this.$element.removeClass(Affix.RESET).addClass('affix' + (affix ? '-' + affix : ''))
+    this.$element.trigger(e)
+
+    if (e.isDefaultPrevented()) return
+
+    this.affixed = affix
+    this.unpin = affix == 'bottom' ? this.getPinnedOffset() : null
+
+    this.$element
+      .removeClass(Affix.RESET)
+      .addClass(affixType)
+      .trigger($.Event(affixType.replace('affix', 'affixed')))
 
     if (affix == 'bottom') {
-      this.$element.offset({ top: document.body.offsetHeight - offsetBottom - this.$element.height() })
+      this.$element.offset({ top: scrollHeight - offsetBottom - this.$element.height() })
     }
   }
 
@@ -10146,27 +10267,17 @@ return jQuery;
 
 }(jQuery);
 /* ========================================================================
- * Bootstrap: alert.js v3.0.3
+ * Bootstrap: alert.js v3.1.1
  * http://getbootstrap.com/javascript/#alerts
  * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
 
 
-+function ($) { "use strict";
++function ($) {
+  'use strict';
 
   // ALERT CLASS DEFINITION
   // ======================
@@ -10245,34 +10356,25 @@ return jQuery;
 
 }(jQuery);
 /* ========================================================================
- * Bootstrap: button.js v3.0.3
+ * Bootstrap: button.js v3.1.1
  * http://getbootstrap.com/javascript/#buttons
  * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
 
 
-+function ($) { "use strict";
++function ($) {
+  'use strict';
 
   // BUTTON PUBLIC CLASS DEFINITION
   // ==============================
 
   var Button = function (element, options) {
-    this.$element = $(element)
-    this.options  = $.extend({}, Button.DEFAULTS, options)
+    this.$element  = $(element)
+    this.options   = $.extend({}, Button.DEFAULTS, options)
+    this.isLoading = false
   }
 
   Button.DEFAULTS = {
@@ -10292,25 +10394,26 @@ return jQuery;
     $el[val](data[state] || this.options[state])
 
     // push to event loop to allow forms to submit
-    setTimeout(function () {
-      state == 'loadingText' ?
-        $el.addClass(d).attr(d, d) :
-        $el.removeClass(d).removeAttr(d);
-    }, 0)
+    setTimeout($.proxy(function () {
+      if (state == 'loadingText') {
+        this.isLoading = true
+        $el.addClass(d).attr(d, d)
+      } else if (this.isLoading) {
+        this.isLoading = false
+        $el.removeClass(d).removeAttr(d)
+      }
+    }, this), 0)
   }
 
   Button.prototype.toggle = function () {
-    var $parent = this.$element.closest('[data-toggle="buttons"]')
     var changed = true
+    var $parent = this.$element.closest('[data-toggle="buttons"]')
 
     if ($parent.length) {
       var $input = this.$element.find('input')
-      if ($input.prop('type') === 'radio') {
-        // see if clicking on current one
-        if ($input.prop('checked') && this.$element.hasClass('active'))
-          changed = false
-        else
-          $parent.find('.active').removeClass('active')
+      if ($input.prop('type') == 'radio') {
+        if ($input.prop('checked') && this.$element.hasClass('active')) changed = false
+        else $parent.find('.active').removeClass('active')
       }
       if (changed) $input.prop('checked', !this.$element.hasClass('active')).trigger('change')
     }
@@ -10361,27 +10464,17 @@ return jQuery;
 
 }(jQuery);
 /* ========================================================================
- * Bootstrap: carousel.js v3.0.3
+ * Bootstrap: carousel.js v3.1.1
  * http://getbootstrap.com/javascript/#carousel
  * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
 
 
-+function ($) { "use strict";
++function ($) {
+  'use strict';
 
   // CAROUSEL CLASS DEFINITION
   // =========================
@@ -10402,9 +10495,9 @@ return jQuery;
   }
 
   Carousel.DEFAULTS = {
-    interval: 5000
-  , pause: 'hover'
-  , wrap: true
+    interval: 5000,
+    pause: 'hover',
+    wrap: true
   }
 
   Carousel.prototype.cycle =  function (e) {
@@ -10441,7 +10534,7 @@ return jQuery;
   Carousel.prototype.pause = function (e) {
     e || (this.paused = true)
 
-    if (this.$element.find('.next, .prev').length && $.support.transition.end) {
+    if (this.$element.find('.next, .prev').length && $.support.transition) {
       this.$element.trigger($.support.transition.end)
       this.cycle(true)
     }
@@ -10474,13 +10567,15 @@ return jQuery;
       $next = this.$element.find('.item')[fallback]()
     }
 
+    if ($next.hasClass('active')) return this.sliding = false
+
+    var e = $.Event('slide.bs.carousel', { relatedTarget: $next[0], direction: direction })
+    this.$element.trigger(e)
+    if (e.isDefaultPrevented()) return
+
     this.sliding = true
 
     isCycling && this.pause()
-
-    var e = $.Event('slide.bs.carousel', { relatedTarget: $next[0], direction: direction })
-
-    if ($next.hasClass('active')) return
 
     if (this.$indicators.length) {
       this.$indicators.find('.active').removeClass('active')
@@ -10491,8 +10586,6 @@ return jQuery;
     }
 
     if ($.support.transition && this.$element.hasClass('slide')) {
-      this.$element.trigger(e)
-      if (e.isDefaultPrevented()) return
       $next.addClass(type)
       $next[0].offsetWidth // force reflow
       $active.addClass(direction)
@@ -10504,10 +10597,8 @@ return jQuery;
           that.sliding = false
           setTimeout(function () { that.$element.trigger('slid.bs.carousel') }, 0)
         })
-        .emulateTransitionEnd(600)
+        .emulateTransitionEnd($active.css('transition-duration').slice(0, -1) * 1000)
     } else {
-      this.$element.trigger(e)
-      if (e.isDefaultPrevented()) return
       $active.removeClass('active')
       $next.addClass('active')
       this.sliding = false
@@ -10579,27 +10670,17 @@ return jQuery;
 
 }(jQuery);
 /* ========================================================================
- * Bootstrap: collapse.js v3.0.3
+ * Bootstrap: collapse.js v3.1.1
  * http://getbootstrap.com/javascript/#collapse
  * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
 
 
-+function ($) { "use strict";
++function ($) {
+  'use strict';
 
   // COLLAPSE PUBLIC CLASS DEFINITION
   // ================================
@@ -10650,7 +10731,7 @@ return jQuery;
     var complete = function () {
       this.$element
         .removeClass('collapsing')
-        .addClass('in')
+        .addClass('collapse in')
         [dimension]('auto')
       this.transitioning = 0
       this.$element.trigger('shown.bs.collapse')
@@ -10718,6 +10799,7 @@ return jQuery;
       var data    = $this.data('bs.collapse')
       var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
 
+      if (!data && options.toggle && option == 'show') option = !option
       if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
       if (typeof option == 'string') data[option]()
     })
@@ -10759,27 +10841,17 @@ return jQuery;
 
 }(jQuery);
 /* ========================================================================
- * Bootstrap: dropdown.js v3.0.3
+ * Bootstrap: dropdown.js v3.1.1
  * http://getbootstrap.com/javascript/#dropdowns
  * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
 
 
-+function ($) { "use strict";
++function ($) {
+  'use strict';
 
   // DROPDOWN CLASS DEFINITION
   // =========================
@@ -10806,13 +10878,14 @@ return jQuery;
         $('<div class="dropdown-backdrop"/>').insertAfter($(this)).on('click', clearMenus)
       }
 
-      $parent.trigger(e = $.Event('show.bs.dropdown'))
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
 
       if (e.isDefaultPrevented()) return
 
       $parent
         .toggleClass('open')
-        .trigger('shown.bs.dropdown')
+        .trigger('shown.bs.dropdown', relatedTarget)
 
       $this.focus()
     }
@@ -10838,7 +10911,8 @@ return jQuery;
       return $this.click()
     }
 
-    var $items = $('[role=menu] li:not(.divider):visible a', $parent)
+    var desc = ' li:not(.divider):visible a'
+    var $items = $parent.find('[role=menu]' + desc + ', [role=listbox]' + desc)
 
     if (!$items.length) return
 
@@ -10846,19 +10920,20 @@ return jQuery;
 
     if (e.keyCode == 38 && index > 0)                 index--                        // up
     if (e.keyCode == 40 && index < $items.length - 1) index++                        // down
-    if (!~index)                                      index=0
+    if (!~index)                                      index = 0
 
     $items.eq(index).focus()
   }
 
-  function clearMenus() {
+  function clearMenus(e) {
     $(backdrop).remove()
-    $(toggle).each(function (e) {
+    $(toggle).each(function () {
       var $parent = getParent($(this))
+      var relatedTarget = { relatedTarget: this }
       if (!$parent.hasClass('open')) return
-      $parent.trigger(e = $.Event('hide.bs.dropdown'))
+      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
       if (e.isDefaultPrevented()) return
-      $parent.removeClass('open').trigger('hidden.bs.dropdown')
+      $parent.removeClass('open').trigger('hidden.bs.dropdown', relatedTarget)
     })
   }
 
@@ -10867,7 +10942,7 @@ return jQuery;
 
     if (!selector) {
       selector = $this.attr('href')
-      selector = selector && /#/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') //strip for ie7
+      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') //strip for ie7
     }
 
     var $parent = selector && $(selector)
@@ -10909,32 +10984,22 @@ return jQuery;
   $(document)
     .on('click.bs.dropdown.data-api', clearMenus)
     .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
-    .on('click.bs.dropdown.data-api'  , toggle, Dropdown.prototype.toggle)
-    .on('keydown.bs.dropdown.data-api', toggle + ', [role=menu]' , Dropdown.prototype.keydown)
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle + ', [role=menu], [role=listbox]', Dropdown.prototype.keydown)
 
 }(jQuery);
 /* ========================================================================
- * Bootstrap: tab.js v3.0.3
+ * Bootstrap: tab.js v3.1.1
  * http://getbootstrap.com/javascript/#tabs
  * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
 
 
-+function ($) { "use strict";
++function ($) {
+  'use strict';
 
   // TAB CLASS DEFINITION
   // ====================
@@ -10969,8 +11034,8 @@ return jQuery;
     this.activate($this.parent('li'), $ul)
     this.activate($target, $target.parent(), function () {
       $this.trigger({
-        type: 'shown.bs.tab'
-      , relatedTarget: previous
+        type: 'shown.bs.tab',
+        relatedTarget: previous
       })
     })
   }
@@ -11050,27 +11115,17 @@ return jQuery;
 
 }(jQuery);
 /* ========================================================================
- * Bootstrap: transition.js v3.0.3
+ * Bootstrap: transition.js v3.1.1
  * http://getbootstrap.com/javascript/#transitions
  * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
 
 
-+function ($) { "use strict";
++function ($) {
+  'use strict';
 
   // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
   // ============================================================
@@ -11079,10 +11134,10 @@ return jQuery;
     var el = document.createElement('bootstrap')
 
     var transEndEventNames = {
-      'WebkitTransition' : 'webkitTransitionEnd'
-    , 'MozTransition'    : 'transitionend'
-    , 'OTransition'      : 'oTransitionEnd otransitionend'
-    , 'transition'       : 'transitionend'
+      'WebkitTransition' : 'webkitTransitionEnd',
+      'MozTransition'    : 'transitionend',
+      'OTransition'      : 'oTransitionEnd otransitionend',
+      'transition'       : 'transitionend'
     }
 
     for (var name in transEndEventNames) {
@@ -11090,6 +11145,8 @@ return jQuery;
         return { end: transEndEventNames[name] }
       }
     }
+
+    return false // explicit for ie8 (  ._.)
   }
 
   // http://blog.alexmaccaw.com/css-transitions
@@ -11107,27 +11164,17 @@ return jQuery;
 
 }(jQuery);
 /* ========================================================================
- * Bootstrap: scrollspy.js v3.0.3
+ * Bootstrap: scrollspy.js v3.1.1
  * http://getbootstrap.com/javascript/#scrollspy
  * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
 
 
-+function ($) { "use strict";
++function ($) {
+  'use strict';
 
   // SCROLLSPY CLASS DEFINITION
   // ==========================
@@ -11167,10 +11214,11 @@ return jQuery;
       .map(function () {
         var $el   = $(this)
         var href  = $el.data('target') || $el.attr('href')
-        var $href = /^#\w/.test(href) && $(href)
+        var $href = /^#./.test(href) && $(href)
 
         return ($href
           && $href.length
+          && $href.is(':visible')
           && [[ $href[offsetMethod]().top + (!$.isWindow(self.$scrollElement.get(0)) && self.$scrollElement.scrollTop()), href ]]) || null
       })
       .sort(function (a, b) { return a[0] - b[0] })
@@ -11193,6 +11241,10 @@ return jQuery;
       return activeTarget != (i = targets.last()[0]) && this.activate(i)
     }
 
+    if (activeTarget && scrollTop <= offsets[0]) {
+      return activeTarget != (i = targets[0]) && this.activate(i)
+    }
+
     for (i = offsets.length; i--;) {
       activeTarget != targets[i]
         && scrollTop >= offsets[i]
@@ -11205,18 +11257,18 @@ return jQuery;
     this.activeTarget = target
 
     $(this.selector)
-      .parents('.active')
+      .parentsUntil(this.options.target, '.active')
       .removeClass('active')
 
-    var selector = this.selector
-      + '[data-target="' + target + '"],'
-      + this.selector + '[href="' + target + '"]'
+    var selector = this.selector +
+        '[data-target="' + target + '"],' +
+        this.selector + '[href="' + target + '"]'
 
     var active = $(selector)
       .parents('li')
       .addClass('active')
 
-    if (active.parent('.dropdown-menu').length)  {
+    if (active.parent('.dropdown-menu').length) {
       active = active
         .closest('li.dropdown')
         .addClass('active')
@@ -11266,27 +11318,17 @@ return jQuery;
 
 }(jQuery);
 /* ========================================================================
- * Bootstrap: modal.js v3.0.3
+ * Bootstrap: modal.js v3.1.1
  * http://getbootstrap.com/javascript/#modals
  * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
 
 
-+function ($) { "use strict";
++function ($) {
+  'use strict';
 
   // MODAL CLASS DEFINITION
   // ======================
@@ -11297,13 +11339,19 @@ return jQuery;
     this.$backdrop =
     this.isShown   = null
 
-    if (this.options.remote) this.$element.load(this.options.remote)
+    if (this.options.remote) {
+      this.$element
+        .find('.modal-content')
+        .load(this.options.remote, $.proxy(function () {
+          this.$element.trigger('loaded.bs.modal')
+        }, this))
+    }
   }
 
   Modal.DEFAULTS = {
-      backdrop: true
-    , keyboard: true
-    , show: true
+    backdrop: true,
+    keyboard: true,
+    show: true
   }
 
   Modal.prototype.toggle = function (_relatedTarget) {
@@ -11322,7 +11370,7 @@ return jQuery;
 
     this.escape()
 
-    this.$element.on('click.dismiss.modal', '[data-dismiss="modal"]', $.proxy(this.hide, this))
+    this.$element.on('click.dismiss.bs.modal', '[data-dismiss="modal"]', $.proxy(this.hide, this))
 
     this.backdrop(function () {
       var transition = $.support.transition && that.$element.hasClass('fade')
@@ -11331,7 +11379,9 @@ return jQuery;
         that.$element.appendTo(document.body) // don't move modals dom position
       }
 
-      that.$element.show()
+      that.$element
+        .show()
+        .scrollTop(0)
 
       if (transition) {
         that.$element[0].offsetWidth // force reflow
@@ -11373,7 +11423,7 @@ return jQuery;
     this.$element
       .removeClass('in')
       .attr('aria-hidden', true)
-      .off('click.dismiss.modal')
+      .off('click.dismiss.bs.modal')
 
     $.support.transition && this.$element.hasClass('fade') ?
       this.$element
@@ -11417,7 +11467,6 @@ return jQuery;
   }
 
   Modal.prototype.backdrop = function (callback) {
-    var that    = this
     var animate = this.$element.hasClass('fade') ? 'fade' : ''
 
     if (this.isShown && this.options.backdrop) {
@@ -11426,7 +11475,7 @@ return jQuery;
       this.$backdrop = $('<div class="modal-backdrop ' + animate + '" />')
         .appendTo(document.body)
 
-      this.$element.on('click.dismiss.modal', $.proxy(function (e) {
+      this.$element.on('click.dismiss.bs.modal', $.proxy(function (e) {
         if (e.target !== e.currentTarget) return
         this.options.backdrop == 'static'
           ? this.$element[0].focus.call(this.$element[0])
@@ -11448,7 +11497,7 @@ return jQuery;
     } else if (!this.isShown && this.$backdrop) {
       this.$backdrop.removeClass('in')
 
-      $.support.transition && this.$element.hasClass('fade')?
+      $.support.transition && this.$element.hasClass('fade') ?
         this.$backdrop
           .one($.support.transition.end, callback)
           .emulateTransitionEnd(150) :
@@ -11496,9 +11545,9 @@ return jQuery;
     var $this   = $(this)
     var href    = $this.attr('href')
     var $target = $($this.attr('data-target') || (href && href.replace(/.*(?=#[^\s]+$)/, ''))) //strip for ie7
-    var option  = $target.data('modal') ? 'toggle' : $.extend({ remote: !/#/.test(href) && href }, $target.data(), $this.data())
+    var option  = $target.data('bs.modal') ? 'toggle' : $.extend({ remote: !/#/.test(href) && href }, $target.data(), $this.data())
 
-    e.preventDefault()
+    if ($this.is('a')) e.preventDefault()
 
     $target
       .modal(option, this)
@@ -11508,33 +11557,23 @@ return jQuery;
   })
 
   $(document)
-    .on('show.bs.modal',  '.modal', function () { $(document.body).addClass('modal-open') })
+    .on('show.bs.modal', '.modal', function () { $(document.body).addClass('modal-open') })
     .on('hidden.bs.modal', '.modal', function () { $(document.body).removeClass('modal-open') })
 
 }(jQuery);
 /* ========================================================================
- * Bootstrap: tooltip.js v3.0.3
+ * Bootstrap: tooltip.js v3.1.1
  * http://getbootstrap.com/javascript/#tooltip
  * Inspired by the original jQuery.tipsy by Jason Frame
  * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
 
 
-+function ($) { "use strict";
++function ($) {
+  'use strict';
 
   // TOOLTIP PUBLIC CLASS DEFINITION
   // ===============================
@@ -11551,15 +11590,15 @@ return jQuery;
   }
 
   Tooltip.DEFAULTS = {
-    animation: true
-  , placement: 'top'
-  , selector: false
-  , template: '<div class="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
-  , trigger: 'hover focus'
-  , title: ''
-  , delay: 0
-  , html: false
-  , container: false
+    animation: true,
+    placement: 'top',
+    selector: false,
+    template: '<div class="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
+    trigger: 'hover focus',
+    title: '',
+    delay: 0,
+    html: false,
+    container: false
   }
 
   Tooltip.prototype.init = function (type, element, options) {
@@ -11576,8 +11615,8 @@ return jQuery;
       if (trigger == 'click') {
         this.$element.on('click.' + this.type, this.options.selector, $.proxy(this.toggle, this))
       } else if (trigger != 'manual') {
-        var eventIn  = trigger == 'hover' ? 'mouseenter' : 'focus'
-        var eventOut = trigger == 'hover' ? 'mouseleave' : 'blur'
+        var eventIn  = trigger == 'hover' ? 'mouseenter' : 'focusin'
+        var eventOut = trigger == 'hover' ? 'mouseleave' : 'focusout'
 
         this.$element.on(eventIn  + '.' + this.type, this.options.selector, $.proxy(this.enter, this))
         this.$element.on(eventOut + '.' + this.type, this.options.selector, $.proxy(this.leave, this))
@@ -11598,8 +11637,8 @@ return jQuery;
 
     if (options.delay && typeof options.delay == 'number') {
       options.delay = {
-        show: options.delay
-      , hide: options.delay
+        show: options.delay,
+        hide: options.delay
       }
     }
 
@@ -11648,12 +11687,13 @@ return jQuery;
   }
 
   Tooltip.prototype.show = function () {
-    var e = $.Event('show.bs.'+ this.type)
+    var e = $.Event('show.bs.' + this.type)
 
     if (this.hasContent() && this.enabled) {
       this.$element.trigger(e)
 
       if (e.isDefaultPrevented()) return
+      var that = this;
 
       var $tip = this.tip()
 
@@ -11703,11 +11743,21 @@ return jQuery;
       var calculatedOffset = this.getCalculatedOffset(placement, pos, actualWidth, actualHeight)
 
       this.applyPlacement(calculatedOffset, placement)
-      this.$element.trigger('shown.bs.' + this.type)
+      this.hoverState = null
+
+      var complete = function() {
+        that.$element.trigger('shown.bs.' + that.type)
+      }
+
+      $.support.transition && this.$tip.hasClass('fade') ?
+        $tip
+          .one($.support.transition.end, complete)
+          .emulateTransitionEnd(150) :
+        complete()
     }
   }
 
-  Tooltip.prototype.applyPlacement = function(offset, placement) {
+  Tooltip.prototype.applyPlacement = function (offset, placement) {
     var replace
     var $tip   = this.tip()
     var width  = $tip[0].offsetWidth
@@ -11724,9 +11774,18 @@ return jQuery;
     offset.top  = offset.top  + marginTop
     offset.left = offset.left + marginLeft
 
-    $tip
-      .offset(offset)
-      .addClass('in')
+    // $.fn.offset doesn't round pixel values
+    // so we use setOffset directly with our own function B-0
+    $.offset.setOffset($tip[0], $.extend({
+      using: function (props) {
+        $tip.css({
+          top: Math.round(props.top),
+          left: Math.round(props.left)
+        })
+      }
+    }, offset), 0)
+
+    $tip.addClass('in')
 
     // check to see if placing tip in new offset caused the tip to resize itself
     var actualWidth  = $tip[0].offsetWidth
@@ -11758,8 +11817,8 @@ return jQuery;
     if (replace) $tip.offset(offset)
   }
 
-  Tooltip.prototype.replaceArrow = function(delta, dimension, position) {
-    this.arrow().css(position, delta ? (50 * (1 - delta / dimension) + "%") : '')
+  Tooltip.prototype.replaceArrow = function (delta, dimension, position) {
+    this.arrow().css(position, delta ? (50 * (1 - delta / dimension) + '%') : '')
   }
 
   Tooltip.prototype.setContent = function () {
@@ -11777,6 +11836,7 @@ return jQuery;
 
     function complete() {
       if (that.hoverState != 'in') $tip.detach()
+      that.$element.trigger('hidden.bs.' + that.type)
     }
 
     this.$element.trigger(e)
@@ -11791,7 +11851,7 @@ return jQuery;
         .emulateTransitionEnd(150) :
       complete()
 
-    this.$element.trigger('hidden.bs.' + this.type)
+    this.hoverState = null
 
     return this
   }
@@ -11810,8 +11870,8 @@ return jQuery;
   Tooltip.prototype.getPosition = function () {
     var el = this.$element[0]
     return $.extend({}, (typeof el.getBoundingClientRect == 'function') ? el.getBoundingClientRect() : {
-      width: el.offsetWidth
-    , height: el.offsetHeight
+      width: el.offsetWidth,
+      height: el.offsetHeight
     }, this.$element.offset())
   }
 
@@ -11867,6 +11927,7 @@ return jQuery;
   }
 
   Tooltip.prototype.destroy = function () {
+    clearTimeout(this.timeout)
     this.hide().$element.off('.' + this.type).removeData('bs.' + this.type)
   }
 
@@ -11882,6 +11943,7 @@ return jQuery;
       var data    = $this.data('bs.tooltip')
       var options = typeof option == 'object' && option
 
+      if (!data && option == 'destroy') return
       if (!data) $this.data('bs.tooltip', (data = new Tooltip(this, options)))
       if (typeof option == 'string') data[option]()
     })
@@ -11900,27 +11962,17 @@ return jQuery;
 
 }(jQuery);
 /* ========================================================================
- * Bootstrap: popover.js v3.0.3
+ * Bootstrap: popover.js v3.1.1
  * http://getbootstrap.com/javascript/#popovers
  * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2011-2014 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
 
 
-+function ($) { "use strict";
++function ($) {
+  'use strict';
 
   // POPOVER PUBLIC CLASS DEFINITION
   // ===============================
@@ -11931,11 +11983,11 @@ return jQuery;
 
   if (!$.fn.tooltip) throw new Error('Popover requires tooltip.js')
 
-  Popover.DEFAULTS = $.extend({} , $.fn.tooltip.Constructor.DEFAULTS, {
-    placement: 'right'
-  , trigger: 'click'
-  , content: ''
-  , template: '<div class="popover"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+  Popover.DEFAULTS = $.extend({}, $.fn.tooltip.Constructor.DEFAULTS, {
+    placement: 'right',
+    trigger: 'click',
+    content: '',
+    template: '<div class="popover"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
   })
 
 
@@ -11956,7 +12008,9 @@ return jQuery;
     var content = this.getContent()
 
     $tip.find('.popover-title')[this.options.html ? 'html' : 'text'](title)
-    $tip.find('.popover-content')[this.options.html ? 'html' : 'text'](content)
+    $tip.find('.popover-content')[ // we use append for html objects to maintain js events
+      this.options.html ? (typeof content == 'string' ? 'html' : 'append') : 'text'
+    ](content)
 
     $tip.removeClass('fade top bottom left right in')
 
@@ -12000,6 +12054,7 @@ return jQuery;
       var data    = $this.data('bs.popover')
       var options = typeof option == 'object' && option
 
+      if (!data && option == 'destroy') return
       if (!data) $this.data('bs.popover', (data = new Popover(this, options)))
       if (typeof option == 'string') data[option]()
     })
@@ -17378,10 +17433,16 @@ vjs.LoadingSpinner.prototype.createEl = function(){
 vjs.BigPlayButton = vjs.Button.extend();
 
 vjs.BigPlayButton.prototype.createEl = function(){
+  // FREMOTE_EDIT
+  // return vjs.Button.prototype.createEl.call(this, 'div', {
+  //   className: 'vjs-big-play-button',
+  //   innerHTML: '<span aria-hidden="true"></span>',
+  //   'aria-label': 'play video'
+  // });
+
   return vjs.Button.prototype.createEl.call(this, 'div', {
     className: 'vjs-big-play-button',
-    innerHTML: '<span aria-hidden="true"></span>',
-    'aria-label': 'play video'
+    innerHTML: '<?xml version="1.0" encoding="UTF-8" standalone="no"?><!-- Created with Inkscape (http://www.inkscape.org/) --><svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="630" height="355" id="svg3142" version="1.1" inkscape:version="0.48.3.1 r9886" sodipodi:docname="waiting.svg"> <defs id="defs3144" /> <sodipodi:namedview id="base" pagecolor="#ffffff" bordercolor="#666666" borderopacity="1.0" inkscape:pageopacity="0.0" inkscape:pageshadow="2" inkscape:zoom="1" inkscape:cx="280.38778" inkscape:cy="178.26267" inkscape:document-units="px" inkscape:current-layer="layer1" showgrid="false" inkscape:window-width="1024" inkscape:window-height="586" inkscape:window-x="0" inkscape:window-y="14" inkscape:window-maximized="1" showguides="true" inkscape:guide-bbox="true"> <sodipodi:guide orientation="0,1" position="329.64286,177.67857" id="guide3847" /> </sodipodi:namedview> <metadata id="metadata3147"> <rdf:RDF> <cc:Work rdf:about=""> <dc:format>image/svg+xml</dc:format> <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" /> <dc:title></dc:title> </cc:Work> </rdf:RDF> </metadata> <g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1" transform="translate(0,-697.36218)"> <path style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:1;stroke:#7b7b7b;stroke-width:0.60342562;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" d="m 402.31547,859.50032 -2.62741,2.53942 c 3.15096,3.25958 5.0914,7.67218 5.0914,12.57138 0,4.8992 -1.94045,9.3243 -5.0914,12.5839 l 2.62741,2.5394 c 3.78197,-3.9124 6.10969,-9.2595 6.10969,-15.1233 0,-5.8638 -2.32771,-11.1984 -6.10969,-15.1108 z" id="beam_small" inkscape:connector-curvature="0" /> <path style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:1;stroke:#7b7b7b;stroke-width:0.60342562;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" d="m 412.00799,849.77009 -2.5897,2.56456 c 5.67786,5.71746 9.18967,13.57447 9.18967,22.27647 0,8.702 -3.51181,16.5716 -9.18967,22.289 l 2.5897,2.5646 c 6.32913,-6.3733 10.24567,-15.1696 10.24567,-24.8536 0,-9.684 -3.91654,-18.46777 -10.24567,-24.84103 z" id="beam_large" inkscape:connector-curvature="0" /> <path style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:1;stroke:#7b7b7b;stroke-width:0.60342562;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans" d="m 207.97472,832.64273 0,3.65827 170.0403,0 c 3.05169,0 5.45597,2.40428 5.45597,5.45597 l 0,65.48425 c 0,3.0517 -2.40428,5.456 -5.45597,5.456 l -170.0403,0 0,3.6457 170.0403,0 c 5.01105,0 9.10167,-4.0907 9.10167,-9.1017 l 0,-22.7416 c 4.82673,-0.7446 8.54853,-4.9551 8.54853,-9.9817 0,-5.0266 -3.7236,-9.2032 -8.54853,-9.9439 l 0,-22.81705 c 0,-5.01104 -4.09062,-9.11424 -9.10167,-9.11424 l -170.0403,0 z m 179.26768,35.69009 c 2.75744,0.7252 4.77712,3.1906 4.77712,6.1851 0,2.9907 -2.02629,5.4663 -4.77712,6.1977 l 0,-12.3828 z" id="rect4058" inkscape:connector-curvature="0" /> <g transform="matrix(0.82463165,0,0,0.82463165,161.33503,661.16632)" style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;font-family:League Gothic;-inkscape-font-specification:League Gothic" id="flowRoot2994"> <path d="m 66.39375,268.83333 -3.36,0 -3.96,-29.4 4,0 1.72,15.28 0.08,0.96 0.32,0 0.12,-0.96 1.84,-15.28 3.12,0 1.84,15.28 0.12,0.96 0.32,0 0.08,-0.96 1.72,-15.28 4,0 -3.96,29.4 -3.36,0 -2,-13.92 -0.24,-1.72 -0.16,0 -0.24,1.72 -2,13.92" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3003" inkscape:connector-curvature="0" /> <path d="m 86.548125,252.15333 c 0,-0.36 0,-0.92 -0.12,-1.32 -0.16,-0.4 -0.480001,-0.68 -1,-0.68 -0.679999,0 -0.96,0.52 -1.08,1.16 -0.04,0.32 -0.08,0.68 -0.08,1.04 0,0.36 0,0.72 0,1.04 l -4.04,0 0,-0.92 c 0,-1.6 0.600001,-3.04 1.56,-4.12 0.959999,-1.08 2.320002,-1.72 3.88,-1.72 1.319999,0 2.520001,0.52 3.44,1.4 0.919999,0.88 1.48,2.12 1.48,3.56 l 0,13.44 c 0,1.96 0.12,2.84 0.28,3.8 l -3.96,0 c -0.36,-0.44 -0.36,-1.48 -0.36,-1.76 l -0.28,0 c -0.2,0.36 -0.560001,0.88 -1.12,1.32 -0.559999,0.44 -1.320001,0.76 -2.12,0.76 -0.519999,0 -1.360001,-0.2 -2,-1 -0.679999,-0.76 -1.24,-2.12 -1.24,-4.4 0,-2.43999 0.720001,-4.2 1.68,-5.4 0.959999,-1.2 2.160001,-1.96 3.16,-2.48 0.999999,-0.52 1.76,-0.88 1.92,-1.32 l 0,-2.4 m 0,6.12 c -1.959998,0.84 -2.8,2.80001 -2.8,4.88 0,0.28 0.04,0.76 0.2,1.2 0.16,0.48 0.44,0.84 0.92,0.84 0.919999,0 1.68,-0.56 1.68,-1.32 l 0,-5.6" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3005" inkscape:connector-curvature="0" /> <path d="m 93.1625,239.43333 4.04,0 0,4.04 -4.04,0 0,-4.04 m 0,29.4 0,-21.88 4.04,0 0,21.88 -4.04,0" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3007" inkscape:connector-curvature="0" /> <path d="m 105.15188,241.55333 0,5.4 2.75999,0 0,3.64 -2.75999,0 0,10.88 c 0,0.68 0,1.56 0.16,2.28 0.15999,0.72 0.48,1.32 1.12,1.32 0.31999,0 0.72,-0.04 1,-0.08 0.15999,-0.04 0.32,-0.04 0.47999,-0.08 l 0,3.96 c -0.19999,0.04 -0.4,0.12 -0.59999,0.16 -0.4,0.08 -0.92001,0.12 -1.56001,0.12 -2.35999,0 -3.48,-1.2 -4.03999,-2.72 -0.56,-1.52 -0.60001,-3.36 -0.60001,-4.64 l 0,-11.2 -2.039995,0 0,-3.64 2.039995,0 0,-5.4 4.04001,0" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3009" inkscape:connector-curvature="0" /> <path d="m 110.0375,239.43333 4.04,0 0,4.04 -4.04,0 0,-4.04 m 0,29.4 0,-21.88 4.04,0 0,21.88 -4.04,0" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3011" inkscape:connector-curvature="0" /> <path d="m 121.34313,268.83333 -4.04001,0 0,-21.88 4.04001,0 0,1.84 c 0.08,-0.04 0.24,-0.2 0.48,-0.44 0.43999,-0.44 1.04,-1.04 1.75999,-1.44 0.36,-0.2 0.68001,-0.28 1.04001,-0.28 1.07999,0 1.84,0.64 2.31999,1.44 0.48,0.84 0.72,1.92 0.72,2.84 l 0,17.92 -4.03999,0 0,-17.32 c 0,-0.84 -0.48001,-0.96 -0.96001,-0.96 -0.43999,0 -0.68,0.24 -0.95999,0.52 -0.12,0.16 -0.24001,0.32 -0.36,0.52 l 0,17.24" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3013" inkscape:connector-curvature="0" /> <path d="m 140.69875,258.27333 c -0.12,2.04 -0.84,3.48 -2.24,4.56 -0.72,0.56 -1.72,0.84 -2.96,0.84 -0.12,0 -0.24,0 -0.36,0 -0.12,0 -0.28,0 -0.4,-0.04 -0.36,0.32 -0.56,0.64 -0.56,1 0,0.48 0.4,0.76 1,0.92 0.6,0.2 1.32,0.32 2.08,0.44 1.28,0.16 2.64,0.48 3.76,1.24 1.08,0.76 1.84,1.92001 1.84,3.84 0,2.12 -0.92,3.56 -2.2,4.4 -1.32,0.84 -3.08,1.2 -4.72,1.2 -1.92,-0.04 -3.56,-0.32 -4.68,-0.96 -1.16,-0.64 -1.8,-1.68 -1.8,-3.28 0,-0.76 0.4,-1.4 1,-1.96 0.6,-0.56 1.4,-1 2.16,-1.36 -1.32,-0.36 -2.44,-1.2 -2.44,-2.92 0,-0.64 0.36,-1.28 0.84,-1.88 0.48,-0.6 1.08,-1.08 1.68,-1.4 -1.16,-0.76 -1.72,-1.96 -2,-2.96 -0.16,-0.6 -0.28,-1.2 -0.32,-1.8 l 0,-5.96 c 0.16,-2.03999 0.8,-3.52 2.2,-4.68 0.68,-0.6 1.68,-0.88 2.92,-0.88 2.04,0 3.28,0.92 4.04,2 0.28,-0.28 0.76,-0.76 1.4,-1.2 0.6,-0.44 1.28,-0.8 1.92,-0.8 l 0,3.6 c -1.08,0 -1.88,0.2 -2.36,0.48 0.04,0.2 0.08,0.4 0.12,0.52 0,0.16 0,0.32 0.04,0.44 0.04,0.12 0.04,0.28 0.04,0.4 l 0,6.2 m -3.96,-5.92 c 0,-0.76 -0.16,-1.24 -0.48,-1.68 -0.16,-0.2 -0.4,-0.32 -0.76,-0.32 -0.64,0 -0.96,0.52 -1.08,1 -0.08,0.28 -0.12,0.64 -0.08,1 l 0,6 c -0.04,0.76 0.08,1.24 0.44,1.64 0.16,0.2 0.4,0.32 0.72,0.32 0.68,0 0.96,-0.48 1.12,-0.96 0.08,-0.28 0.12,-0.64 0.12,-1 l 0,-6 m -1.88,17.48 c -0.84,0.48 -1.48,1.08 -1.48,1.92 0,0.84 0.76,1.52 2.64,1.52 0.68,0 1.44,-0.12 2.04,-0.36 0.6,-0.24 1.04,-0.6 1.04,-1.12 0,-0.36 -0.04,-0.64 -0.32,-0.92 -0.32,-0.28 -0.84,-0.48 -1.84,-0.64 l -2.08,-0.4" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3015" inkscape:connector-curvature="0" /> <path d="m 151.5025,268.83333 0,-18.24 -2.04,0 0,-3.64 2.04,0 0,-0.6 c 0,-1.12 0.04,-2.92 0.6,-4.4 0.56,-1.48 1.68,-2.68 4.04,-2.68 0.64,0 1.08,0.04 1.4,0.16 l 0.48,0.12 0,3.48 c -0.12,-0.04 -0.24,-0.04 -0.36,-0.08 -0.28,-0.04 -0.56,-0.08 -0.84,-0.08 -0.68,0 -1,0.6 -1.16,1.36 -0.08,0.4 -0.12,0.8 -0.12,1.2 0,0.4 0,0.72 0,0.96 l 0,0.56 2.04,0 0,3.64 -2.04,0 0,18.24 -4.04,0" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3017" inkscape:connector-curvature="0" /> <path d="m 169.95937,263.51333 c -0.11999,2.12 -0.76,3.6 -2.16,4.76 -0.71999,0.6 -1.72,0.88 -3.04,0.88 -2.59999,0 -3.88,-1.44 -4.52,-2.88 -0.35999,-0.84 -0.6,-1.8 -0.64,-2.88 l 0,-11 c 0.12,-2.11999 0.76001,-3.68 2.16,-4.88 0.68,-0.6 1.68001,-0.88 3,-0.88 2.6,0 3.92001,1.44 4.56,2.84 0.36,0.84 0.60001,1.76 0.64,2.8 l 0,11.24 m -3.8,-11.12 c 0.04,-0.84 -0.12,-1.44 -0.52,-1.92 -0.19999,-0.2 -0.52,-0.32 -0.88,-0.32 -0.75999,0 -1.08,0.52 -1.24,1.12 -0.11999,0.32 -0.15999,0.68 -0.12,1.12 l 0,11 c -0.04,0.84 0.16001,1.44 0.52,1.88 0.2,0.2 0.48001,0.32 0.84,0.32 0.76,0 1.12001,-0.48 1.28,-1.08 0.12,-0.32 0.16,-0.68 0.12,-1.12 l 0,-11" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3019" inkscape:connector-curvature="0" /> <path d="m 180.77375,251.11333 c -0.36,-0.12 -0.76,-0.16 -1.12,-0.16 -0.64,0 -1.4,0.08 -2.04,0.68 -0.76,0.64 -0.88,1.32 -0.88,2 l 0,15.2 -4.04,0 0,-21.88 4.04,0 0,2.44 c 0.04,-0.28 0.32,-0.96 0.96,-1.6 0.64,-0.6 1.6,-1.16 3.08,-1.16 l 0,4.48" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3021" inkscape:connector-curvature="0" /> <path d="m 190.98937,268.83333 -3.56,-21.88 3.92,0 1.32,12.68 0.16,1.4 0.32,0 0.16,-1.4 1.32,-12.68 3.92,0 -3.56,21.88 -4,0" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3023" inkscape:connector-curvature="0" /> <path d="m 200.50625,239.43333 4.04,0 0,4.04 -4.04,0 0,-4.04 m 0,29.4 0,-21.88 4.04,0 0,21.88 -4.04,0" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3025" inkscape:connector-curvature="0" /> <path d="m 217.97187,268.83333 -4.04,0 0,-1.44 c -0.67999,0.64 -1.28,1.12 -2.04,1.48 -0.39999,0.2 -0.8,0.28 -1.16,0.28 -1.11999,0 -1.88,-0.64 -2.36,-1.48 -0.51999,-0.8 -0.76,-1.88 -0.76,-2.8 l 0,-13.96 c 0,-0.92 0.24001,-2 0.76,-2.84 0.48,-0.8 1.24001,-1.44 2.36,-1.44 0.76,0 1.56001,0.44 2.16,0.88 0.36,0.28 0.68001,0.56 1.04,0.88 l 0,-8.96 4.04,0 0,29.4 m -4.04,-17.08 c 0,-0.64 -0.6,-1.32 -1.2,-1.32 -0.59999,0 -1.08,0.56 -1.08,1.32 l 0,12.28 c 0,0.76 0.48001,1.32 1.08,1.32 0.6,0 1.2,-0.56 1.2,-1.32 l 0,-12.28" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3027" inkscape:connector-curvature="0" /> <path d="m 231.32937,260.99333 0,2.52 c -0.11999,2.12 -0.76,3.6 -2.2,4.76 -0.71999,0.6 -1.72,0.88 -3.04,0.88 -2.59999,0 -3.92,-1.44 -4.56,-2.88 -0.35999,-0.84 -0.6,-1.8 -0.64,-2.88 l 0,-11 c 0.12,-2.11999 0.80001,-3.68 2.24,-4.88 0.68,-0.6 1.68001,-0.88 3,-0.88 2.6,0 3.92001,1.44 4.56,2.84 0.36,0.84 0.60001,1.76 0.64,2.8 l 0,6.36 -6.68,0 0,4.76 c 0.04,0.84 0.28001,1.44 0.64,1.88 0.2,0.2 0.48001,0.32 0.84,0.32 0.76,0 1.12001,-0.48 1.28,-1.08 0.12,-0.32 0.16,-0.68 0.16,-1.12 l 0,-2.4 3.76,0 m -6.68,-5.52 2.92,0 0,-3.08 c 0,-0.84 -0.16,-1.44 -0.56,-1.92 -0.19999,-0.2 -0.52,-0.32 -0.88,-0.32 -0.75999,0 -1.08,0.52 -1.28,1.12 -0.11999,0.32 -0.16,0.68 -0.2,1.12 l 0,3.08" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3029" inkscape:connector-curvature="0" /> <path d="m 244.1,263.51333 c -0.12,2.12 -0.76,3.6 -2.16,4.76 -0.72,0.6 -1.72,0.88 -3.04,0.88 -2.6,0 -3.88,-1.44 -4.52,-2.88 -0.36,-0.84 -0.6,-1.8 -0.64,-2.88 l 0,-11 c 0.12,-2.11999 0.76,-3.68 2.16,-4.88 0.68,-0.6 1.68,-0.88 3,-0.88 2.6,0 3.92,1.44 4.56,2.84 0.36,0.84 0.6,1.76 0.64,2.8 l 0,11.24 m -3.8,-11.12 c 0.04,-0.84 -0.12,-1.44 -0.52,-1.92 -0.2,-0.2 -0.52,-0.32 -0.88,-0.32 -0.76,0 -1.08,0.52 -1.24,1.12 -0.12,0.32 -0.16,0.68 -0.12,1.12 l 0,11 c -0.04,0.84 0.16,1.44 0.52,1.88 0.2,0.2 0.48,0.32 0.84,0.32 0.76,0 1.12,-0.48 1.28,-1.08 0.12,-0.32 0.16,-0.68 0.12,-1.12 l 0,-11" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3031" inkscape:connector-curvature="0" /> <path d="m 246.3525,264.39333 4.2,0 0,4.44 -4.2,0 0,-4.44" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3033" inkscape:connector-curvature="0" /> <path d="m 252.6025,264.39333 4.2,0 0,4.44 -4.2,0 0,-4.44" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3035" inkscape:connector-curvature="0" /> <path d="m 258.8525,264.39333 4.2,0 0,4.44 -4.2,0 0,-4.44" style="fill:#ffffff;stroke:#7b7b7b;stroke-width:0.73175168;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" id="path3037" inkscape:connector-curvature="0" /> </g> </g></svg>'
   });
 };
 
@@ -19623,29 +19684,6 @@ vjs.plugin = function(name, init){
 
 videojs.options.flash.swf = "/assets/video-js.swf"
 ;
-$(document).on('ready', function(){
-	$('#playlist').on('click', '.playlist_item', function(){
-		var self = $(this)
-      $.ajax({
-        type: 'POST',
-        url: '/remotes/' + Remote.remote_id,
-        data: { _method:'PUT', status: 0, start_at: Remote.start_at, sender_id: user, selection: $('#playlist li').index(self)},
-        dataType: 'JSON'
-      })
-      console.log(self.closest('li').parent()[0].sectionRowIndex)
-      console.log('playlist_item_clicked')
-	})
-})
-
-var Playlist = {
-  selectedListItem: 0
-}
-
-$('#playlist li').on('mousedown', function(){
-  Playlist.slectedListItem = $('#playlist li').index(self)
-})
-
-;
 /*
  * HTML5 Sortable jQuery Plugin
  * https://github.com/voidberg/html5sortable
@@ -19779,168 +19817,748 @@ $('#playlist li').on('mousedown', function(){
     });
   };
 })($);
-$(document).on('ready', function(){
-  $('#owner_only_tooltip').tooltip()
+// class Remote
+function Remote(){
+  var self = this
+  var endOfFormString = '<span class="input-group-btn"><button class="btn btn-edit" type="submit">Edit</button><button class="btn btn-edit btn-red" type="button">Cancel</button></span></div></form>'
+  var remoteNameElement = $('#remote_name')
+  var remoteDescriptionElement = $('#remote_description')
+  self.serverTime = 0
+  self.status = 0
+  self.startAt = 0
+  self.remoteId = remote_id
 
-  var nav = $('#top_nav')
-
-  $(window).scroll(function () {
-      if ($(this).scrollTop() > 3) {
-          nav.addClass("nav-scrolled")
-      } else {
-          nav.removeClass("nav-scrolled")
-      }
+  remoteNameElement.on('click', function(e) {
+    if (e.target.tagName === "H3") {
+      self.getNameForm($(e.target), endOfFormString)
+    }
   })
-})
 
-$('#owner_controls_form').on('click', function(){
-	$('#owner_controls_form').submit()
-})
+  remoteDescriptionElement.on('click', function(e) {
+    if (e.target.tagName === "P") {
+      self.getDescriptionForm($(this).find('p'), endOfFormString)
+    }
+  })
 
-$('body .sortable').sortable().bind('sortupdate', function(e, ui) {
-	// console.log('sorted')
-	// console.log(ui)
-	// console.log(ui.item.index())
-	// console.log(ui.oldindex)
-	$.ajax({
-		url: "/remotes/" + Remote.remote_id + "/playlist",
-		type: "POST",
-		data: {old_position: ui.oldindex, new_position: ui.item.index(), _method: "patch"}
-	})
-})
+  $(document).on('keypress', function(e) {
+    if (e.target.id === "member_") {
+      if (e.keyCode === 13) {
+        e.preventDefault()
+        self.addToMemberList()         
+      }
+    }
+  })
+
+  $(document).on('click', function(e) {
+    var target = $(e.target)
+    if (target[0].id === "add_members") {
+      self.addToMemberList()
+    } else if (target.hasClass('user-remove')) {
+      e.preventDefault()
+      self.removeFromMemberList(target)
+    } else if (target.hasClass('user-delete')) {
+      e.preventDefault()
+      self.setFlagToRemoveMember(target)
+    } else if (target.hasClass('user-add')) {
+      e.preventDefault()
+      self.removeFlagToRemoveMember(target)
+    }
+  })
+
+  self.addedMemberListItem = function(member) {
+    return '<li><input type="hidden" name="member[]" value="' + member + '">' + member + '<button class="right btn-xfs btn-danger user-remove">X</button></li>'
+  }
+
+  self.addToMemberList = function() {
+    var member = $('input#member_').val()
+    if (member !== '') {
+      $('#added_members').show()
+      $('#added_members').find('ul').append(self.addedMemberListItem(member))
+      $('input#member_').val('')
+    }
+  }
+
+  self.removeFlagToRemoveMember = function(target) {
+    target.parent().removeClass('to-delete')
+    target.parent().find('input').remove()
+    target.removeClass('user-add')
+    target.addClass('user-delete')
+    target.text('X')
+  }
+
+  self.setFlagToRemoveMember = function(target) {
+    target.parent().addClass('to-delete')
+    target.parent().append('<input type="hidden" name="delete[]" value="' + target.parent()[0].innerText.replace(/ [X]$/, '') + '" >')
+    target.removeClass('user-delete')
+    target.addClass('user-add')
+    target.text('+')
+  }
+
+  self.removeFromMemberList = function(target) {
+    if ($(target.parents()[1]).find('li').length === 1) {
+      $(target.parents()[2]).hide()
+    }
+    target.parent().remove()
+  }
+
+  self.getNameForm = function(thisSelf, endOfFormString) {
+    $(thisSelf).replaceWith('<form id="edit_remote_name" action="' + self.remoteId + '" method="PATCH"><div class="input-group input-group-sm"><input class="form-control" type="text" value="' + thisSelf.html() + '">' + endOfFormString)
+
+    $('#remote_name form button[type="button"]').on('click', function(e) {
+      $(e.target).closest('form').replaceWith(self.returnName(thisSelf.html()))
+    })
+
+    $('#remote_name form').on('submit', function(e) {
+      self.updateName(e, this)
+    })
+  }
+
+  self.updateName = function(e, thisSelf) {
+    e.preventDefault()
+    var data = $('#remote_name input').val()
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + self.remoteId,
+      data: { _method: 'PATCH', name: data, type: 'name' }
+    }).done(function(e, status, data, xhr) {
+      var response_name = data.responseJSON.remote.name
+      $(thisSelf).replaceWith(self.returnName(response_name))
+    })
+  }
+
+  self.returnName = function(text) {
+    return '<h3 class="panel-title inline">' + text + '</h3>'
+  }
+
+  self.getDescriptionForm = function(thisSelf, endOfFormString) {
+    $(thisSelf).replaceWith('<form id="edit_remote_description" action="' + self.remoteId + '" method="PATCH"><div class="input-group input-group-sm"><textarea class="form-control">' + thisSelf.html() + '</textarea>' + endOfFormString)
+    $('#remote_description form').addClass('edit-description')
+
+    $('#remote_description form button[type="button"]').on('click', function(e) {
+      $(e.target).closest('form').replaceWith(self.returnDescription(thisSelf.html()))
+    })
+
+    $('#remote_description form').on('submit', function(e) {
+      self.updateDescription(e, this)
+    })
+  }
+
+  self.updateDescription = function(e, thisSelf) {
+    e.preventDefault()
+    var data = $('#remote_description textarea').val()
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + self.remoteId,
+      data: { _method: 'PATCH', description: data, type: 'description' }
+    }).done(function(e, status, data, xhr) {
+      var response_description = data.responseJSON.remote.description
+      $(thisSelf).replaceWith(self.returnDescription(response_description))
+    })
+  }
+
+  self.returnDescription = function(text) {
+    return '<p>' + text + '</p>'
+  }
+
+  self.getServerTime = function(){
+    $.ajax({
+      type: 'GET',
+      url: '/time',
+      async: false,
+      dataType: 'JSON'
+    }).done(function(response){
+      self.serverTime = Date.parse(response.time)
+      setInterval(function(){self.serverTime = self.serverTime + 1000},1000);
+    })
+  }
+
+  self.ping = function(){
+    // playlist.createPlaylist()
+    $.ajax({
+      type: 'GET',
+      url: '/remotes/' + self.remoteId + "/ping"
+    }).done(function(data){
+      if (data.stream_url != undefined){
+        self.player.element.src(data.stream_url)
+        self.player.element.one('loadedmetadata', function(){
+          self.toggle(data)
+        })
+      } else {
+        self.toggle(data)
+      }
+    })
+  }
+
+  self.update = function(){
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + self.remoteId + '/control',
+      data: { _method:'PUT', status: self.status, start_at: Math.floor(self.startAt), sender_id: user },
+      dataType: 'JSON'
+    })
+  }
+
+  self.pause = function(start_at){
+    self.player.element.currentTime(start_at)
+    self.player.element.play() // to bypass the big button mode
+    self.player.element.pause()
+  }
+
+  self.play = function(start_at, updated_at){
+    var offset = Math.max(0, (self.serverTime - Date.parse(updated_at)) / 1000 )
+    self.player.element.currentTime(Math.floor(start_at + offset))
+    self.player.element.play()
+  }
+
+  self.toggle = function(data){
+    if (data.status == -1 || data.status == 2){
+      self.pause(data.start_at)
+    } else if (data.status == 1){
+      self.play(data.start_at, data.updated_at)
+    }
+  }
+
+  self.getServerTime()
+
+} // END REMOTE CONSTRUCTOR
 ;
-$(document).ready(function() {
-  var localCanvas = $('canvas')
+function Stream(){
+  var self = this
+  var alertClosed = $('div.alert-danger')
+  self.source = new EventSource(remote_id + '/stream')
 
-  var canvas = new Canvas(localCanvas)
+  if (self.source.readyState === 0) {
+    // Connecting
+    alertClosed.hide()
+  }
 
-  canvas.draw()
+  window.onunload = function() {
+    self.source.close()
+  }
+
+  self.source.onopen = function() {
+    // Connected
+    alertClosed.hide()
+  }
+
+  self.source.onerror = function() {
+    // Disconnected
+    alertClosed.show()
+  }
+
+} // END STREAM CONSTRUCTOR
+;
+//class Playlist
+function Playlist(source, remote){
+  var self = this
+  self.element = $('#playlist')
+  var playlistGroup = $('#playlist_group')
+  var listItems = $('#playlist li')
+  var playlistClearButton = $('#clear_playlist')
+  self.selectedListItem = 0
+
+  if (authorized === 'true') {
+    self.playlistItemHead = '<li class="playlist_item sortable" draggable="true"><a class="playlist-title">'
+    self.playlistItemFoot = '</a><button class="btn btn-xfs btn-danger right playlist-delete">X</button></li>'
+  } else {
+    self.playlistItemHead = '<li class="playlist_item"><a>'
+    self.playlistItemFoot = '</a></li>'
+  }
+
+  source.addEventListener("playlist_sort:" + remote.remoteId, function(event){
+    self.sortPlaylist(event)
+  })
+
+  source.addEventListener("playlist_block:" + remote.remoteId, function(event){
+    self.blockPlaylist(event)
+  })
+
+  source.addEventListener("playlist_add:" + remote.remoteId, function(event){
+    self.addToPlaylist(event)
+  })
+
+  source.addEventListener("playlist_delete:" + remote.remoteId, function(event){
+    self.deleteFromPlaylist(event)
+  })
+
+  source.addEventListener("playlist_clear:" + remote.remoteId, function(event) {
+    self.clearPlaylist(event)   
+  })
+
+  // Click event for playlist items.
+  self.element.on('click', '.playlist-title', function(){
+    var thisSelf = $(this)
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + remote.remoteId + '/control',
+      data: { _method:'PUT', status: 0, start_at: remote.startAt, sender_id: user, selection: $('#playlist li').index(thisSelf.parent())},
+      dataType: 'JSON'
+    })
+  })
+
+  // Playlist clear button click event
+  playlistClearButton.on('click', function() {
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + remote.remoteId + '/playlist',
+      data: { _method: 'DELETE', clear: $('#playlist li').length },
+      dataType: 'JSON'
+    })
+  })
+
+  // Playlist item delete click event
+  self.element.on('click', ".playlist-delete", function(e){
+    e.preventDefault()
+    var index = $(this).parent().index()
+    $.ajax({
+      url: "/remotes/" + remote.remoteId + "/playlist",
+      type: "POST",
+      data: {index: index, _method: "delete"}
+    })
+  })
+
+  $('#playlist_group form').on('ajax:success', function(){
+    $('#playlist_url_field').val('')
+  })
+
+  // Ivoke sortable method for playlist ordered list
+  $('ol.sortable').sortable()
+
+  // Update playlist item position on drag
+  $('ol.sortable').sortable().bind('sortupdate', function(e, ui) {
+    playlistGroup.block()
+    $.ajax({
+      url: "/remotes/" + remote.remoteId + "/playlist",
+      type: "POST",
+      data: {old_position: ui.oldindex, new_position: ui.item.index(), _method: "patch"}
+    }).done(function(){
+      playlistGroup.unblock()
+    })
+  })
+
+  // Update selected list item index on mousedown
+  $('#playlist li').on('mousedown', function(){
+    Playlist.selectedListItem = $('#playlist li').index(self)
+  })
+
+  self.refresh = function(){
+    $.ajax({
+      type: 'GET',
+      url: '/remotes/' + remote.remoteId + "/playlist"
+    }).done(function(response){
+      $.each(response, function(index, item){
+        self.element.append(self.playlistItemHead + item.title + self.playlistItemFoot)
+      })
+      self.element.sortable()
+    })    
+  }
+
+  self.sortPlaylist = function(event) {
+    var data = JSON.parse(event.data)
+
+    self.element.html('')
+
+    $.each(data.playlist, function(index, item){
+      self.element.append(self.playlistItemHead + item.title + self.playlistItemFoot)
+    })
+
+    self.element.sortable()
+  }
+
+  self.blockPlaylist = function(event) {
+    var data = JSON.parse(event.data)
+    data = JSON.parse(data)
+
+    if(data.block == true){
+      if(data.add == true){
+        playlistGroup.block({ css: { backgroundColor: '#fff', color: '#006c51', border: 'none' }, message: 'preparing playlist video' })
+      } else {
+        playlistGroup.block({ css: { backgroundColor: '#fff', color: '#006c51', border: 'none' }, message: 'modifying playlist' })
+      }
+    } else {
+      playlistGroup.unblock()
+    }
+  }
+
+  self.addToPlaylist = function(event) {
+    var data = JSON.parse(event.data)
+    self.element.append(self.playlistItemHead + JSON.parse(data).title + self.playlistItemFoot)
+    self.element.sortable()
+  }
+
+  self.deleteFromPlaylist = function(event) {
+    var data = JSON.parse(event.data)
+    var index = parseInt(JSON.parse(data).index)
+
+    var list_item = $('#playlist .playlist_item')[index]
+    $(list_item).remove()
+  }
+
+  self.clearPlaylist = function(event) {
+    $('#playlist li').remove() 
+  }
+
+  self.createPlaylist = function() {
+    $.ajax({
+      type: 'GET',
+      url: '/remotes/' + remote.remoteId + "/playlist"
+    }).done(function(response){
+      $.each(response, function(index, item){
+        self.element.append(self.playlistItemHead + item.title + self.playlistItemFoot)
+      })
+      self.element.sortable()
+    })
+  }
+
+  self.createPlaylist()
+
+} // END CONSTRUCTOR
+;
+function Player(source,remote){
+  var self = this
+  self.element = videojs('player')
+
+  source.addEventListener("control:" + remote.remoteId, function(event){
+    var data = JSON.parse(event.data)
+    if (data.stream_url != undefined){
+      self.element.src(data.stream_url)
+      self.element.one('loadedmetadata', function(){
+        remote.toggle(data)
+      })
+    } else {
+      remote.toggle(data)
+    }
+  })
+
+  self.element.on('ended', function(){
+    remote.status = 0
+    remote.update()
+  })
+
+  self.element.on('timeupdate', function(){
+    self.element.loadingSpinner.hide()
+  })
+
+  self.element.ready(function(){
+    remote.player = self
+    remote.ping()
+  })
+
+  $(document).on('userplay', function(){
+    remote.status = 1
+    remote.startAt = self.element.currentTime()
+    remote.update()
+  })
+
+  $(document).on('userpause', function(){
+    remote.status = 2
+    remote.startAt = self.element.currentTime()
+    remote.update()
+  })
+
+}
+;
+// class Chat
+function Chat(source,remote){
+  var self = this
+  var chatInput = $('input#chat_message')
+  var chatTableBody = $('#chat_table_body')
+  var characterLimitElement = $('div#chat_character_limit')
+
+  chatInput.on('keyup', function() {
+    self.checkCharacterLimit(this.value)
+  })
+
+  source.addEventListener("chat:" + remote.remoteId, function(event){
+    self.sendChatMessage(event)
+  })
+
+  self.checkCharacterLimit = function(chatValue) {
+    var charactersRemaining = self.getCharactersRemaining(chatValue.length)
+    var chatBox = $('div#chat_character_limit')
+    var chatBtn = $('input.btn[name="commit"]')
+    var chatForm = $('form').first()
+
+    characterLimitElement.html(charactersRemaining + ' characters left')
+
+    if (charactersRemaining < 0) {
+      self.addError(chatForm, chatBox, chatBtn)
+    } else {
+      self.removeError(chatForm, chatBox, chatBtn)
+    }
+  }
+
+  self.addError = function(chatForm, chatBox, chatBtn) {
+    chatForm.addClass('has-error')
+    chatBox.addClass('error')
+    chatBtn.prop('disabled', true)
+  }
+
+  self.removeError = function(chatForm, chatBox, chatBtn) {
+    chatForm.removeClass('has-error')
+    chatBox.removeClass('error')
+    chatBtn.prop('disabled', false)
+  }
+
+  self.getCharactersRemaining = function(chatLength) {
+    return 500 - chatLength
+  }
+
+  self.sendChatMessage = function(event) {
+    var data = JSON.parse(event.data)
+    chatInput.val('')
+    chatTableBody.prepend('<tr>' + '<td>' + data.message + '</td>' + '<td class="grey-text">' + data.name + '</td>' + '</tr>')
+    self.checkCharacterLimit(chatInput.val())
+  }
+} // END CHAT CONSTRUCTOR
+;
+function WatcherList(source, remote){
+
+  var watchersElement = $('#watchers')
+
+  source.addEventListener("watch:" + remote.remoteId, function(event){
+    self.updateWatchers(event)
+  })
+
+  source.addEventListener("unwatch:" + remote.remoteId, function(event){
+    self.updateWatchers(event)
+  })
+
+  self.displayWatcher = function(watcher) {
+    if (watcher.user_kind === 'owner') {
+      watchersElement.append('<li id="' + watcher.username.toLowerCase() + '" class="' + watcher.user_kind + '">' + watcher.username + '<span class="glyphicon glyphicon-star owner"></span></li>')
+    } else if (watcher.user_kind === 'member') {
+      watchersElement.append('<li id="' + watcher.username.toLowerCase() + '" class="' + watcher.user_kind + '">' + watcher.username + '<span class="glyphicon glyphicon-user member"></span></li>')
+    } else {
+      watchersElement.append('<li id="' + watcher.username.toLowerCase() + '" class="' + watcher.user_kind + '">' + watcher.username + '</li>')
+    }
+  }
+
+  self.updateWatchers = function(event) {
+    var data = JSON.parse(event.data)
+
+    watchersElement.html('')
+
+    $.each(data.watchers, function(index, watcher){
+      self.displayWatcher(watcher)
+    })
+  }
+}
+;
+function Canvas(source, remote){
+  var canvas = $('canvas')
+  var video = $('#player')[0]
+  var self = this
+  var mousedown = false
+  var currentCoordinates = []
+  var saveCoordinates = []
+  self.canvas = canvas[0]
+  self.context = self.canvas.getContext('2d')
 
   $('button#clear').on('click', function(e) {
     $.ajax({
       type: 'POST',
-      url: '/remotes/' + Remote.remote_id + '/clear'
+      url: '/remotes/' + remote.remoteId + '/clear'
     })
   })
-})
 
-var Canvas = function(canvas) {
-  this.canvas = canvas[0]
-  this.context = this.canvas.getContext('2d')
-}
+  self.drawOnRemoteCanvas = function(previousCoordinates, x_coordinate, y_coordinate) {
+    var length = previousCoordinates.length - 1,
+        prevX = parseInt(previousCoordinates[length]['x_coordinate']),
+        prevY = parseInt(previousCoordinates[length]['y_coordinate']),
+        x = parseInt(x_coordinate),
+        y = parseInt(y_coordinate)
 
-Canvas.prototype.color = function() {
-  var color = $('input#color').val()
-
-  return color
-}
-
-Canvas.prototype.line = function() {
-  var line = $('input#line').val()
-  return line
-}
-
-var mousedown = false
-var currentCoordinates = []
-
-function onMouseDown(targetCanvas) {
-  targetCanvas.onmousedown = function(e) {
-    var pos = getMousePos(targetCanvas, e)
-    mousedown = true
-    return false
+    self.context.beginPath()
+    self.context.moveTo(prevX, prevY)
+    self.context.lineTo(x, y)
+    self.context.stroke()
   }
-}
 
-function onMouseMove(targetCanvas, color, line) {
-  targetCanvas.onmousemove = function(e) {
-    e.preventDefault()
-    var pos = getMousePos(targetCanvas, e)
+  self.remoteDraw = function(previousCoordinates, x_coordinate, y_coordinate, color, line) {
+    self.context.strokeStyle = color
+    self.context.lineWidth = line
 
-    $('input#color').on('change', function(e) {
-      color = $('input#color').val()
-    })
-    $('input#line').on('change', function(e) {
-      line = $('input#line').val()
-    })
-    if (mousedown) {
-      currentCoordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y, 'color': color, 'line': line})
-
-      sendCoordinatesIfCorrectLength()
+    if (x_coordinate != null) {
+      self.drawOnRemoteCanvas(previousCoordinates, x_coordinate, y_coordinate, color, line)
     }
   }
-}
 
-function sendCoordinatesIfCorrectLength() {
-  if (currentCoordinates.length >= 10) {
-    sendCoordinates(currentCoordinates)
+  self.initiateDrawingOnEventListener = function(e) {
+    var data = JSON.parse(e.data)
+    var previousCoordinates = []
 
-    var newCurrent = [currentCoordinates[currentCoordinates.length-1]]
-    currentCoordinates = newCurrent
+    $.each(data['coordinates'], function(index, coordinate) {
+      if (previousCoordinates.length >= 1) {
+        self.remoteDraw(previousCoordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
+      }
+
+      previousCoordinates.push(coordinate)
+    })
+    previousCoordinates = []
   }
-}
 
-function onMouseUp(targetCanvas) {
-  targetCanvas.onmouseup = function(e) {
-    mousedown = false
-    
-    sendCoordinates(currentCoordinates)
-    currentCoordinates = []
+  source.addEventListener("drawing:" + remote.remoteId, function(e){
+    self.initiateDrawingOnEventListener(e)
+  })
+
+  self.clear = function() {
+    self.canvas.width = self.canvas.width
   }
-}
 
-Canvas.prototype.draw = function() {
-  var color = this.color()
-  var line = this.line()
-  var targetCanvas = this.canvas
+  source.addEventListener("clear:" + remote.remoteId, function(event){
+    self.clear()
+  })
 
-  onMouseDown(targetCanvas)
-  onMouseMove(targetCanvas, color, line)
-  onMouseUp(targetCanvas)
-}
-
-Canvas.prototype.clear = function() {
-  var canvas = this.canvas
-  canvas.width = canvas.width
-}
-
-Canvas.prototype.remoteDraw = function(previous_coordinates, x_coordinate, y_coordinate, color, line) {
-  var remote_canvas = this.canvas
-  var context = remote_canvas.getContext('2d')
-
-  context.strokeStyle = color
-  context.lineWidth = line
-
-  if (x_coordinate != null) {
-    drawOnRemoteCanvas(previous_coordinates, x_coordinate, y_coordinate, context, color, line)
+  self.color = function(){
+    var color = $('input#color').val()
+    return color
   }
-}
 
-function drawOnRemoteCanvas(previous_coordinates, x_coordinate, y_coordinate, context, color, line) {
-  var length = previous_coordinates.length - 1,
-      prev_x = parseInt(previous_coordinates[length]['x_coordinate']),
-      prev_y = parseInt(previous_coordinates[length]['y_coordinate']),
-      x = parseInt(x_coordinate),
-      y = parseInt(y_coordinate)
+  self.line = function() {
+    var line = $('input#line').val()
+    return line
+  }
 
-  context.beginPath()
-  context.moveTo(prev_x, prev_y)
-  context.lineTo(x, y)
-  context.stroke()
-}
+  self.getMousePos = function(e) {
+    var rect = self.canvas.getBoundingClientRect()
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    }
+  }
 
-function sendCoordinates(currentCoordinates) {
-  $.ajax({
-    type: 'POST',
-    url: '/remotes/' + Remote.remote_id + '/drawing',
-    data: {'coordinates': currentCoordinates}
+  self.onMouseDown = function() {
+    self.canvas.onmousedown = function(e) {
+      var pos = self.getMousePos(e)
+      mousedown = true
+      return false
+    }
+  }
+
+  self.sendCoordinates = function(currentCoordinates) {
+    saveCoordinates.push(currentCoordinates)
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + remote.remoteId + '/drawings',
+      data: {_method: 'PUT', 'coordinates': currentCoordinates}
+    })
+  }
+
+  self.sendCoordinatesIfCorrectLength = function() {
+    if (currentCoordinates.length >= 10) {
+      self.sendCoordinates(currentCoordinates)
+
+      var newCurrent = [currentCoordinates[currentCoordinates.length-1]]
+      currentCoordinates = newCurrent
+    }
+  }
+
+  self.onMouseMove = function() {
+    self.canvas.onmousemove = function(e) {
+      e.preventDefault()
+      var pos = self.getMousePos(e)
+
+      if (mousedown) {
+        currentCoordinates.push({'x_coordinate': pos.x, 'y_coordinate': pos.y, 'color': self.color(), 'line': self.line()})
+        self.sendCoordinatesIfCorrectLength()
+      }
+    }
+  }
+
+  self.sendToSaveCoordinates = function(saveCoordinates) {
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + remote.remoteId + '/write',
+      data: {'coordinates': saveCoordinates}
+    })
+  }
+
+  self.onMouseUp = function() {
+    self.canvas.onmouseup = function(e) {
+      mousedown = false
+      
+      self.sendCoordinates(currentCoordinates)
+      self.sendToSaveCoordinates(saveCoordinates)
+      
+      currentCoordinates = []
+    }
+  }
+
+  self.parseDrawingData = function(data) {
+    var previousCoordinates = []
+
+    if (data.length > 1) {
+      $.each(data, function(index, setOfCoordinates) {
+        $.each(setOfCoordinates, function(index, coordinate) {
+          if (previousCoordinates.length >= 1) {
+            self.remoteDraw(previousCoordinates, coordinate.x_coordinate, coordinate.y_coordinate, coordinate.color, coordinate.line)
+          }
+
+          previousCoordinates.push(coordinate)
+        })
+        previousCoordinates = []
+      })
+    }
+  }
+
+  self.drawOnLoad = function() {
+    $.ajax({
+      type: 'GET',
+      url: '/remotes/' + remote.remoteId + '/read'
+    }).done(function(data){
+      self.parseDrawingData(data)
+    })
+  }
+
+  self.draw = function() {
+    self.drawOnLoad()
+    self.onMouseDown()
+    self.onMouseMove()
+    self.onMouseUp()
+  }
+
+  self.draw()
+} // END CANVAS CONSTRUCTOR
+;
+window['remotes#show'] = function(data) {
+  $(document).on('ready', function() {
+    var stream = new Stream()
+    var remote = new Remote()
+    var player = new Player(stream.source, remote)
+    var chat = new Chat(stream.source, remote)
+    var canvas = new Canvas(stream.source, remote)
+    var playlist = new Playlist(stream.source, remote)
+    var watcher_list = new WatcherList(stream.source, remote)
   })
 }
 
-function getMousePos(drawing_canvas, e) {
-  var rect = drawing_canvas.getBoundingClientRect()
-  return {
-    x: e.clientX - rect.left,
-    y: e.clientY - rect.top
+window['remotes#edit'] = function(data) {
+  $(document).on('ready', function() {
+    var remote = new Remote()
+  })
+}
+
+window['remotes#new'] = function(data) {
+  $(document).on('ready', function() {
+    var remote = new Remote()
+  })
+}
+
+window['remotes#index'] = function(data) {
+  $('#owner_only_tooltip').tooltip()
+
+  window.onload = function() {
+    changeWindowHeight()
+  }
+
+  window.onresize = function() {
+    changeWindowHeight()
+  }
+
+  function changeWindowHeight() {
+    var windowHeight = $(window).height()
+    $('#on_landing').css('padding-top', windowHeight / 3)
   }
 }
 ;
@@ -19965,6 +20583,10 @@ function getMousePos(drawing_canvas, e) {
 
 
 
-// require_directory .
+
+
+
+
+
 
 ;

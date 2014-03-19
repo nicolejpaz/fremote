@@ -7,7 +7,7 @@ describe DrawingsController do
     
     @sample_video = "http://www.youtube.com/watch?v=NX_23r7vYak"
     @sample_remote = Remote.make
-    @sample_remote.populate("http://www.youtube.com/watch?v=zoO0s1ukcqQ")
+    @sample_remote.populate("https://www.youtube.com/watch?v=NX_23r7vYak")
     @sample_remote.save
 
     @sample_owned_remote = Remote.make(@sample_user)

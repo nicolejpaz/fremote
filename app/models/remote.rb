@@ -152,7 +152,7 @@ class Remote
   end
 
   def check_if_params_has_members(params)
-    if params[:member] != []
+    if params[:member] != [] && params[:member]
       params[:member].each do |member|
         check_if_member_exists(member)
       end
@@ -178,8 +178,8 @@ class Remote
   def determine_user_type(user)
     if self.member_list.members.include? user.id
       return 'member'
-    elsif self.user
-      return 'owner' if self.user.id == user.id
+    elsif self.user.id == user.id
+      return 'owner'
     else
       return 'user'
     end

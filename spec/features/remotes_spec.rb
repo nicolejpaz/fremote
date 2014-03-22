@@ -112,3 +112,38 @@ feature 'When a user is logged in' do
     expect(page).to have_content('You are a guest of this remote')
   end
 end
+
+feature 'When a logged in user creates a quick remote with owner_only checked' do
+  before(:each) do
+    user = create(:user)
+    login_as(user, :scope => :user)
+
+    visit root_path
+
+    fill_in 'video_url', :with => 'http://www.youtube.com/watch?v=NX_23r7vYak'
+    check('admin_only')
+    click_button('Create Remote')
+
+    expect(page).to have_content('Unnamed Remote')
+    click_link('Logout')
+    click_button('Send')
+  end
+
+  scenario 'a guest cannot chat' do
+    expect(page).to have_content('You are a guest of this remote, so you do not have permission to chat.')
+    expect(page).to have_content('You must be any of these to use the chat: owner')
+  end
+
+  scenario 'a guest cannot modify the playlist' do
+    expect(page).to have_content('You are a guest of this remote, so you do not have permission to add to this playlist.')
+    expect(page).to have_content('You must be any of these to use the playlist: owner')
+  end
+
+  scenario 'a guest cannot draw on the screen' do
+    expect(page).to_not have_content('Clear Screen')
+  end
+  
+  scenario 'a guest cannot edit the remote' do
+    expect(page).to_not have_content('Edit Remote')
+  end
+end 

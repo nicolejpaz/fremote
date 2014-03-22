@@ -113,7 +113,7 @@ feature 'When a user is logged in' do
   end
 end
 
-feature 'When a logged in user creates a quick remote with owner_only checked' do
+feature 'When a logged in user creates a quick remote with owner_only checked, a guest' do
   before(:each) do
     user = create(:user)
     login_as(user, :scope => :user)
@@ -129,21 +129,64 @@ feature 'When a logged in user creates a quick remote with owner_only checked' d
     click_button('Send')
   end
 
-  scenario 'a guest cannot chat' do
+  scenario 'cannot chat' do
     expect(page).to have_content('You are a guest of this remote, so you do not have permission to chat.')
     expect(page).to have_content('You must be any of these to use the chat: owner')
   end
 
-  scenario 'a guest cannot modify the playlist' do
+  scenario 'cannot modify the playlist' do
     expect(page).to have_content('You are a guest of this remote, so you do not have permission to add to this playlist.')
     expect(page).to have_content('You must be any of these to use the playlist: owner')
   end
 
-  scenario 'a guest cannot draw on the screen' do
+  scenario 'cannot draw on the screen' do
     expect(page).to_not have_content('Clear Screen')
   end
   
-  scenario 'a guest cannot edit the remote' do
+  scenario 'cannot edit the remote' do
     expect(page).to_not have_content('Edit Remote')
   end
 end 
+
+feature 'When a user creates a remote with owner_only checked, a user' do
+  before(:each) do
+    user = create(:user)
+    login_as(user, :scope => :user)
+
+    visit root_path
+
+    fill_in 'video_url', :with => 'http://www.youtube.com/watch?v=NX_23r7vYak'
+    check('admin_only')
+    click_button('Create Remote')
+
+    expect(page).to have_content('Unnamed Remote')
+
+    click_link('Logout')
+    click_link('Sign up')
+    fill_in 'user[name]', :with => 'another'
+    fill_in 'user[email]', :with => 'test2@test.com'
+    fill_in 'user[password]', :with => 'pa55word3'
+    fill_in 'user[password_confirmation]', :with => 'pa55word3'
+    click_button 'Sign up'
+
+    expect(page).to have_content('another')
+  end
+
+  scenario 'cannot chat' do
+    expect(page).to have_content('You are a user of this remote, so you do not have permission to chat.')
+    expect(page).to have_content('You must be any of these to use the chat: owner')
+  end
+
+  scenario 'cannot modify the playlist' do
+    expect(page).to have_content('You are a user of this remote, so you do not have permission to add to this playlist.')
+    expect(page).to have_content('You must be any of these to use the playlist: owner')
+  end
+
+  scenario 'cannot draw on the screen' do
+    expect(page).to_not have_content('Clear Screen')
+  end
+  
+  scenario 'cannot edit the remote' do
+    expect(page).to_not have_content('Edit Remote')
+  end
+end

@@ -98,4 +98,17 @@ feature 'When a user is logged in' do
     expect(page).to have_content('Unnamed Remote')
     expect(page).to have_content('No description.')
   end
+
+  scenario 'they can create a remote that does not allow a guest to update the remote' do
+    expect(page).to have_content('New Remote')
+
+    click_link('New Remote')
+    click_button('Create Remote')
+
+    click_link('Logout')
+    click_button('Send')
+    
+    expect(page).to_not have_content('Edit Remote')  
+    expect(page).to have_content('You are a guest of this remote')
+  end
 end

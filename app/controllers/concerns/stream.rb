@@ -27,7 +27,7 @@ module Stream
         remote.watchers << watcher_record
         remote.save
         ActiveSupport::Notifications.instrument("watch:#{remote.remote_id}", {watchers: remote.watchers.uniq, username: username}.to_json)
-        until response.stream.closed? == false do
+        until response.stream.closed? == true do
           sleep heartrate.seconds
           response.stream.write "event: heartbeat\n"
         end

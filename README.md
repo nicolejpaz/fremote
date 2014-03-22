@@ -28,9 +28,7 @@ Fremote is a web app to remote-control YouTube & Vimeo videos.  A user can send 
 
 ## Demo
 
-[fremote.herokuapp.com](http://fremote.herokuapp.com/)
-
-Keep in mind that the demo is currently out of date.  We are working on bringing the rest of the features missing in the demo to the future home of Fremote when we deploy it to prime-time.
+[fremote.tv](http://fremote.tv/)
 
 ## To Contribute
 

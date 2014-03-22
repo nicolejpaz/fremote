@@ -1,4 +1,6 @@
 require 'spec_helper'
+include Warden::Test::Helpers
+Warden.test_mode!
 
 feature 'When a guest visits the landing page' do
   scenario 'they can create a quick remote' do
@@ -43,5 +45,57 @@ feature 'When a guest creates a remote' do
 
     expect(page).to have_content('New Remote')
     expect(page).to have_content('Lorem ipsum')
+  end
+end
+
+feature 'When a user is logged in' do
+  before(:each) do
+    user = create(:user)
+    login_as(user, :scope => :user)
+
+    visit root_path
+  end
+  
+  scenario 'they can create a remote on remotes#new' do
+    expect(page).to have_content('New Remote')
+
+    click_link('New Remote')
+
+    fill_in 'name', :with => 'New Name'
+    fill_in 'description', :with => 'A description.'
+    click_button('Create Remote')
+
+    expect(page).to have_content('New Name')
+    expect(page).to have_content('A description.')
+  end
+
+  scenario 'they can edit the remote' do
+    expect(page).to have_content('New Remote')
+
+    click_link('New Remote')
+
+    fill_in 'name', :with => 'New Name'
+    fill_in 'description', :with => 'A description.'
+    click_button('Create Remote')
+
+    expect(page).to have_content('Edit Remote')
+
+    click_link('Edit Remote')
+
+    fill_in 'name', :with => 'Another Name'
+    click_button 'Update Remote'
+
+    expect(page).to have_content('Another Name')
+  end
+
+  scenario 'they can create a remote with no name or description and it assigns it a default name' do
+    expect(page).to have_content('New Remote')
+
+    click_link('New Remote')
+
+    click_button('Create Remote')
+
+    expect(page).to have_content('Unnamed Remote')
+    expect(page).to have_content('No description.')
   end
 end

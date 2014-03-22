@@ -50,6 +50,11 @@ module Stream
     # Make sure that the stream is closed and the current process is unsubscribed.
   rescue IOError
   ensure
+    remote = remote.reload
+    watcher_index = remote.watchers.index(remote.watchers.select{ |i| i["username"] == username}.first)
+    remote.watchers.delete_at(watcher_index)
+    remote.save
+    ActiveSupport::Notifications.instrument("unwatch:#{remote.remote_id}", {watchers: remote.watchers.uniq, username: username}.to_json)
     notifications.each do |notification|
       ActiveSupport::Notifications.unsubscribe("#{notification}:#{remote.id}")
     end

@@ -112,3 +112,107 @@ feature 'When a user is logged in' do
     expect(page).to have_content('You are a guest of this remote')
   end
 end
+
+feature 'When a user creates a new remote, the default permissions are in place, a guest' do
+  before(:each) do
+    user = create(:user)
+    login_as(user, :scope => :user)
+
+    visit root_path
+
+    expect(page).to have_content('New Remote')
+
+    click_link('New Remote')
+    click_button('Create Remote')
+
+    click_link('Logout')
+    click_button('Send')
+  end
+
+  scenario 'can chat' do
+    expect(page).to have_content('Welcome to Fremote chat.  If you would like a dedicated username for the chat, sign up for an account!')
+  end
+
+  scenario 'cannot modify the playlist' do
+    expect(page).to have_content('You are a guest of this remote, so you do not have permission to add to this playlist.')
+  end
+
+  scenario 'cannot modify the remote settings' do
+    expect(page).to_not have_content('Edit Remote')
+  end
+
+  scenario 'cannot draw on the screen' do
+    expect(page).to_not have_content('Clear Screen')
+  end
+end
+
+feature 'When a user creates a new remote, the default permissions are in place, a user that is not a member or the remote owner' do
+  before(:each) do
+    user = create(:user)
+    login_as(user, :scope => :user)
+
+    visit root_path
+
+    expect(page).to have_content('New Remote')
+
+    click_link('New Remote')
+    click_button('Create Remote')
+
+    click_link('Logout')
+    click_link('Sign up')
+
+    fill_in 'user[name]', :with => 'another test'
+    fill_in 'user[email]', :with => 'test2@test.com'
+    fill_in 'user[password]', :with => 'pa55word3'
+    fill_in 'user[password_confirmation]', :with => 'pa55word3'
+    click_button 'Sign up'
+
+    expect(page).to have_content('Welcome, another test')
+  end
+
+  scenario 'can chat' do
+    expect(page).to have_content('Welcome to Fremote chat.')
+    expect(page).to_not have_content('If you would like a dedicated username for the chat, sign up for an account!')
+  end
+
+  scenario 'cannot modify the playlist' do
+    expect(page).to have_content('You are a user of this remote, so you do not have permission to add to this playlist.')
+  end
+
+  scenario 'cannot modify the remote settings' do
+    expect(page).to_not have_content('Edit Remote')
+  end
+
+  scenario 'cannot draw on the screen' do
+    expect(page).to_not have_content('Clear Screen')
+  end
+end
+
+feature 'When a user creates a new remote, they can set the permissions of the remote individually' do
+  before(:each) do
+    user = create(:user)
+    login_as(user, :scope => :user)
+
+    visit root_path
+
+    expect(page).to have_content('New Remote')
+
+    click_link('New Remote')
+    uncheck('_guest[chat]')
+    uncheck('_guest[control]')
+    uncheck('_guest[playlist]')
+    uncheck('_guest[draw]')
+    uncheck('_guest[settings]')
+    click_button('Create Remote')
+
+    click_link('Logout')
+  end
+
+  scenario 'a guest cannot use the chat, draw, add to the playlist, or modify the remote settings' do
+    click_button('Send')
+    expect(page).to have_content('You are a guest of this remote, so you do not have permission to chat.')
+    expect(page).to have_content('You are a guest of this remote, so you do not have permission to add to this playlist.')
+    expect(page).to_not have_content('Clear Screen')
+    expect(page).to_not have_content('Edit Remote')
+  end
+end

@@ -23,6 +23,7 @@ module RemotesHelper
         return 'member'
       elsif remote.user
         return 'owner' if remote.user.id == user.id
+        return 'user'
       else
         return 'user'
       end

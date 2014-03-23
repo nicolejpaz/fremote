@@ -6,8 +6,10 @@ describe 'When a guest visits the landing page' do
   it 'they can create a quick remote' do
     visit root_path
 
-    fill_in 'video_url', :with => 'http://www.youtube.com/watch?v=NX_23r7vYak'
-    click_button 'Create Remote'
+    fill_in 'video_url', :with => 'https://www.youtube.com/watch?v=NX_23r7vYak'
+    VCR.use_cassette('remote') do
+      click_button 'Create Remote'
+    end
 
     click_button 'Send'
 
@@ -21,8 +23,10 @@ describe 'When a guest creates a remote' do
   before(:each) do
     visit root_path
 
-    fill_in 'video_url', :with => 'http://www.youtube.com/watch?v=NX_23r7vYak'
-    click_button 'Create Remote'
+    fill_in 'video_url', :with => 'https://www.youtube.com/watch?v=NX_23r7vYak'
+    VCR.use_cassette('remote') do
+      click_button 'Create Remote'
+    end
   end
 
   it 'they can choose their own guest name for the remote' do

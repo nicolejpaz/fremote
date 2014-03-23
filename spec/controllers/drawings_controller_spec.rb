@@ -5,13 +5,23 @@ describe DrawingsController do
     @sample_user = User.create name: "john", email: "john@john.com", password: "password"
     @another_user = User.create name: "jane", email: "jane@jane.com", password: "password"
     
-    @sample_video = "http://www.youtube.com/watch?v=NX_23r7vYak"
+    @params = {
+      name: "Test name",
+      alternate_name: "Alternate name",
+      description: "Test description",
+      video_url: "https://www.youtube.com/watch?v=NX_23r7vYak"
+    }
+
     @sample_remote = Remote.make
-    @sample_remote.populate("https://www.youtube.com/watch?v=NX_23r7vYak")
+    VCR.use_cassette('remote') do
+      @sample_remote.populate(@params[:video_url])
+    end
     @sample_remote.save
 
     @sample_owned_remote = Remote.make(@sample_user)
-    @sample_owned_remote.populate("http://www.youtube.com/watch?v=NX_23r7vYak")
+    VCR.use_cassette('create_owned_remote') do
+      @sample_owned_remote.populate(@params[:video_url])
+    end
     @sample_owned_remote.save
 
     @sample_coordinates = []

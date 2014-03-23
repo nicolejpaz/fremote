@@ -2,12 +2,21 @@ require 'spec_helper'
 
 describe PlaylistsController do
   before(:each) do
+    @params = {
+      name: "Test name",
+      alternate_name: "Alternate name",
+      description: "Test description",
+      video_url: "https://www.youtube.com/watch?v=NX_23r7vYak"
+    }
+
     @sample_remote = create(:remote)
     @sample_remote = Remote.make
-    @sample_remote.populate('http://www.youtube.com/watch?v=NX_23r7vYak')
+    VCR.use_cassette('remote') do
+      @sample_remote.populate(@params[:video_url])
+    end
     @sample_remote.save
 
-    @sample_user = User.create name: "john", email: "john@john.com", password: "password"
+    @sample_user = create(:user, name: "john", email: "john@john.com")
   end
 
   context "GET show" do
@@ -23,7 +32,7 @@ describe PlaylistsController do
 
     it "should include the remote's link in the response's body" do
       get :show, remote_id: @sample_remote.remote_id
-      expect(response.body).to include "http://www.youtube.com/watch?v=NX_23r7vYak"
+      expect(response.body).to include @params[:video_url]
     end
   end
 

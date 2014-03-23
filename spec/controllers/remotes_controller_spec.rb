@@ -13,7 +13,9 @@ describe RemotesController do
     }
 
     @sample_remote = Remote.make
-    @sample_remote.populate(@params[:video_url])
+    VCR.use_cassette('remote') do
+      @sample_remote.populate(@params[:video_url])
+    end
     @sample_remote.name = @params[:name]
     @sample_remote.description = @params[:description]
     @sample_remote.save
@@ -51,7 +53,9 @@ describe RemotesController do
   describe "POST create" do
     it "creates a remote with a valid url" do
       count = Remote.all.count
-      post :create, video_url: @params[:video_url], name: @params[:name], description: @params[:description]
+      VCR.use_cassette('create_remote') do
+        post :create, video_url: @params[:video_url], name: @params[:name], description: @params[:description]
+      end
       expect(assigns(:remote).remote_id.length).to eq(10)
       expect(Remote.all.count).to eq(count + 1)
     end
@@ -59,7 +63,9 @@ describe RemotesController do
     context "when a user is logged in" do
       before(:each) do
         controller.stub(:current_user){@sample_user}
-        post :create, video_url: @params[:video_url], name: @params[:name], description: @params[:description]
+        VCR.use_cassette('create_remote_with_user') do
+          post :create, video_url: @params[:video_url], name: @params[:name], description: @params[:description]
+        end
       end
 
       it "assigns the current user to @user" do
@@ -73,7 +79,9 @@ describe RemotesController do
 
     context "when a user is not logged in" do
       before(:each) do
-        post :create, video_url: @params[:video_url], name: @params[:name], description: @params[:description]
+        VCR.use_cassette('create_remote') do
+          post :create, video_url: @params[:video_url], name: @params[:name], description: @params[:description]
+        end
       end
 
       it "does not assign @user" do
@@ -101,18 +109,21 @@ describe RemotesController do
   end
 
   describe "GET ping" do
+    before(:each) do
+      VCR.use_cassette('ping_remote') do
+        get :ping, id: @sample_remote.remote_id
+      end
+    end
+    
     it "retrieves @remote from remote_id" do
-      get :ping, id: @sample_remote.remote_id
       expect(assigns(:remote)).to eq(@sample_remote)
     end
 
     it "gets playlist from remote" do
-      get :ping, id: @sample_remote.remote_id
       expect(assigns(:playlist)).to eq(@sample_remote.playlist)
     end
 
     it "renders json" do
-      get :ping, id: @sample_remote.remote_id
       response.body.include?("stream_url").should eq(true)
     end
   end
@@ -120,7 +131,9 @@ describe RemotesController do
   describe "PUT control" do
     before(:each) do
       @sample_owned_remote = Remote.make(@sample_user)
-      @sample_owned_remote.populate(@params[:video_url])
+      VCR.use_cassette('create_owned_remote') do
+        @sample_owned_remote.populate(@params[:video_url])
+      end
       @sample_owned_remote.admin_only = true
       @sample_owned_remote.save
     end
@@ -128,6 +141,7 @@ describe RemotesController do
     context "when the current user is the remote owner" do
       before(:each) do
         controller.stub(:current_user){@sample_user}
+
         put :control, remote: { :admin_only => "false" }, id: @sample_owned_remote.remote_id
       end
 
@@ -192,7 +206,9 @@ describe RemotesController do
   describe "PATCH update" do
     before(:each) do
       @sample_owned_remote = Remote.make(@sample_user)
-      @sample_owned_remote.populate(@params[:video_url])
+      VCR.use_cassette('create_owned_remote') do
+        @sample_owned_remote.populate(@params[:video_url])
+      end
       @sample_owned_remote.name = @params[:name]
       @sample_owned_remote.description = @params[:description]
       @sample_owned_remote.save  
@@ -307,7 +323,9 @@ describe RemotesController do
   describe 'GET edit' do
     before(:each) do
       @sample_owned_remote = Remote.make(@sample_user)
-      @sample_owned_remote.populate(@params[:video_url])
+      VCR.use_cassette('create_owned_remote') do
+        @sample_owned_remote.populate(@params[:video_url])
+      end
       @sample_owned_remote.save
     end
 

@@ -9,6 +9,7 @@ class RemotesController < ApplicationController
 	def new
 		@user = current_user if current_user
 		@remote = Remote.new
+    redirect_to root_path unless @remote.authorization.is_authorized?("settings", @user)
 	end
 
 	def create
@@ -26,6 +27,7 @@ class RemotesController < ApplicationController
 		@remote = Remote.find_by({remote_id: params[:id]})
 		@remote_owner = @user if @user == @remote.user
 		@members = @remote.member_list.members
+    render "permission_denied" unless @remote.authorization.is_authorized?("settings", @user)
 	end
 
 	def update

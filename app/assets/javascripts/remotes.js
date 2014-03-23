@@ -1,5 +1,6 @@
 window['remotes#show'] = function(data) {
   $(document).on('ready', function() {
+    $('.pick-a-color').pickAColor()
     var stream = new Stream()
     var remote = new Remote()
     var player = new Player(stream.source, remote)

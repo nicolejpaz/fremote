@@ -6,9 +6,9 @@ GIT
 
 GIT
   remote: https://github.com/Ravenstine/viddl-rb.git
-  revision: d233cafaefa45b519ca4c857a76de18e97ca8d61
+  revision: a85b4181e9d1405ae4197c3fd463fac90ac0e4c0
   specs:
-    viddl-rb (0.99)
+    viddl-rb (0.99.1)
       mime-types
       multi_json
       nokogiri
@@ -159,7 +159,7 @@ GEM
       bson (~> 2.2)
       connection_pool (~> 1.2)
       optionable (~> 0.2.0)
-    multi_json (1.9.0)
+    multi_json (1.9.2)
     nio4r (1.0.0)
     nokogiri (1.6.1)
       mini_portile (~> 0.5.0)

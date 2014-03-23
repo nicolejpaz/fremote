@@ -38,11 +38,13 @@ describe RemotesHelper do
   end
 
   context "is_authorized?" do
-    before(:all) do
+    before(:each) do
       @sample_user = create(:user)
-      @another_user = create(:user, name: 'Another user', email: 'test2@test.com')
+      @another_user = create(:user, name: 'Another user', email: 'testasdgh@test.com')
       @sample_remote = Remote.make(@sample_user)
-      @sample_remote.populate('http://www.youtube.com/watch?v=NX_23r7vYak')
+      VCR.use_cassette('create_owned_remote') do
+        @sample_remote.populate('https://www.youtube.com/watch?v=NX_23r7vYak')
+      end
       @sample_remote.save
     end
 
@@ -78,8 +80,8 @@ describe RemotesHelper do
   context "sanitized_name" do
     before(:all) do
       @one_word_user_name = create(:user, name: 'One')
-      @two_word_user_name = create(:user, name: 'One Two', email: 'test2@test.com')
-      @three_word_user_name = create(:user, name: 'One Two Three', email: 'test3@test.com')
+      @two_word_user_name = create(:user, name: 'One Two', email: 'testtwo@test.com')
+      @three_word_user_name = create(:user, name: 'One Two Three', email: 'testthree@test.com')
     end
 
     it "returns the user's name if their name is one word" do

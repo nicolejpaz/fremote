@@ -2,11 +2,21 @@ require 'spec_helper'
 
 describe Playlist do
   before(:each) do
+    @params = {
+      name: "Test name",
+      description: "Test description",
+      video_url: "https://www.youtube.com/watch?v=NX_23r7vYak"
+    }
+
     @sample_user = create(:user)
     @sample_remote = Remote.make(@sample_user)
-    @sample_remote.populate('http://www.youtube.com/watch?v=NX_23r7vYak')
+    VCR.use_cassette('create_owned_remote') do
+      @sample_remote.populate(@params[:video_url])
+    end
     @sample_remote.save
-    @sample_playlist_item = Media.new('https://www.youtube.com/watch?v=zoO0s1ukcqQ')
+    VCR.use_cassette('add_playlist_item') do
+      @sample_playlist_item = Media.new('https://www.youtube.com/watch?v=zoO0s1ukcqQ')
+    end
   end
 
   it "should add a list item to the playlist" do

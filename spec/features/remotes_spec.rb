@@ -59,11 +59,11 @@ feature 'When a user is logged in' do
   scenario 'they can create a remote on remotes#new' do
     expect(page).to have_content('New Remote')
 
-    click_link('New Remote')
+    click_link 'New Remote'
 
     fill_in 'name', :with => 'New Name'
     fill_in 'description', :with => 'A description.'
-    click_button('Create Remote')
+    click_button 'Create Remote'
 
     expect(page).to have_content('New Name')
     expect(page).to have_content('A description.')
@@ -72,15 +72,15 @@ feature 'When a user is logged in' do
   scenario 'they can edit the remote' do
     expect(page).to have_content('New Remote')
 
-    click_link('New Remote')
+    click_link 'New Remote'
 
     fill_in 'name', :with => 'New Name'
     fill_in 'description', :with => 'A description.'
-    click_button('Create Remote')
+    click_button 'Create Remote'
 
     expect(page).to have_content('Edit Remote')
 
-    click_link('Edit Remote')
+    click_link 'Edit Remote'
 
     fill_in 'name', :with => 'Another Name'
     click_button 'Update Remote'
@@ -91,9 +91,9 @@ feature 'When a user is logged in' do
   scenario 'they can create a remote with no name or description and it assigns it a default name' do
     expect(page).to have_content('New Remote')
 
-    click_link('New Remote')
+    click_link'New Remote'
 
-    click_button('Create Remote')
+    click_button 'Create Remote'
 
     expect(page).to have_content('Unnamed Remote')
     expect(page).to have_content('No description.')
@@ -102,11 +102,11 @@ feature 'When a user is logged in' do
   scenario 'they can create a remote that does not allow a guest to update the remote' do
     expect(page).to have_content('New Remote')
 
-    click_link('New Remote')
-    click_button('Create Remote')
+    click_link 'New Remote'
+    click_button 'Create Remote'
 
-    click_link('Logout')
-    click_button('Send')
+    click_link 'Logout'
+    click_button 'Send'
     
     expect(page).to_not have_content('Edit Remote')  
     expect(page).to have_content('You are a guest of this remote')
@@ -122,11 +122,11 @@ feature 'When a user creates a new remote, the default permissions are in place,
 
     expect(page).to have_content('New Remote')
 
-    click_link('New Remote')
-    click_button('Create Remote')
+    click_link 'New Remote'
+    click_button 'Create Remote'
 
-    click_link('Logout')
-    click_button('Send')
+    click_link 'Logout'
+    click_button 'Send'
   end
 
   scenario 'can chat' do
@@ -155,11 +155,11 @@ feature 'When a user creates a new remote, the default permissions are in place,
 
     expect(page).to have_content('New Remote')
 
-    click_link('New Remote')
-    click_button('Create Remote')
+    click_link 'New Remote'
+    click_button 'Create Remote'
 
-    click_link('Logout')
-    click_link('Sign up')
+    click_link 'Logout'
+    click_link 'Sign up'
 
     fill_in 'user[name]', :with => 'another test'
     fill_in 'user[email]', :with => 'test2@test.com'
@@ -188,31 +188,62 @@ feature 'When a user creates a new remote, the default permissions are in place,
   end
 end
 
-feature 'When a user creates a new remote, they can set the permissions of the remote individually' do
+feature 'When a user creates a new remote, the default permissions are in place, a member' do
   before(:each) do
-    user = create(:user)
-    login_as(user, :scope => :user)
-
     visit root_path
 
-    expect(page).to have_content('New Remote')
+    click_link 'Sign up'
 
-    click_link('New Remote')
-    uncheck('_guest[chat]')
-    uncheck('_guest[control]')
-    uncheck('_guest[playlist]')
-    uncheck('_guest[draw]')
-    uncheck('_guest[settings]')
-    click_button('Create Remote')
+    fill_in 'user[name]', :with => 'tester'
+    fill_in 'user[email]', :with => 'test@test.com'
+    fill_in 'user[password]', :with => 'pa55word3'
+    fill_in 'user[password_confirmation]', :with => 'pa55word3'
+    click_button 'Sign up'
 
-    click_link('Logout')
+    expect(page).to have_content('Welcome, tester')
+
+    click_link 'Logout'
+
+    click_link 'Sign up'
+
+    fill_in 'user[name]', :with => 'another tester'
+    fill_in 'user[email]', :with => 'test2@test.com'
+    fill_in 'user[password]', :with => 'pa55word3'
+    fill_in 'user[password_confirmation]', :with => 'pa55word3'
+    click_button 'Sign up'    
+
+    expect(page).to have_content('Welcome, another tester')
+
+    click_link 'New Remote'
+
+    fill_in 'member[]', :with => 'tester'
+    click_button 'Create Remote'
+
+    click_link 'Logout'
+
+    click_link 'Login'
+
+    fill_in 'user[login]', :with => 'tester'
+    fill_in 'user[password]', :with => 'pa55word3'
+    click_button 'Log in'
+
+    expect(page).to have_content('Welcome, tester')
   end
 
-  scenario 'a guest cannot use the chat, draw, add to the playlist, or modify the remote settings' do
-    click_button('Send')
-    expect(page).to have_content('You are a guest of this remote, so you do not have permission to chat.')
-    expect(page).to have_content('You are a guest of this remote, so you do not have permission to add to this playlist.')
-    expect(page).to_not have_content('Clear Screen')
+  scenario 'can chat' do
+    expect(page).to have_content('Welcome to Fremote chat.')
+    expect(page).to_not have_content('If you would like a dedicated username for the chat, sign up for an account!')
+  end
+
+  scenario 'can modify the playlist' do
+    expect(page).to have_content('Clear Playlist')
+  end
+
+  scenario 'cannot modify the remote settings' do
     expect(page).to_not have_content('Edit Remote')
+  end
+
+  scenario 'can draw on the screen' do
+    expect(page).to have_content('Clear Screen')
   end
 end

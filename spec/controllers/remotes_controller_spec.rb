@@ -13,7 +13,9 @@ describe RemotesController do
     }
 
     @sample_remote = Remote.make
-    @sample_remote.populate(@params[:video_url])
+    VCR.use_cassette('remote') do
+      @sample_remote.populate(@params[:video_url])
+    end
     @sample_remote.name = @params[:name]
     @sample_remote.description = @params[:description]
     @sample_remote.save

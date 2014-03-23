@@ -154,7 +154,7 @@ class Remote
   end
 
   def check_if_params_has_members(params)
-    if params[:member] != [] && params[:member]
+    if params[:member] != [''] && params[:member]
       params[:member].each do |member|
         check_if_member_exists(member)
       end

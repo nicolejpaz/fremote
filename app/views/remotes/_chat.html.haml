@@ -14,7 +14,9 @@
         %tr
           %td.small.grey-text 
             - if remote.authorization.is_authorized?("chat", @user)
-              Welcome to Fremote chat.  If you would like a dedicated username for the chat, sign up for an account!
+              Welcome to Fremote chat.  
+              - unless current_user
+                If you would like a dedicated username for the chat, sign up for an account!
             - else
               = "Welcome to Fremote chat. You are a #{user_type(remote, @user)} of this remote, so you do not have permission to chat."
               You must be any of these to use the chat: 

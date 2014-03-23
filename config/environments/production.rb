@@ -81,4 +81,7 @@ Fremote::Application.configure do
   config.assets.precompile += %w( .svg .eot .woff .ttf )
   config.assets.precompile += %w( video-js.swf vjs.eot vjs.svg vjs.ttf vjs.woff )
 
+  config.preload_frameworks = true
+  config.allow_concurrency = true
+
 end

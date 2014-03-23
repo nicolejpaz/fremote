@@ -6,9 +6,9 @@ GIT
 
 GIT
   remote: https://github.com/Ravenstine/viddl-rb.git
-  revision: a85b4181e9d1405ae4197c3fd463fac90ac0e4c0
+  revision: fda723b7f03d8100c9e5ebb2bf95628bdaf73ba5
   specs:
-    viddl-rb (0.99.1)
+    viddl-rb (0.99.2)
       mime-types
       multi_json
       nokogiri

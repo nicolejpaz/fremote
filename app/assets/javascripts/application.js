@@ -25,3 +25,5 @@
 //= require watcher_list
 //= require canvas
 //= require remotes
+//= require pick-a-color-1.2.2.min
+//= require tinycolor-0.9.15.min

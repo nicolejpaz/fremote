@@ -241,8 +241,22 @@ canvas#drawing-surface {
       padding: 10px;
     }
 
-    input#color {
-      border: none;
+    #linecolor {
+      display: inline !important;
+
+      .input-group-btn {
+        display: inline;
+      }
+    }
+
+    button.color-dropdown {
+      border-radius: 0;
+      height: 27px;
+      padding: 0 5px;
+    }
+
+    .hex-pound, input#color {
+      display: none;
     }
 
     input#line {

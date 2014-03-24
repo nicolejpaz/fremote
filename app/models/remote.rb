@@ -20,6 +20,7 @@ class Remote
   embeds_one :member_list
   validates_presence_of :status
   validates_presence_of :start_at
+  validates_length_of :description, maximum: 5000
 
   def to_param
     remote_id

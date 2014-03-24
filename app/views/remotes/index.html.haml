@@ -6,7 +6,12 @@
 					%p.left create a remote
 					= form_for :remote, :url => { :controller => 'remotes', :action => 'create' }, :html => {:id => "new_remote"} do |f|
 						.input-group.full-width
-							= text_field_tag :video_url, "", :class => 'form-control', placeholder: 'enter a url'
+							= text_field_tag :video_url, "", :class => 'form-control', placeholder: 'enter a video url here...'
 							%span.input-group-btn
 								= submit_tag "Create Remote", class: "btn btn-landing"
-					%p.right that everyone can control
+					%p.right and watch videos together
+		.col-sm-8.col-sm-offset-2
+			%p
+				%h5.text-align-center.light-green-text
+					We support videos from:
+			= image_tag("providers.png", class: "img-responsive")

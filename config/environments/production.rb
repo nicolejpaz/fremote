@@ -20,6 +20,8 @@ Fremote::Application.configure do
   # config.action_dispatch.rack_cache = true
 
   # Disable Rails's static asset server (Apache or nginx will already do this).
+  # Puts ActionDispatch::Static in middleware stack which we are going to replace with
+  # Rack::Zippy::AssetServer
   config.serve_static_assets = true
 
   # Compress JavaScripts and CSS.

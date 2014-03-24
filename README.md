@@ -34,10 +34,6 @@ Fremote is a web app to remote-control YouTube & Vimeo videos.  A user can send 
 
 We'd love to have people contribute!  Simply fork the repo, make changes, and submit a pull request.
 
-## Issues
-
-* Latency-correction needs to be improved for playback.
-
 ## Team
 
 * Ben Titcomb [@Ravenstine](https://github.com/Ravenstine)

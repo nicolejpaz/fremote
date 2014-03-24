@@ -234,6 +234,7 @@ canvas#drawing-surface {
       background-color: $dark-gold;
       border: none;
       border-bottom: $border $light-gold;
+      height: 24px;
     }
 
     p {
@@ -241,8 +242,46 @@ canvas#drawing-surface {
       padding: 10px;
     }
 
-    input#color {
-      border: none;
+    #linecolor {
+      display: inline !important;
+
+      .input-group-btn {
+        display: inline;
+      }
+    }
+
+    button.color-dropdown {
+      border-radius: 0;
+      height: 27px;
+      padding: 0 5px;
+    }
+
+    .hex-pound, input#color, .color-menu-tabs {
+      display: none;
+    }
+
+    .saturation-text, .lightness-text, .hue-text, .preview-text {
+      display: none;
+    }
+
+    .color-menu {
+      border-radius: 0;
+    }
+
+    .dropdown-menu {
+      min-width: 335px;
+    }
+
+    .advanced-list {
+      margin-top: 0;
+    }
+
+    .advanced-content {
+      top: 10px;
+    }
+
+    .color-preview, .color-box {
+      border-radius: 0;
     }
 
     input#line {

@@ -465,6 +465,10 @@ input[type="submit"] {
   display: table;
 }
 
+.description-height {
+  height: 125px;
+}
+
 .edit-description {
   width: 400px;
   height: 60px;
@@ -569,4 +573,12 @@ input[type="submit"] {
 
 .light-green-text {
   color: #00a67c;
+}
+
+.error {
+  color: red;
+}
+
+textarea.error {
+  border: 3px solid red;
 }

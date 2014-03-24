@@ -3,8 +3,9 @@
     Users currently watching this remote:
   %li.list-group-item.video-body
     #watchers_key.right
-      %span.glyphicon.glyphicon-star.owner
-      %span Owner
-      %span.glyphicon.glyphicon-user.member
-      %span Member
+      - if @remote.user
+        %span.glyphicon.glyphicon-star.owner
+        %span Owner
+        %span.glyphicon.glyphicon-user.member
+        %span Member
     %ul#watchers.list

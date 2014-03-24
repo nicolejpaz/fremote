@@ -5,79 +5,80 @@
       .input-group.full-width
         = text_field_tag :name, @remote.name, :class => 'form-control', placeholder: 'Optional: Name your remote here...'
         = text_area_tag :description, @remote.description, :class => 'form-control', placeholder: 'Optional: Describe your remote here...'
-      %table.table.table-responsive
-        %thead
-          %tr
-            %td
-            %td
-              Controls
-            %td
-              Playlist
-            %td
-              Chat
-            %td
-              Draw
-            %td
-              Settings
-        %tbody
-          %tr
-            %td
-              Guest
-            %td
-              = remote_authorization_checkbox(@remote, "_guest", "control")
-            %td
-              = remote_authorization_checkbox(@remote, "_guest", "playlist")
-            %td
-              = remote_authorization_checkbox(@remote, "_guest", "chat")
-            %td
-              = remote_authorization_checkbox(@remote, "_guest", "draw")
-            %td
-              = remote_authorization_checkbox(@remote, "_guest", "settings")
-          %tr
-            %td
-              User
-            %td
-              = remote_authorization_checkbox(@remote, "_user", "control")
-            %td
-              = remote_authorization_checkbox(@remote, "_user", "playlist")
-            %td
-              = remote_authorization_checkbox(@remote, "_user", "chat")
-            %td
-              = remote_authorization_checkbox(@remote, "_user", "draw")
-            %td
-              = remote_authorization_checkbox(@remote, "_user", "settings")
-          %tr
-            %td
-              Member
-            %td
-              = remote_authorization_checkbox(@remote, "_member", "control")
-            %td
-              = remote_authorization_checkbox(@remote, "_member", "playlist")
-            %td
-              = remote_authorization_checkbox(@remote, "_member", "chat")
-            %td
-              = remote_authorization_checkbox(@remote, "_member", "draw")
-            %td
-              = remote_authorization_checkbox(@remote, "_member", "settings")
-      .input-group.full-width
-        = text_field_tag 'member[]', '', :class => 'form-control', placeholder: 'Optional: add other members to the remote'
-        %span#add_members.glyphicon.glyphicon-plus
-        - if @members
-          %ul.padded#members.opacity.list-unstyled
-            %li#added_members 
-              Members to Add:
-              %ul.inside-member-list
-            %li 
-              Current Members:
-              %ul.inside-member-list
-                - unless @members == []
-                  - @members.each do |member|
-                    %li
-                      = "#{return_user(member).name}"
-                      - unless return_user(member) == current_user
-                        %button.right.btn-xfs.btn-danger.user-delete X
-                - else
-                  %li.list-unstyled There are no members assigned to this remote.
+      - if @remote.user
+        %table.table.table-responsive
+          %thead
+            %tr
+              %td
+              %td
+                Controls
+              %td
+                Playlist
+              %td
+                Chat
+              %td
+                Draw
+              %td
+                Settings
+          %tbody
+            %tr
+              %td
+                Guest
+              %td
+                = remote_authorization_checkbox(@remote, "_guest", "control")
+              %td
+                = remote_authorization_checkbox(@remote, "_guest", "playlist")
+              %td
+                = remote_authorization_checkbox(@remote, "_guest", "chat")
+              %td
+                = remote_authorization_checkbox(@remote, "_guest", "draw")
+              %td
+                = remote_authorization_checkbox(@remote, "_guest", "settings")
+            %tr
+              %td
+                User
+              %td
+                = remote_authorization_checkbox(@remote, "_user", "control")
+              %td
+                = remote_authorization_checkbox(@remote, "_user", "playlist")
+              %td
+                = remote_authorization_checkbox(@remote, "_user", "chat")
+              %td
+                = remote_authorization_checkbox(@remote, "_user", "draw")
+              %td
+                = remote_authorization_checkbox(@remote, "_user", "settings")
+            %tr
+              %td
+                Member
+              %td
+                = remote_authorization_checkbox(@remote, "_member", "control")
+              %td
+                = remote_authorization_checkbox(@remote, "_member", "playlist")
+              %td
+                = remote_authorization_checkbox(@remote, "_member", "chat")
+              %td
+                = remote_authorization_checkbox(@remote, "_member", "draw")
+              %td
+                = remote_authorization_checkbox(@remote, "_member", "settings")
+        .input-group.full-width
+          = text_field_tag 'member[]', '', :class => 'form-control', placeholder: 'Optional: add other members to the remote'
+          %span#add_members.glyphicon.glyphicon-plus
+          - if @members
+            %ul.padded#members.opacity.list-unstyled
+              %li#added_members 
+                Members to Add:
+                %ul.inside-member-list
+              %li 
+                Current Members:
+                %ul.inside-member-list
+                  - unless @members == []
+                    - @members.each do |member|
+                      %li
+                        = "#{return_user(member).name}"
+                        - unless return_user(member) == current_user
+                          %button.right.btn-xfs.btn-danger.user-delete X
+                  - else
+                    %li.list-unstyled There are no members assigned to this remote.
 
       .input-group
         %span.input-group-btn

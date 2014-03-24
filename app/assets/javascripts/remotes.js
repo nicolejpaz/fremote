@@ -1,5 +1,11 @@
 window['remotes#show'] = function(data) {
-  $(document).on('ready', function() {
+  $(document).on('ready', function() {    
+    $('.pick-a-color').pickAColor({
+      showSpectrum: false,
+      showSavedColors: false,
+      showBasicColors: false,
+      showHexInput: false
+    })
     var stream = new Stream()
     var remote = new Remote()
     var player = new Player(stream.source, remote)
@@ -22,19 +28,19 @@ window['remotes#new'] = function(data) {
   })
 }
 
-window['remotes#index'] = function(data) {
-  $('#owner_only_tooltip').tooltip()
+// window['remotes#index'] = function(data) {
+//   $('#owner_only_tooltip').tooltip()
 
-  window.onload = function() {
-    changeWindowHeight()
-  }
+//   window.onload = function() {
+//     changeWindowHeight()
+//   }
 
-  window.onresize = function() {
-    changeWindowHeight()
-  }
+//   window.onresize = function() {
+//     changeWindowHeight()
+//   }
 
-  function changeWindowHeight() {
-    var windowHeight = $(window).height()
-    $('#on_landing').css('padding-top', windowHeight / 3)
-  }
-}
+//   function changeWindowHeight() {
+//     var windowHeight = $(window).height()
+//     $('#on_landing').css('padding-top', windowHeight / 3)
+//   }
+// }

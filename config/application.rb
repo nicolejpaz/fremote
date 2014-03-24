@@ -27,5 +27,6 @@ module Fremote
     config.assets.initialize_on_precompile = false
     config.i18n.enforce_available_locales = false
     config.exceptions_app = self.routes
+    config.middleware.use Rack::Deflater
   end
 end

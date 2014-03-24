@@ -14,6 +14,10 @@ Fremote::Application.routes.draw do
   get 'time' => 'remotes#time'
   put 'remotes/:id/control' => 'remotes#control'
 
+  %w( 404 422 500 ).each do |code|
+    get code, :to => "errors#show", :code => code
+  end
+
   resources :remotes do
     resource :playlist, only: [:update, :show, :create, :destroy]
     resource :chat, controller: 'chat', only: [:create, :update]

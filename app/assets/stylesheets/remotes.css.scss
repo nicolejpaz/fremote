@@ -76,7 +76,7 @@ div#footer {
 
 main {
   margin-top: 60px;
-  margin-bottom: 50px;
+  /*margin-bottom: 50px;*/
 }
 
 canvas#drawing-surface {
@@ -573,4 +573,10 @@ input[type="submit"] {
 
 .spaced-apart-links a {
   padding-right: 25px;
+}
+
+.spacer {
+  height: 50px;
+  width: 100%;
+  clear: both;
 }

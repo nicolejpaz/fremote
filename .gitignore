@@ -20,3 +20,8 @@
 
 # Ignore test coverage
 /coverage
+
+
+# Ignore VCR fixtures
+/spec/fixtures
+

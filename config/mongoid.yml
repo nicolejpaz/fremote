@@ -77,3 +77,15 @@ production:
         max_retries: 30
         retry_interval: 1
         timeout: 30
+
+# production:
+#   sessions:
+#     default:
+#       database: fremote_development
+#       hosts:
+#         - localhost:27017
+#       options:
+#         # consistency: :strong
+#         max_retries: 30
+#         retry_interval: 1
+#         timeout: 30

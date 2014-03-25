@@ -107,5 +107,15 @@ describe PlaylistsController do
       delete :destroy, remote_id: @sample_remote.remote_id
       expect(assigns(:remote)).to eq @sample_remote
     end
+
+    it "should delete all playlist items if params[:clear]" do
+      delete :destroy, remote_id: @sample_remote.remote_id, clear: true
+      expect(Remote.last.playlist.list).to eq []
+    end
+
+    it "should delete the specified list item if params[:index]" do
+      delete :destroy, remote_id: @sample_remote.remote_id, index: 0
+      expect(Remote.last.playlist.list.first).to_not eq @sample_remote.playlist.list.first
+    end
   end
 end

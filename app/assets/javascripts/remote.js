@@ -5,6 +5,7 @@ function Remote(){
   var remoteNameElement = $('#remote_name')
   var remoteDescriptionElement = $('#remote_description')
   var descriptionError = '<br><span class="error small">Please enter a description under 5000 characters</span>'
+  var editRemoteTextarea = $('#edit_remote textarea')
   self.serverTime = 0
   self.status = 0
   self.startAt = 0
@@ -46,6 +47,36 @@ function Remote(){
       self.removeFlagToRemoveMember(target)
     }
   })
+
+  self.applyOrDeleteErrors = function(remaining, textarea, spans, textClass) {
+    if (remaining < 0) {
+      spans.addClass('error')
+      spans.removeClass(textClass)
+      textarea.addClass('error')
+    } else {
+      spans.removeClass('error')
+      spans.addClass(textClass)
+      textarea.removeClass('error')
+    }
+  }
+
+  self.getDescriptionRemaining = function(textarea) {
+    return 5000 - textarea.val().length
+  }
+
+  if (editRemoteTextarea.length !== 0) {
+    var remaining = 5000 - editRemoteTextarea.val().length
+    var editRemoteContainer = editRemoteTextarea.parent()
+
+    editRemoteContainer.append('<span class="white-text small">' + remaining + ' characters remaining</span>')
+    editRemoteTextarea.on('keyup', function() {
+      var editCharRemaining = editRemoteTextarea.parent().find('span')
+      remaining = self.getDescriptionRemaining(editRemoteTextarea)
+
+      editCharRemaining.text(remaining + ' characters remaining.')
+      self.applyOrDeleteErrors(remaining, editRemoteTextarea, editCharRemaining, 'white-text')
+    })
+  }
 
   self.addedMemberListItem = function(member) {
     return '<li><input type="hidden" name="member[]" value="' + member + '">' + member + '<button class="right btn-xfs btn-danger user-remove">X</button></li>'
@@ -112,33 +143,23 @@ function Remote(){
     return '<h3 class="panel-title inline">' + text + '</h3>'
   }
 
-  self.getDescriptionRemaining = function() {
-    return 5000 - $('#remote_description form textarea').val().length
-  }
-
   self.checkDescriptionLength = function() {
     var descriptionSpans = $('#remote_description form span')
     var descriptionTextarea = $('#remote_description form textarea')
-    var remaining = self.getDescriptionRemaining()
+    var remaining = self.getDescriptionRemaining($('#remote_description form textarea'))
 
     $(descriptionSpans[1]).text(remaining + ' characters remaining.')
 
-    if (remaining < 0) {
-      $(descriptionSpans[1]).addClass('error')
-      $(descriptionSpans[1]).removeClass('grey-text')
-      descriptionTextarea.addClass('error')
-    } else {
-      $(descriptionSpans[1]).removeClass('error')
-      $(descriptionSpans[1]).addClass('grey-text')
-      descriptionTextarea.removeClass('error')
-    }
+    self.applyOrDeleteErrors(remaining, descriptionTextarea, $(descriptionSpans[1]), 'grey-text')
   }
 
   self.getDescriptionForm = function(thisSelf, endOfFormString) {
     $(thisSelf).replaceWith('<form id="edit_remote_description" action="' + self.remoteId + '" method="PATCH"><div class="input-group input-group-sm"><textarea class="form-control">' + thisSelf.html() + '</textarea>' + endOfFormString)
 
     var descriptionForm = $('#remote_description form')
-    descriptionForm.append('<span class="small grey-text">' + self.getDescriptionRemaining() + ' characters remaining.</span>')
+    var descriptionTextarea = $('#remote_description form textarea')
+
+    descriptionForm.append('<span class="small grey-text">' + self.getDescriptionRemaining(descriptionTextarea) + ' characters remaining.</span>')
     descriptionForm.addClass('edit-description')
     $('#remote_description').parents().first().addClass('description-height')
 
@@ -146,8 +167,8 @@ function Remote(){
       $(e.target).closest('form').replaceWith(self.returnDescription(thisSelf.html()))
     })
 
-    $('#remote_description form textarea').on('keyup', function() {
-      self.checkDescriptionLength()
+    descriptionTextarea.on('keyup', function() {
+      self.checkDescriptionLength(descriptionTextarea)
     })
 
     descriptionForm.on('submit', function(e) {

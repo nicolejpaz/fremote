@@ -11,7 +11,7 @@ describe 'When a guest visits the landing page' do
       click_button 'Create Remote'
     end
 
-    click_button 'Send'
+    click_button 'Use Remote'
 
     node = page.find('body')
 
@@ -31,13 +31,13 @@ describe 'When a guest creates a remote' do
 
   it 'they can choose their own guest name for the remote' do
     fill_in 'guest_name', :with => 'test name'
-    click_button 'Send'
+    click_button 'Use Remote'
 
     page.should have_xpath("//input[contains(@value, 'test')]")
   end
 
   it 'they can modify a remote on the edit page' do
-    click_button 'Send'
+    click_button 'Use Remote'
 
     click_link 'Edit Remote'
 
@@ -45,7 +45,7 @@ describe 'When a guest creates a remote' do
     fill_in 'description', :with => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam libero tortor, mattis et nisi vel, adipiscing auctor ipsum. Etiam metus tellus, consequat non urna at, convallis posuere est. Integer eleifend sapien turpis, et pretium neque vulputate sit amet. Aliquam et ligula at odio mollis dapibus pulvinar sed elit. Morbi semper sed diam ac pellentesque. Mauris porttitor ultricies ante, non rhoncus nisi elementum quis. Aliquam aliquet elementum lectus eu tempus. Vestibulum blandit fringilla tempus. Cras congue leo tellus. Curabitur tincidunt metus nulla, vel semper nulla placerat at. Mauris id risus quis nulla dignissim molestie. Curabitur sem metus, vestibulum quis nisi sit amet, scelerisque egestas ligula. Phasellus semper tellus nec eleifend porttitor. Mauris ullamcorper sed sem sed semper. Ut at iaculis nunc, vitae ultrices orci.'
     click_button 'Update Remote'
 
-    click_button 'Send'
+    click_button 'Use Remote'
 
     expect(page).to have_content('New Remote')
     expect(page).to have_content('Lorem ipsum')
@@ -110,7 +110,7 @@ describe 'When a user is logged in' do
     click_button 'Create Remote'
 
     click_link 'Logout'
-    click_button 'Send'
+    click_button 'Use Remote'
     
     expect(page).to_not have_content('Edit Remote')  
     expect(page).to have_content('You are a guest of this remote')
@@ -131,7 +131,7 @@ describe 'When a user creates a new remote, the default permissions are in place
       click_button 'Create Remote'
 
       click_link 'Logout'
-      click_button 'Send'
+      click_button 'Use Remote'
     end
 
     it 'can chat' do
@@ -307,7 +307,7 @@ describe 'When a user creates a new remote, they can set the permissions of the 
 
   context 'a guest' do
     before(:each) do
-      click_button 'Send'
+      click_button 'Use Remote'
     end
     
     it 'cannot use the chat' do

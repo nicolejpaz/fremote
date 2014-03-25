@@ -138,6 +138,7 @@ function Remote(){
     }).done(function(e, status, data, xhr) {
       var response_name = data.responseJSON.remote.name
       $(thisSelf).replaceWith(self.returnName(response_name))
+      document.title = response_name + " - Fremote"
     })
   }
 

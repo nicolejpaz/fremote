@@ -76,7 +76,7 @@ div#footer {
 
 main {
   margin-top: 60px;
-  margin-bottom: 50px;
+  /*margin-bottom: 50px;*/
 }
 
 canvas#drawing-surface {
@@ -581,4 +581,17 @@ input[type="submit"] {
 
 textarea.error {
   border: 3px solid red;
+
+.spaced-apart-links a {
+  padding-right: 25px;
+}
+
+.spacer {
+  height: 50px;
+  width: 100%;
+  clear: both;
+}
+
+#footer p {
+  margin: 0 0 0;
 }

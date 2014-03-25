@@ -66,19 +66,20 @@ class Remote
     delete_members(params) if params[:delete]
 
     if params[:member]
-      check_if_params_has_members(params)
+      check_if_members(params)
       self.authorization.update_permissions(params)
     end
 
     self.save
   end
 
-  def populate_with_options_and_save(params, user = nil)
+  def populate_with_options(params, user = nil)
     self.name = params[:name] unless params[:name] == '' || params[:name] == nil
     self.description = params[:description] unless params[:description] == '' || params[:description] == nil
     self.admin_only = to_boolean(params[:admin_only]) || false
-    check_if_params_has_members(params)
+    check_if_members(params)
     self.save
+    return { message: "Congratulations!  Take control of your remote.", status: :notice, path: remote_path(self.remote_id) }
   end
 
   def control(params, remote_owner = nil)
@@ -91,7 +92,7 @@ class Remote
         self.admin_only = to_boolean(params["remote"]["admin_only"])
       end
 
-      check_if_params_has_selection(params)
+      check_if_selection(params)
     end
   end
 
@@ -120,23 +121,24 @@ class Remote
     if new_media != nil
       self.playlist.list << new_media
       self.save
+      return { message: "Congratulations!  Take control of your remote.", status: :notice, path: remote_path(self.remote_id) }
     else
       return { message: "The video URL you provided is invalid.  Try again using a valid YouTube, Vimeo, Veoh, Blip, or Soundcloud URL.", status: :alert, path: root_path }
     end
   end
 
-  def check_if_params_has_selection(params)
+  def check_if_selection(params)
     if params.has_key?("selection")
-      change_playlist_selection_if_selection_key_exists(params)
+      change_playlist_selection(params)
     elsif params["status"] == 0 || params["status"] == "0"
-      change_status_if_status_is_zero(params)
+      change_status_if_zero(params)
     else
       self.save
       Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.last_controlled_at, 'dispatched_at' => Time.now })
     end
   end
 
-  def change_playlist_selection_if_selection_key_exists(params)
+  def change_playlist_selection(params)
     Notify.new("playlist_block:#{self.remote_id}", {"block" => true, "add" => true}.to_json)
     self.playlist.selection = params["selection"].to_i
     self.start_at = 0
@@ -146,7 +148,7 @@ class Remote
     Notify.new("playlist_block:#{self.remote_id}", {"block" => false}.to_json)
   end
 
-  def change_status_if_status_is_zero(params)
+  def change_status_if_zero(params)
     self.playlist.selection = (self.playlist.selection + 1) unless ((self.playlist.selection + 1) > (self.playlist.list.count - 1))
     self.start_at = 0
     self.status = 1
@@ -154,7 +156,7 @@ class Remote
     Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.selection]["url"]))  })
   end
 
-  def check_if_params_has_members(params)
+  def check_if_members(params)
     if params[:member] != [''] && params[:member]
       params[:member].each do |member|
         check_if_member_exists(member)

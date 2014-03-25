@@ -16,10 +16,13 @@ class RemotesController < ApplicationController
 		@user = current_user if current_user
 		@remote = Remote.make(@user)
     @remote.authorization.update_permissions(params) if @user
-		dispatch = @remote.populate(params[:video_url])
-		@remote.populate_with_options_and_save(params, @user)
-    flash[:notice] = "Congratulations!  Take control of your remote."
-    redirect_to remote_path(@remote.remote_id)
+    if params[:video_url]
+  		dispatch = @remote.populate(params[:video_url])
+    else
+      dispatch = @remote.populate_with_options(params, @user)
+    end
+    flash[dispatch[:status]] = dispatch[:message]
+    redirect_to dispatch[:path]
 	end
 
 	def edit

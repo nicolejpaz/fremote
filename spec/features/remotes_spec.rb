@@ -11,11 +11,28 @@ describe 'When a guest visits the landing page' do
       click_button 'Create Remote'
     end
 
-    click_button 'Send'
+    click_button 'Use Remote'
 
     node = page.find('body')
 
     node.native.inner_html.should include('player')
+  end
+
+  it 'they cannot create a new remote if the url field is blank' do
+    visit root_path
+
+    click_button 'Create Remote'
+
+    expect(page).to have_content('URL can\'t be blank')
+  end
+
+  it 'they cannot create a new remote if the url is invalid' do
+    visit root_path
+
+    fill_in :video_url, with: 'invalid_url'
+    click_button 'Create Remote'
+
+    expect(page).to have_content('The video URL you provided is invalid.')
   end
 end
 
@@ -31,13 +48,13 @@ describe 'When a guest creates a remote' do
 
   it 'they can choose their own guest name for the remote' do
     fill_in 'guest_name', :with => 'test name'
-    click_button 'Send'
+    click_button 'Use Remote'
 
     page.should have_xpath("//input[contains(@value, 'test')]")
   end
 
   it 'they can modify a remote on the edit page' do
-    click_button 'Send'
+    click_button 'Use Remote'
 
     click_link 'Edit Remote'
 
@@ -45,7 +62,7 @@ describe 'When a guest creates a remote' do
     fill_in 'description', :with => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam libero tortor, mattis et nisi vel, adipiscing auctor ipsum. Etiam metus tellus, consequat non urna at, convallis posuere est. Integer eleifend sapien turpis, et pretium neque vulputate sit amet. Aliquam et ligula at odio mollis dapibus pulvinar sed elit. Morbi semper sed diam ac pellentesque. Mauris porttitor ultricies ante, non rhoncus nisi elementum quis. Aliquam aliquet elementum lectus eu tempus. Vestibulum blandit fringilla tempus. Cras congue leo tellus. Curabitur tincidunt metus nulla, vel semper nulla placerat at. Mauris id risus quis nulla dignissim molestie. Curabitur sem metus, vestibulum quis nisi sit amet, scelerisque egestas ligula. Phasellus semper tellus nec eleifend porttitor. Mauris ullamcorper sed sem sed semper. Ut at iaculis nunc, vitae ultrices orci.'
     click_button 'Update Remote'
 
-    click_button 'Send'
+    click_button 'Use Remote'
 
     expect(page).to have_content('New Remote')
     expect(page).to have_content('Lorem ipsum')
@@ -61,9 +78,9 @@ describe 'When a user is logged in' do
   end
   
   it 'they can create a remote on remotes#new' do
-    expect(page).to have_content('New Remote')
+    expect(page).to have_content('New remote')
 
-    click_link 'New Remote'
+    click_link 'New remote'
 
     fill_in 'name', :with => 'New Name'
     fill_in 'description', :with => 'A description.'
@@ -74,9 +91,9 @@ describe 'When a user is logged in' do
   end
 
   it 'they can edit the remote' do
-    expect(page).to have_content('New Remote')
+    expect(page).to have_content('New remote')
 
-    click_link 'New Remote'
+    click_link 'New remote'
 
     fill_in 'name', :with => 'New Name'
     fill_in 'description', :with => 'A description.'
@@ -93,9 +110,9 @@ describe 'When a user is logged in' do
   end
 
   it 'they can create a remote with no name or description and it assigns it a default name' do
-    expect(page).to have_content('New Remote')
+    expect(page).to have_content('New remote')
 
-    click_link'New Remote'
+    click_link'New remote'
 
     click_button 'Create Remote'
 
@@ -104,13 +121,13 @@ describe 'When a user is logged in' do
   end
 
   it 'they can create a remote that does not allow a guest to update the remote' do
-    expect(page).to have_content('New Remote')
+    expect(page).to have_content('New remote')
 
-    click_link 'New Remote'
+    click_link 'New remote'
     click_button 'Create Remote'
 
     click_link 'Logout'
-    click_button 'Send'
+    click_button 'Use Remote'
     
     expect(page).to_not have_content('Edit Remote')  
     expect(page).to have_content('You are a guest of this remote')
@@ -125,13 +142,13 @@ describe 'When a user creates a new remote, the default permissions are in place
 
       visit root_path
 
-      expect(page).to have_content('New Remote')
+      expect(page).to have_content('New remote')
 
-      click_link 'New Remote'
+      click_link 'New remote'
       click_button 'Create Remote'
 
       click_link 'Logout'
-      click_button 'Send'
+      click_button 'Use Remote'
     end
 
     it 'can chat' do
@@ -158,9 +175,9 @@ describe 'When a user creates a new remote, the default permissions are in place
 
       visit root_path
 
-      expect(page).to have_content('New Remote')
+      expect(page).to have_content('New remote')
 
-      click_link 'New Remote'
+      click_link 'New remote'
       click_button 'Create Remote'
 
       click_link 'Logout'
@@ -219,7 +236,7 @@ describe 'When a user creates a new remote, the default permissions are in place
 
       expect(page).to have_content('Welcome, another tester')
 
-      click_link 'New Remote'
+      click_link 'New remote'
 
       fill_in 'member[]', :with => 'tester'
       click_button 'Create Remote'
@@ -280,7 +297,7 @@ describe 'When a user creates a new remote, they can set the permissions of the 
 
     expect(page).to have_content('Welcome, another tester')
 
-    click_link 'New Remote'
+    click_link 'New remote'
 
     fill_in 'member[]', :with => 'tester'
     uncheck '_guest[chat]'
@@ -307,7 +324,7 @@ describe 'When a user creates a new remote, they can set the permissions of the 
 
   context 'a guest' do
     before(:each) do
-      click_button 'Send'
+      click_button 'Use Remote'
     end
     
     it 'cannot use the chat' do

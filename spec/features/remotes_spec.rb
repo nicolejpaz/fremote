@@ -61,9 +61,9 @@ describe 'When a user is logged in' do
   end
   
   it 'they can create a remote on remotes#new' do
-    expect(page).to have_content('New Remote')
+    expect(page).to have_content('New remote')
 
-    click_link 'New Remote'
+    click_link 'New remote'
 
     fill_in 'name', :with => 'New Name'
     fill_in 'description', :with => 'A description.'
@@ -74,9 +74,9 @@ describe 'When a user is logged in' do
   end
 
   it 'they can edit the remote' do
-    expect(page).to have_content('New Remote')
+    expect(page).to have_content('New remote')
 
-    click_link 'New Remote'
+    click_link 'New remote'
 
     fill_in 'name', :with => 'New Name'
     fill_in 'description', :with => 'A description.'
@@ -93,9 +93,9 @@ describe 'When a user is logged in' do
   end
 
   it 'they can create a remote with no name or description and it assigns it a default name' do
-    expect(page).to have_content('New Remote')
+    expect(page).to have_content('New remote')
 
-    click_link'New Remote'
+    click_link'New remote'
 
     click_button 'Create Remote'
 
@@ -104,9 +104,9 @@ describe 'When a user is logged in' do
   end
 
   it 'they can create a remote that does not allow a guest to update the remote' do
-    expect(page).to have_content('New Remote')
+    expect(page).to have_content('New remote')
 
-    click_link 'New Remote'
+    click_link 'New remote'
     click_button 'Create Remote'
 
     click_link 'Logout'
@@ -125,9 +125,9 @@ describe 'When a user creates a new remote, the default permissions are in place
 
       visit root_path
 
-      expect(page).to have_content('New Remote')
+      expect(page).to have_content('New remote')
 
-      click_link 'New Remote'
+      click_link 'New remote'
       click_button 'Create Remote'
 
       click_link 'Logout'
@@ -158,9 +158,9 @@ describe 'When a user creates a new remote, the default permissions are in place
 
       visit root_path
 
-      expect(page).to have_content('New Remote')
+      expect(page).to have_content('New remote')
 
-      click_link 'New Remote'
+      click_link 'New remote'
       click_button 'Create Remote'
 
       click_link 'Logout'
@@ -219,7 +219,7 @@ describe 'When a user creates a new remote, the default permissions are in place
 
       expect(page).to have_content('Welcome, another tester')
 
-      click_link 'New Remote'
+      click_link 'New remote'
 
       fill_in 'member[]', :with => 'tester'
       click_button 'Create Remote'
@@ -280,7 +280,7 @@ describe 'When a user creates a new remote, they can set the permissions of the 
 
     expect(page).to have_content('Welcome, another tester')
 
-    click_link 'New Remote'
+    click_link 'New remote'
 
     fill_in 'member[]', :with => 'tester'
     uncheck '_guest[chat]'

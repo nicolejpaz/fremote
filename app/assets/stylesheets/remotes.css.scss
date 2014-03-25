@@ -21,7 +21,7 @@ body {
 
 nav {
   background-color: $light-green;
-  box-shadow: 3px 3px 3px $medium-green;
+  box-shadow: 1px 1px 1px $medium-green;
 
   .img-responsive {
     max-height: 40px;
@@ -55,7 +55,7 @@ nav {
 
 div#footer {
   background: $light-green;
-  box-shadow: -3px -3px 3px $medium-green;
+  box-shadow: -1px -1px 1px $medium-green;
   text-align: center;
   min-height: 20px;
   font-size: 1em;
@@ -227,7 +227,7 @@ canvas#drawing-surface {
 #show_remote {
   .canvas-controls {
     background-color: $light-gold;
-    height: 28px;
+    height: 32px;
     width: 630px;
 
     .btn-canvas-controls {
@@ -595,4 +595,8 @@ textarea.error {
 
 #footer p {
   margin: 0 0 0;
+}
+
+.margin-center {
+  margin: 0 auto;
 }

@@ -21,7 +21,7 @@ body {
 
 nav {
   background-color: $light-green;
-  box-shadow: 3px 3px 3px $medium-green;
+  box-shadow: 1px 1px 1px $medium-green;
 
   .img-responsive {
     max-height: 40px;
@@ -55,7 +55,7 @@ nav {
 
 div#footer {
   background: $light-green;
-  box-shadow: -3px -3px 3px $medium-green;
+  box-shadow: -1px -1px 1px $medium-green;
   text-align: center;
   min-height: 20px;
   font-size: 1em;

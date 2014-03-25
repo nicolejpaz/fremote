@@ -53,10 +53,12 @@ function Remote(){
       spans.addClass('error')
       spans.removeClass(textClass)
       textarea.addClass('error')
+      $('#edit_remote input[type="submit"]').prop('disabled', true)
     } else {
       spans.removeClass('error')
       spans.addClass(textClass)
       textarea.removeClass('error')
+      $('#edit_remote input[type="submit"]').prop('disabled', false)
     }
   }
 

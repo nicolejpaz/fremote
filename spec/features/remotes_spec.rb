@@ -17,6 +17,23 @@ describe 'When a guest visits the landing page' do
 
     node.native.inner_html.should include('player')
   end
+
+  it 'they cannot create a new remote if the url field is blank' do
+    visit root_path
+
+    click_button 'Create Remote'
+
+    expect(page).to have_content('URL can\'t be blank')
+  end
+
+  it 'they cannot create a new remote if the url is invalid' do
+    visit root_path
+
+    fill_in :video_url, with: 'invalid_url'
+    click_button 'Create Remote'
+
+    expect(page).to have_content('The video URL you provided is invalid.')
+  end
 end
 
 describe 'When a guest creates a remote' do

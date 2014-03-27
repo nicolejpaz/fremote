@@ -149,9 +149,11 @@ class Remote
   end
 
   def change_status_if_zero(params)
-    self.playlist.selection = (self.playlist.selection + 1) unless ((self.playlist.selection + 1) > (self.playlist.list.count - 1))
+    unless ((self.playlist.selection + 1) > (self.playlist.list.count - 1))
+      self.playlist.selection = (self.playlist.selection + 1)
+      self.status = 1
+    end
     self.start_at = 0
-    self.status = 1
     self.save
     Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.selection]["url"]))  })
   end

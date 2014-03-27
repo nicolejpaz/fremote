@@ -14,9 +14,19 @@ function Player(source,remote){
     }
   })
 
-  self.element.on('ended', function(){
-    remote.status = 0
-    remote.update()
+  //// Ended event is not reliable on Linux Chrome 32.  Using timeupdate instead.
+
+  // self.element.on('ended', function(){
+  //   remote.status = 0
+  //   remote.update()
+  // })
+
+  // ON ENDED EVENT
+  self.element.on('timeupdate',function() {
+    if(this.currentTime() == this.duration()) {
+      remote.status = 0
+      remote.update()
+    }
   })
 
   self.element.on('timeupdate', function(){

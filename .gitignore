@@ -26,8 +26,8 @@
 /spec/fixtures/*
 
 # Ignore mongodb binaries
-#/db/mongodb
-#/db/mongodb/*
+/db/mongodb
+/db/mongodb/*
 
 # Ignore bfg
 bfg.jar

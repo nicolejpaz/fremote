@@ -21,7 +21,17 @@
 # Ignore test coverage
 /coverage
 
-
 # Ignore VCR fixtures
 /spec/fixtures
+/spec/fixtures/*
 
+# Ignore mongodb binaries
+#/db/mongodb
+#/db/mongodb/*
+
+# Ignore bfg
+bfg.jar
+*bfg.jar*
+./bfg.jar
+/.git.bfg-report
+.git.bfg-report

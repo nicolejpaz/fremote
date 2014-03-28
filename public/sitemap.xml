@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>http://fremote.tv/</loc>
+    <priority>1</priority>
+  </url>
+  <url>
+    <loc>http://fremote.tv/users/sign_up</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>http://fremote.tv/users/sign_in</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>http://fremote.tv/how-it-works</loc>
+    <priority>0.5</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>http://fremote.tv/terms-of-use</loc>
+    <priority>0.5</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>http://fremote.tv/privacy-policy</loc>
+    <priority>0.5</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>http://paradoxsector.blogspot.com</loc>
+  </url>
+</urlset>

@@ -1,7 +1,7 @@
 User-agent: *
-Disallow:/users/
+Disallow:/users/password/
+Disallow:/users/cancel/
+Disallow:/users/sign_out/
+Disallow:/users/edit/
 Disallow:/remotes/new/
 Disallow:/time/
-Disallow:edit/
-Disallow:playlist/
-Disallow:chat/

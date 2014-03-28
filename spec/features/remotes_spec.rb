@@ -70,6 +70,21 @@ describe 'When a guest creates a remote' do
     expect(page).to have_content('New Remote')
     expect(page).to have_content(description)
   end
+
+  it 'they cannot modify a remote with a description that is too long' do
+    description = Faker::Lorem.paragraph(500)
+    click_button 'Use Remote'
+
+    click_link 'Edit Remote'
+
+    fill_in 'description', :with => description
+    click_button 'Update Remote'
+
+    click_button 'Use Remote'
+
+    expect(page).to_not have_content(description)
+    expect(page).to have_content('No description.')
+  end
 end
 
 describe 'When a user is logged in' do

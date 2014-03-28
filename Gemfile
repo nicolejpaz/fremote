@@ -19,6 +19,7 @@ gem 'viddl-rb', git: 'https://github.com/Ravenstine/viddl-rb.git'
 gem 'pluggable_js', '~> 2.0.0'
 gem 'rack-zippy'
 gem 'metamagic'
+gem 'google-analytics-rails'
 
 group :doc do
   gem 'sdoc', require: false

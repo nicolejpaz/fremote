@@ -72,6 +72,10 @@ function Remote(){
     return 5000 - textarea.val().length
   }
 
+  self.getNameRemaining = function(input) {
+    return 60 - input.val().length
+  }
+
   if (inRemote) {
     var descRemaining = 5000 - remoteTextarea.val().length
 
@@ -121,11 +125,26 @@ function Remote(){
     target.parent().remove()
   }
 
+  self.checkNameLength = function() {
+    var nameInput = $('#edit_remote_name input')
+    var nameRemaining = self.getNameRemaining(nameInput)
+    var nameSpans = $('#edit_remote_name span')
+
+    $(nameSpans[1]).text(nameRemaining + ' characters remaining.')
+    self.applyOrDeleteErrors(nameRemaining, nameInput, nameSpans.last(), 'white-text', '#edit_remote_name')
+  }
+
   self.getNameForm = function(thisSelf, endOfFormString) {
     $(thisSelf).replaceWith('<form id="edit_remote_name" action="' + self.remoteId + '" method="PATCH"><div class="input-group input-group-sm"><input class="form-control" type="text" value="' + thisSelf.html() + '">' + endOfFormString)
+    var nameInput = $('#edit_remote_name input')
+    $('#edit_remote_name').append('<span class="small white-text">' + self.getNameRemaining(nameInput) + ' characters remaining.')
 
     $('#remote_name form button[type="button"]').on('click', function(e) {
       $(e.target).closest('form').replaceWith(self.returnName(thisSelf.html()))
+    })
+
+    nameInput.on('keyup', function() {
+      self.checkNameLength(nameInput)
     })
 
     $('#remote_name form').on('submit', function(e) {
@@ -199,10 +218,6 @@ function Remote(){
         $(thisSelf).replaceWith(self.returnDescription(responseDescription))
         $('#remote_description').parents().first().removeClass('description-height')
       })
-    } else {
-      if (descriptionSpans.length === 2) {
-        descriptionSpans.last().append(descriptionError)
-      }
     }
   }
 

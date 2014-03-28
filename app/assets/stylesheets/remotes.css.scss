@@ -600,3 +600,12 @@ textarea.error {
 .margin-center {
   margin: 0 auto;
 }
+
+#resync:before {
+  font-family: VideoJS;
+  content: "\e01f";
+}
+
+#resync {
+  cursor:pointer;
+}

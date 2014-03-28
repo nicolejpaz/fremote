@@ -14,6 +14,8 @@ Fremote::Application.routes.draw do
   get 'time' => 'remotes#time'
   put 'remotes/:id/control' => 'remotes#control'
   get 'how-it-works' => 'pages#how_it_works'
+  get 'privacy-policy' => 'pages#privacy_policy'
+  get 'terms-of-use' => 'pages#terms_of_use'
 
   resources :remotes do
     resource :playlist, only: [:update, :show, :create, :destroy]

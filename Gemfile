@@ -37,6 +37,7 @@ group :test, :development do
   gem 'debugger'
   gem 'rspec-rails'
   gem 'mongoid-rspec'
+  gem 'faker'
 end
 
 group :production do

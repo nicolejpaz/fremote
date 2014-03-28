@@ -1,6 +1,6 @@
 require 'faker'
 
-pass = Faker::Internet.password
+pass = Faker::Internet.password(9)
 
 FactoryGirl.define do
   factory :user do

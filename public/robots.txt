@@ -1,0 +1,7 @@
+User-agent: *
+Disallow:/users/
+Disallow:/remotes/new/
+Disallow:/time/
+Disallow:edit/
+Disallow:playlist/
+Disallow:chat/

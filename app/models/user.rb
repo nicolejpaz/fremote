@@ -9,6 +9,7 @@ class User
   validates_presence_of :name
   validates_uniqueness_of :name, :email, :case_sensitive => false
   validates_length_of :name, maximum: 16
+  validates :name, :exclusion => %w[sign_in sign_out sign_up password cancel edit]
   # attr_accessible :name, :email, :password, :password_confirmation, :remember_me
 
   ## Database authenticatable

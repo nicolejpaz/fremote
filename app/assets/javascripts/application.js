@@ -16,6 +16,7 @@
 //= require bootstrap
 //= require eventsource
 //= require video.dev
+//= require videojs.chromeCast
 //= require html.sortable.0.1.1
 //= require pick-a-color-1.2.2.min
 //= require tinycolor-0.9.15.min

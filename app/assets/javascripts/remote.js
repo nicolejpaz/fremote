@@ -74,15 +74,14 @@ function Remote(){
 
   if (inRemote) {
     var descRemaining = 5000 - remoteTextarea.val().length
-    var editRemoteContainer = remoteTextarea.parent()
 
-    editRemoteContainer.after('<span class="white-text small">' + descRemaining + ' characters remaining</span>')
+    remoteTextarea.after('<span class="white-text small">' + descRemaining + ' characters remaining</span>')
     remoteTextarea.on('keyup', function() {
-      var descCharRemaining = remoteTextarea.parent().find('span')
+      var descCharRemaining = $('#remote').find('span').first()
       descRemaining = self.getDescriptionRemaining(remoteTextarea)
 
       descCharRemaining.text(descRemaining + ' characters remaining.')
-      self.applyOrDeleteErrors(descRemaining, remoteTextarea, descCharRemaining, 'white-text', '#edit_remote_description')
+      self.applyOrDeleteErrors(descRemaining, remoteTextarea, descCharRemaining, 'white-text', '#remote')
     })
   }
 

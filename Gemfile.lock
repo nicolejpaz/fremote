@@ -111,6 +111,7 @@ GEM
       railties (>= 3.0.0)
     ffi (1.9.3)
     formatador (0.2.4)
+    google-analytics-rails (0.0.5)
     guard (2.5.1)
       formatador (>= 0.2.4)
       listen (~> 2.6)
@@ -147,6 +148,8 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    metamagic (2.0.6)
+      rails (>= 3.0.0)
     method_source (0.8.2)
     mime-types (1.25.1)
     mini_portile (0.5.2)
@@ -284,11 +287,13 @@ DEPENDENCIES
   devise
   email_spec
   factory_girl_rails
+  google-analytics-rails
   guard-rails
   haml
   jbuilder (~> 1.2)
   jquery-rails
   less-rails
+  metamagic
   mongoid!
   mongoid-rspec
   pluggable_js (~> 2.0.0)

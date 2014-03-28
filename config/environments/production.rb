@@ -86,4 +86,6 @@ Fremote::Application.configure do
   config.preload_frameworks = true
   config.allow_concurrency = true
 
+  GA.tracker = "UA-49468529-1"
+
 end

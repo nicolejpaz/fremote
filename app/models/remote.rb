@@ -21,6 +21,7 @@ class Remote
   validates_presence_of :status
   validates_presence_of :start_at
   validates_length_of :description, maximum: 5000
+  validates_length_of :name, maximum: 60
 
   def to_param
     remote_id

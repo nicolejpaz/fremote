@@ -3,11 +3,12 @@
   %head
     %meta{content: "width=device-width, initial-scale=1.0", name: "viewport"}/
     %title= content_for?(:title) ? yield(:title) : "Fremote"
-    %meta{content: content_for?(:description) ? yield(:description) : "Fremote", name: "description"}/
+    = metamagic :description => "Take control of your online videos.  Create remotes to watch videos together with others simultaneously.", :keywords => %w(video remote music audio movies share chat playlist simultaneous synchronous sync synchronized youtube vimeo blip soundcloud mp3 mp4 stream), :'revisit-after' => "1 days", :robots => "index, follow", :author => "ParadoxSector"
     = stylesheet_link_tag "application", media: "all"
     = javascript_include_tag "application"
     = javascript_pluggable_tag
     = csrf_meta_tags
+    = analytics_init if Rails.env.production?
   %body
     %header= render 'layouts/navigation'
     %main{role: "main"}

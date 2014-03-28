@@ -6,6 +6,7 @@ function Remote(){
   var remoteDescriptionElement = $('#remote_description')
   var descriptionError = '<br><span class="error small">Please enter a description under 5000 characters</span>'
   var editRemoteTextarea = $('#edit_remote textarea')
+  var shareUrlTextInput = $('#share')
   self.serverTime = 0
   self.status = 0
   self.startAt = 0
@@ -21,6 +22,11 @@ function Remote(){
     if (e.target.tagName === "P") {
       self.getDescriptionForm($(this).find('p'), endOfFormString)
     }
+  })
+
+  shareUrlTextInput.on('click',function(){
+    this.select()
+    this.setSelectionRange(0, this.value.length)
   })
 
   $(document).on('keypress', function(e) {

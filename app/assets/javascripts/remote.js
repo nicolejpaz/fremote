@@ -5,8 +5,10 @@ function Remote(){
   var remoteNameElement = $('#remote_name')
   var remoteDescriptionElement = $('#remote_description')
   var descriptionError = '<br><span class="error small">Please enter a description under 5000 characters</span>'
-  var editRemoteTextarea = $('#edit_remote textarea')
   var shareUrlTextInput = $('#share')
+  var remoteTextarea = $('#remote textarea')
+  var remoteInput = $('#remote input#name')
+  var inRemote = remoteTextarea.length !== 0
   self.serverTime = 0
   self.status = 0
   self.startAt = 0
@@ -54,17 +56,24 @@ function Remote(){
     }
   })
 
-  self.applyOrDeleteErrors = function(remaining, textarea, spans, textClass) {
+  self.applyOrDeleteErrors = function(remaining, textarea, spans, textClass, remote, otherRemaining) {
+    var editButton = $(remote).find('button').first()
+    var submitInput = $(remote + ' input[type="submit"]')
+    
     if (remaining < 0) {
       spans.addClass('error')
       spans.removeClass(textClass)
       textarea.addClass('error')
-      $('#edit_remote input[type="submit"]').prop('disabled', true)
+      submitInput.prop('disabled', true)
+      editButton.prop('disabled', true)
     } else {
       spans.removeClass('error')
       spans.addClass(textClass)
       textarea.removeClass('error')
-      $('#edit_remote input[type="submit"]').prop('disabled', false)
+      if (otherRemaining >= 0) {
+        submitInput.prop('disabled', false)
+      }
+      editButton.prop('disabled', false)
     }
   }
 
@@ -72,17 +81,32 @@ function Remote(){
     return 5000 - textarea.val().length
   }
 
-  if (editRemoteTextarea.length !== 0) {
-    var remaining = 5000 - editRemoteTextarea.val().length
-    var editRemoteContainer = editRemoteTextarea.parent()
+  self.getNameRemaining = function(input) {
+    return 60 - input.val().length
+  }
 
-    editRemoteContainer.append('<span class="white-text small">' + remaining + ' characters remaining</span>')
-    editRemoteTextarea.on('keyup', function() {
-      var editCharRemaining = editRemoteTextarea.parent().find('span')
-      remaining = self.getDescriptionRemaining(editRemoteTextarea)
+  if (inRemote) {
+    var descRemaining = 5000 - remoteTextarea.val().length
+    var nameRemaining = 60 - $('#remote input#name').val().length
 
-      editCharRemaining.text(remaining + ' characters remaining.')
-      self.applyOrDeleteErrors(remaining, editRemoteTextarea, editCharRemaining, 'white-text')
+    remoteTextarea.parent().after('<span class="white-text small">' + descRemaining + ' characters remaining</span>')
+    remoteInput.after('<span class="white-text small">' + nameRemaining + ' characters remaining.</span>')
+    remoteTextarea.on('keyup', function() {
+      var descCharRemaining = $($('#remote').find('span')[1])
+      descRemaining = self.getDescriptionRemaining(remoteTextarea)
+      nameRemaining = self.getNameRemaining(remoteInput)
+
+      descCharRemaining.text(descRemaining + ' characters remaining.')
+      self.applyOrDeleteErrors(descRemaining, remoteTextarea, descCharRemaining, 'white-text', '#remote', nameRemaining)
+    })
+
+    remoteInput.on('keyup', function() {
+      var nameCharRemaining = $('#remote').find('span').first()
+      descRemaining = self.getDescriptionRemaining(remoteTextarea)
+      nameRemaining = self.getNameRemaining(remoteInput)
+
+      nameCharRemaining.text(nameRemaining + ' characters remaining.')
+      self.applyOrDeleteErrors(nameRemaining, remoteInput, nameCharRemaining, 'white-text', '#remote', descRemaining)
     })
   }
 
@@ -122,11 +146,26 @@ function Remote(){
     target.parent().remove()
   }
 
+  self.checkNameLength = function() {
+    var nameInput = $('#edit_remote_name input')
+    var nameRemaining = self.getNameRemaining(nameInput)
+    var nameSpans = $('#edit_remote_name span')
+
+    $(nameSpans[1]).text(nameRemaining + ' characters remaining.')
+    self.applyOrDeleteErrors(nameRemaining, nameInput, nameSpans.last(), 'white-text', '#edit_remote_name')
+  }
+
   self.getNameForm = function(thisSelf, endOfFormString) {
     $(thisSelf).replaceWith('<form id="edit_remote_name" action="' + self.remoteId + '" method="PATCH"><div class="input-group input-group-sm"><input class="form-control" type="text" value="' + thisSelf.html() + '">' + endOfFormString)
+    var nameInput = $('#edit_remote_name input')
+    $('#edit_remote_name').append('<span class="small white-text">' + self.getNameRemaining(nameInput) + ' characters remaining.')
 
     $('#remote_name form button[type="button"]').on('click', function(e) {
       $(e.target).closest('form').replaceWith(self.returnName(thisSelf.html()))
+    })
+
+    nameInput.on('keyup', function() {
+      self.checkNameLength(nameInput)
     })
 
     $('#remote_name form').on('submit', function(e) {
@@ -159,7 +198,7 @@ function Remote(){
 
     $(descriptionSpans[1]).text(remaining + ' characters remaining.')
 
-    self.applyOrDeleteErrors(remaining, descriptionTextarea, $(descriptionSpans[1]), 'grey-text')
+    self.applyOrDeleteErrors(remaining, descriptionTextarea, $(descriptionSpans[1]), 'grey-text', '#edit_remote_description')
   }
 
   self.getDescriptionForm = function(thisSelf, endOfFormString) {
@@ -173,7 +212,8 @@ function Remote(){
     $('#remote_description').parents().first().addClass('description-height')
 
     $('#remote_description form button[type="button"]').on('click', function(e) {
-      $(e.target).closest('form').replaceWith(self.returnDescription(thisSelf.html()))
+      var replacementText = self.returnDescription(thisSelf.html())
+      $(e.target).closest('form').replaceWith(replacementText)
     })
 
     descriptionTextarea.on('keyup', function() {
@@ -195,14 +235,10 @@ function Remote(){
         url: '/remotes/' + self.remoteId,
         data: { _method: 'PATCH', description: data, type: 'description' }
       }).done(function(e, status, data, xhr) {
-        var response_description = data.responseJSON.remote.description
-        $(thisSelf).replaceWith(self.returnDescription(response_description))
+        var responseDescription = data.responseJSON.remote.description
+        $(thisSelf).replaceWith(self.returnDescription(responseDescription))
         $('#remote_description').parents().first().removeClass('description-height')
       })
-    } else {
-      if (descriptionSpans.length === 2) {
-        descriptionSpans.last().append(descriptionError)
-      }
     }
   }
 
@@ -223,7 +259,6 @@ function Remote(){
   }
 
   self.ping = function(){
-    // playlist.createPlaylist()
     $.ajax({
       type: 'GET',
       url: '/remotes/' + self.remoteId + "/ping"

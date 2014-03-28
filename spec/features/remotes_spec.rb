@@ -1,4 +1,6 @@
 require 'spec_helper'
+require 'faker'
+
 include Warden::Test::Helpers
 Warden.test_mode!
 
@@ -54,18 +56,49 @@ describe 'When a guest creates a remote' do
   end
 
   it 'they can modify a remote on the edit page' do
+    description = Faker::Lorem.paragraph.slice(1..5000)
     click_button 'Use Remote'
 
     click_link 'Edit Remote'
 
     fill_in 'name', :with => 'New Remote'
-    fill_in 'description', :with => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam libero tortor, mattis et nisi vel, adipiscing auctor ipsum. Etiam metus tellus, consequat non urna at, convallis posuere est. Integer eleifend sapien turpis, et pretium neque vulputate sit amet. Aliquam et ligula at odio mollis dapibus pulvinar sed elit. Morbi semper sed diam ac pellentesque. Mauris porttitor ultricies ante, non rhoncus nisi elementum quis. Aliquam aliquet elementum lectus eu tempus. Vestibulum blandit fringilla tempus. Cras congue leo tellus. Curabitur tincidunt metus nulla, vel semper nulla placerat at. Mauris id risus quis nulla dignissim molestie. Curabitur sem metus, vestibulum quis nisi sit amet, scelerisque egestas ligula. Phasellus semper tellus nec eleifend porttitor. Mauris ullamcorper sed sem sed semper. Ut at iaculis nunc, vitae ultrices orci.'
+    fill_in 'description', :with => description
     click_button 'Update Remote'
 
     click_button 'Use Remote'
 
     expect(page).to have_content('New Remote')
-    expect(page).to have_content('Lorem ipsum')
+    expect(page).to have_content(description)
+  end
+
+  it 'they cannot modify a remote with a description that is too long' do
+    description = Faker::Lorem.paragraph(500)
+    click_button 'Use Remote'
+
+    click_link 'Edit Remote'
+
+    fill_in 'description', :with => description
+    click_button 'Update Remote'
+
+    click_button 'Use Remote'
+
+    expect(page).to_not have_content(description)
+    expect(page).to have_content('No description.')
+  end
+
+  it 'they cannot modify a remote with a name that is too long' do
+    name = Faker::Lorem.paragraph(10)
+    click_button 'Use Remote'
+
+    click_link 'Edit Remote'
+
+    fill_in 'name', :with => name
+    click_button 'Update Remote'
+
+    click_button 'Use Remote'
+
+    expect(page).to_not have_content(name)
+    expect(page).to have_content('Unnamed Remote')
   end
 end
 

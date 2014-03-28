@@ -33,6 +33,14 @@ describe User do
 		end
 	end
 
+	it "should reject blacklisted usernames" do
+		names = %w[sign_in sign_out sign_up password cancel edit]
+		names.each do |name|
+			invalid_username = User.new(@attr.merge(:name => name))
+			invalid_username.should_not be_valid
+		end
+	end
+
 	it "should reject invalid email addresses" do
 		addresses = %w[user@foo,com user_at_foo.org example.user@foo.]
 		addresses.each do |address|

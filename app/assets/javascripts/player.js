@@ -2,6 +2,16 @@ function Player(source,remote){
   var self = this
   self.element = videojs('player')
 
+  self.addButton = function(buttonId,buttonClass,targetClass){
+    var HTML = '<div id="' + buttonId + '" class="vjs-control ' + buttonClass + '" role="button" aria-live="polite" tabindex="0"></div>'
+    var targetElement = $($(targetClass)[0])
+    targetElement.append(HTML)
+  }
+
+  self.addButton('resync','resync','.vjs-control-bar')
+
+  self.resyncButtonElement = $('#resync')
+
   source.addEventListener("control:" + remote.remoteId, function(event){
     var data = JSON.parse(event.data)
     if (data.stream_url != undefined){
@@ -36,6 +46,9 @@ function Player(source,remote){
   self.element.ready(function(){
     remote.player = self
     remote.ping()
+    self.resyncButtonElement.on('click', function(){
+      remote.ping()
+    })
   })
 
   $(document).on('userplay', function(){

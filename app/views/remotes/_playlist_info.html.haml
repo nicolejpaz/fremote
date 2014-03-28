@@ -15,3 +15,7 @@
         %p.inline= @remote.description
     - else
       %p= @remote.description
+    %p
+      %br
+      %label 
+        Share URL: #{ text_field_tag :share, 'http://fremote.tv' + remote_path(@remote), spellcheck: "false" }

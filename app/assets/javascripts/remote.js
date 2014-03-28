@@ -6,6 +6,7 @@ function Remote(){
   var remoteDescriptionElement = $('#remote_description')
   var descriptionError = '<br><span class="error small">Please enter a description under 5000 characters</span>'
   var remoteTextarea = $('#remote textarea')
+  var remoteInput = $('#remote input#name')
   var inRemote = remoteTextarea.length !== 0
   self.serverTime = 0
   self.status = 0
@@ -49,10 +50,10 @@ function Remote(){
     }
   })
 
-  self.applyOrDeleteErrors = function(remaining, textarea, spans, textClass, remote) {
+  self.applyOrDeleteErrors = function(remaining, textarea, spans, textClass, remote, otherRemaining) {
     var editButton = $(remote).find('button').first()
     var submitInput = $(remote + ' input[type="submit"]')
-
+    
     if (remaining < 0) {
       spans.addClass('error')
       spans.removeClass(textClass)
@@ -63,7 +64,9 @@ function Remote(){
       spans.removeClass('error')
       spans.addClass(textClass)
       textarea.removeClass('error')
-      submitInput.prop('disabled', false)
+      if (otherRemaining >= 0) {
+        submitInput.prop('disabled', false)
+      }
       editButton.prop('disabled', false)
     }
   }
@@ -78,14 +81,26 @@ function Remote(){
 
   if (inRemote) {
     var descRemaining = 5000 - remoteTextarea.val().length
+    var nameRemaining = 60 - $('#remote input#name').val().length
 
-    remoteTextarea.after('<span class="white-text small">' + descRemaining + ' characters remaining</span>')
+    remoteTextarea.parent().after('<span class="white-text small">' + descRemaining + ' characters remaining</span>')
+    remoteInput.after('<span class="white-text small">' + nameRemaining + ' characters remaining.</span>')
     remoteTextarea.on('keyup', function() {
-      var descCharRemaining = $('#remote').find('span').first()
+      var descCharRemaining = $($('#remote').find('span')[1])
       descRemaining = self.getDescriptionRemaining(remoteTextarea)
+      nameRemaining = self.getNameRemaining(remoteInput)
 
       descCharRemaining.text(descRemaining + ' characters remaining.')
-      self.applyOrDeleteErrors(descRemaining, remoteTextarea, descCharRemaining, 'white-text', '#remote')
+      self.applyOrDeleteErrors(descRemaining, remoteTextarea, descCharRemaining, 'white-text', '#remote', nameRemaining)
+    })
+
+    remoteInput.on('keyup', function() {
+      var nameCharRemaining = $('#remote').find('span').first()
+      descRemaining = self.getDescriptionRemaining(remoteTextarea)
+      nameRemaining = self.getNameRemaining(remoteInput)
+
+      nameCharRemaining.text(nameRemaining + ' characters remaining.')
+      self.applyOrDeleteErrors(nameRemaining, remoteInput, nameCharRemaining, 'white-text', '#remote', descRemaining)
     })
   }
 
@@ -238,7 +253,6 @@ function Remote(){
   }
 
   self.ping = function(){
-    // playlist.createPlaylist()
     $.ajax({
       type: 'GET',
       url: '/remotes/' + self.remoteId + "/ping"

@@ -21,6 +21,7 @@ gem 'rack-zippy'
 gem 'metamagic'
 gem 'google-analytics-rails'
 gem 'sitemap'
+gem 'rack-rewrite'
 
 group :doc do
   gem 'sdoc', require: false

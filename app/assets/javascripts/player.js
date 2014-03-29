@@ -19,23 +19,6 @@ function Player(source,remote){
     targetElement.append(HTML)
   }
 
-  self.enableChromecast = function(){
-      videojs('player', {
-        'plugins': {
-         'chromecast': {
-          enabled : true,
-          appId : 'CBF3F6A9',
-          namespace : 'fremote',
-          title : 'Fremote',
-          description : 'Take control of your videos.'
-          }
-        }
-      }
-    )
-  }
-
-  // self.enableChromecast()
-
   self.addButton('resync','resync','.vjs-control-bar')
 
   self.resyncButtonElement = $('#resync')

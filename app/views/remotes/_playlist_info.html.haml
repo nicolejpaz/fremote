@@ -8,14 +8,14 @@
     - else
       %h3.panel-title= @remote.name
   .video-body
+    %p
+      %label 
+        Share URL: #{ text_field_tag :share, 'http://fremote.tv' + remote_path(@remote), spellcheck: "false" }
+      -if @remote.authorization.is_authorized?('settings', current_user)
+        = link_to 'Edit Remote', edit_remote_path(@remote.remote_id), class: "btn btn-edit right"
     -if @remote.authorization.is_authorized?('settings', current_user)
-      = link_to 'Edit Remote', edit_remote_path(@remote.remote_id), class: "btn btn-edit right"
       #remote_description
         %span.glyphicon.glyphicon-edit.left
         %p.inline= @remote.description
     - else
       %p= @remote.description
-    %p
-      %br
-      %label 
-        Share URL: #{ text_field_tag :share, 'http://fremote.tv' + remote_path(@remote), spellcheck: "false" }

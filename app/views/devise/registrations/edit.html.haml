@@ -26,8 +26,8 @@
         .form-group
           = f.label :current_password
           = f.password_field :current_password, class: 'form-control'
-      = f.submit 'Update', :class => 'button right'
+      = f.submit 'Update', :class => 'btn btn-edit right'
   .authform
     %h3 Cancel Account
     %p Unhappy? We'll be sad to see you go.
-    = button_to "Cancel my account", registration_path(resource_name), :data => { :confirm => "Are you sure?" }, :method => :delete, :class => 'button right'
+    = button_to "Cancel my account", registration_path(resource_name), :data => { :confirm => "Are you sure?" }, :method => :delete, :class => 'btn right'

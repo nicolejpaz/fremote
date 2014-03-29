@@ -33,6 +33,10 @@ nav {
 
   a {
     color: $minty-green;
+
+    &:hover {
+      color: white;
+    }
   }
 
   p.navbar-text {
@@ -46,10 +50,10 @@ nav {
     .icon-bar {
       background-color: $dark-green;
     }
-  }
 
-  .navbar-toggle:hover {
-    background-color: $medium-green
+    &:hover {
+      background-color: $medium-green
+    }
   }
 }
 
@@ -71,12 +75,15 @@ div#footer {
   a {
     color: $minty-green;
     font-weight: 600;
+
+    &:hover {
+      color: white;
+    }
   }
 }
 
 main {
   margin-top: 60px;
-  /*margin-bottom: 50px;*/
 }
 
 canvas#drawing-surface {
@@ -118,13 +125,6 @@ canvas#drawing-surface {
   .list-border {
     border-bottom: $border $medium-green;
     border-right: $border $medium-green;
-  }
-
-  .btn {
-    border: none;
-    background-color: $dark-gold;
-    border-bottom: $border $light-gold;
-    font-weight: 300;
   }
 
   input, textarea {
@@ -217,10 +217,7 @@ canvas#drawing-surface {
 
   input {
     border-radius: 0;
-  }
-
-  input#video_url {
-    height: 100%;
+    height: 35px;
   }
 }
 
@@ -235,6 +232,10 @@ canvas#drawing-surface {
       border: none;
       border-bottom: $border $light-gold;
       height: 24px;
+
+      &:hover {
+        background-color: $light-gold;
+      }
     }
 
     p {
@@ -254,6 +255,8 @@ canvas#drawing-surface {
       border-radius: 0;
       height: 27px;
       padding: 0 5px;
+      background-color: $light-gold;
+      border: none;
     }
 
     .hex-pound, input#color, .color-menu-tabs {
@@ -362,6 +365,38 @@ canvas#drawing-surface {
   }
 }
 
+#landing, #remote, #registration, #show_remote {
+  .btn {
+    border: none;
+    background-color: $dark-gold;
+    border-bottom: $border $light-gold;
+    color: white;
+    font-weight: 300;
+
+    &:hover {
+      background-color: $light-gold;
+      color: white; 
+    }
+  }
+
+  .btn-landing {
+    border-right: $border $light-gold;
+  }
+}
+
+#show_remote {
+  .btn-edit {
+    border-bottom: none;
+    padding: 5px;
+  }
+
+  .video-heading {
+    .btn-landing {
+      border: none;
+    }
+  }
+}
+
 .btn-danger {
   width: 20px;
   height: 20px;
@@ -375,21 +410,19 @@ canvas#drawing-surface {
   }
 
   a {
-    color: $light-green;
+    color: $minty-green;
+
+    &:hover {
+      color: white;
+    }
   }
 
   label {
     font-weight: 300;
   }
 
-  .checkbox {
-    margin-top: 70px;
-
-    input[type="checkbox"] {
-      height: auto;
-      margin: 0;
-      width: 25%;
-    }
+  .btn-edit {
+    margin-top: 10px;
   }
 
   .authform {
@@ -418,6 +451,7 @@ canvas#drawing-surface {
     input {
       height: 30px;
       width: 100%;
+      border-radius: 0;
     }
 
     .form-control {
@@ -426,14 +460,6 @@ canvas#drawing-surface {
       box-shadow: 0;
       border-bottom: $border $light-gray;
     }
-
-    .button {
-      border: none;
-      border-radius: 0;
-      background-color: $dark-gold;
-      border-bottom: $border $light-gold;
-      font-weight: 300;
-    }
   }
 
   .checkbox {
@@ -441,7 +467,7 @@ canvas#drawing-surface {
 
     input[type="checkbox"] {
       height: auto;
-      margin: 4px 0 0 0;
+      margin: 4px 0 0 -20px;
       width: 7%;
     }
   }
@@ -458,14 +484,6 @@ canvas#drawing-surface {
 
 input[type="text"], textarea {
   border-bottom: $border $light-gray;
-}
-
-input[type="submit"] {
-  background-color: $dark-gold;
-  border-bottom: $border $light-gold;
-  border-right: $border $light-gold;
-  font-weight: 300;
-  color: white;
 }
 
 .btn-edit {

@@ -1,6 +1,17 @@
 function Player(source,remote){
   var self = this
-  self.element = videojs('player')
+  self.element = videojs('player', {
+        'plugins': {
+         'chromecast': {
+          enabled : true,
+          appId : 'CBF3F6A9',
+          namespace : 'fremote',
+          title : 'Fremote',
+          description : 'Take control of your videos.'
+          }
+        }
+      }
+    )
 
   self.addButton = function(buttonId,buttonClass,targetClass){
     var HTML = '<div id="' + buttonId + '" class="vjs-control ' + buttonClass + '" role="button" aria-live="polite" tabindex="0"></div>'
@@ -23,7 +34,7 @@ function Player(source,remote){
     )
   }
 
-  self.enableChromecast()
+  // self.enableChromecast()
 
   self.addButton('resync','resync','.vjs-control-bar')
 

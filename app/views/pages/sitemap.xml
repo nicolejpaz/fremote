@@ -27,4 +27,7 @@
     <priority>0.5</priority>
     <changefreq>monthly</changefreq>
   </url>
+  <url>
+    <loc>http://paradoxsector.blogspot.com</loc>
+  </url>
 </urlset>

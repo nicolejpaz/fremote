@@ -13,11 +13,16 @@ class Remote
   field :admin_only, type: Boolean, default: false
   field :watchers, type: Array, default: []
   field :last_controlled_at, type: DateTime, default: Time.now.utc
-  belongs_to :user
+  index({ remote_id: 1 }, { unique: true, name: "remote_id_index" })
+  belongs_to :user, index: true
   embeds_one :playlist
+  index "playlist._id" => 1
   embeds_one :drawing
+  index "drawing._id" => 1
   embeds_one :authorization
+  index "authorization._id" => 1
   embeds_one :member_list
+  index "member_list._id" => 1
   validates_presence_of :status
   validates_presence_of :start_at
   validates_length_of :description, maximum: 5000

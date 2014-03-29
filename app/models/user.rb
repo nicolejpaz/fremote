@@ -40,9 +40,14 @@ class User
   # field :failed_attempts, :type => Integer, :default => 0 # Only if lock strategy is :failed_attempts
   # field :unlock_token,    :type => String # Only if unlock strategy is :email or :both
   # field :locked_at,       :type => Time
+  index({ name: 1 }, { unique: true, name: "name_index" })
+
   after_initialize :spawn_memberships
   has_many :remotes
   embeds_one :membership
+  index "membership._id" => 1
+
+
   attr_accessor :login
 
   def self.find_first_by_auth_conditions(warden_conditions)

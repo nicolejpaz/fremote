@@ -4,7 +4,7 @@ function Player(source,remote){
         'plugins': {
          'chromecast': {
           enabled : true,
-          appId : 'CBF3F6A9',
+          appId : 'A64FA12C',
           namespace : 'fremote',
           title : 'Fremote',
           description : 'Take control of your videos.'

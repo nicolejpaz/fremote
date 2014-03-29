@@ -88,4 +88,10 @@ Fremote::Application.configure do
 
   GA.tracker = "UA-49468529-1"
 
+  config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
+    r301 %r{.*}, 'http://fremote.tv$&', :if => Proc.new {|rack_env|
+      rack_env['SERVER_NAME'] != 'fremote.tv'
+    }
+  end
+
 end

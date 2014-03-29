@@ -28,11 +28,5 @@ module Fremote
     config.i18n.enforce_available_locales = false
     config.exceptions_app = self.routes
     config.middleware.use Rack::Deflater
-
-    config.middleware.insert_before(Rack::Lock, Rack::Rewrite) do
-      r301 %r{.*}, 'http://fremote.tv$&', :if => Proc.new {|rack_env|
-        rack_env['SERVER_NAME'] != 'fremote.tv'
-      }
-    end
   end
 end

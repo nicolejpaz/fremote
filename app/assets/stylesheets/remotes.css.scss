@@ -308,9 +308,15 @@ canvas#drawing-surface {
 
   #video_info {
     width: 630px;
+    height: 245px;
 
     .glyphicon {
       margin-right: 10px;
+    }
+
+    div.video-body {
+      height: 190px;
+      overflow: auto;
     }
   }
 
@@ -332,14 +338,27 @@ canvas#drawing-surface {
     color: #999;
   }
 
-  #watchers_group .video-body {
-    min-height: 40px;
+  #watchers_container {
+    height: 250px;
+
+    ul#watchers_group {
+      height: 185px;
+    }
+
+    ul#watchers {
+      height: 185px;
+      overflow: auto;
+    }
   }
 
   #playlist {
     a {
       font-size: 12px;
     }
+  }
+
+  #playlist_group {
+    min-height: 155px;
   }
 }
 
@@ -608,4 +627,8 @@ textarea.error {
 
 #resync {
   cursor:pointer;
+}
+
+#share {
+  width: 19em;
 }

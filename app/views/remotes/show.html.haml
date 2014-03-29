@@ -13,7 +13,7 @@
           .row.clearfix
             .col-md-8.col-lg-7.column
               = render :partial => 'playlist_info', :locals => { :remote => @remote, :remote_user => @remote_user }
-            .col-md-4.col-lg-5.column
+            .col-md-4.col-lg-5.column#watchers_container
               = render :partial => 'watchers', :locals => { :remote => @remote }
           .row.clearfix
             .col-md-12.column

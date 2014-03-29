@@ -16,6 +16,7 @@ Fremote::Application.routes.draw do
   get 'how-it-works' => 'pages#how_it_works'
   get 'privacy-policy' => 'pages#privacy_policy'
   get 'terms-of-use' => 'pages#terms_of_use'
+  match 'sitemap.xml', to: 'pages#sitemap', via: [:get, :post, :patch, :put, :delete], :defaults => {:format => :xml}
 
   resources :remotes do
     resource :playlist, only: [:update, :show, :create, :destroy]

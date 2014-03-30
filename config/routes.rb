@@ -1,5 +1,5 @@
 Fremote::Application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: { registrations: 'registrations' }
   root 'remotes#index'
 
   resources :remotes, only: [:index, :new, :create,:show,:update, :edit]

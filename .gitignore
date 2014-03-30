@@ -35,3 +35,6 @@ bfg.jar
 ./bfg.jar
 /.git.bfg-report
 .git.bfg-report
+
+# Ignore environment variables
+/config/env_vars.yml

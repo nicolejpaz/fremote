@@ -17,6 +17,8 @@ Fremote::Application.routes.draw do
   get 'privacy-policy' => 'pages#privacy_policy'
   get 'terms-of-use' => 'pages#terms_of_use'
   match 'sitemap.xml', to: 'pages#sitemap', via: [:get, :post, :patch, :put, :delete], :defaults => {:format => :xml}
+  get 'remotes/:id/chromecast-receiver' => 'casts#show'
+  get 'chromecast-receiver' => 'casts#show'
 
   resources :remotes do
     resource :playlist, only: [:update, :show, :create, :destroy]

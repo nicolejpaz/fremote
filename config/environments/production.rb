@@ -88,10 +88,22 @@ Fremote::Application.configure do
 
   GA.tracker = "UA-49468529-1"
 
-  config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
-    r301 %r{.*}, 'http://fremote.tv$&', :if => Proc.new {|rack_env|
-      rack_env['SERVER_NAME'] != 'fremote.tv'
-    }
-  end
+  # config.middleware.insert_before(Rack::Runtime, Rack::Rewrite) do
+  #   r301 %r{.*}, 'http://fremote.tv$&', :if => Proc.new {|rack_env|
+  #     rack_env['SERVER_NAME'] != 'fremote.tv'
+  #   }
+  # end
+
+  config.action_mailer.delivery_method = :smtp
+
+  config.action_mailer.smtp_settings = {
+    address: "smtp.sendgrid.net",
+    port: "587",
+    domain: "heroku.com",
+    authentication: "plain",
+    enable_starttls_auto: true,
+    user_name: ENV['SENDGRID_USERNAME'],
+    password: ENV['SENDGRID_PASSWORD']
+  }
 
 end

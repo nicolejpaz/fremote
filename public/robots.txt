@@ -5,3 +5,4 @@ Disallow:/users/sign_out/
 Disallow:/users/edit/
 Disallow:/remotes/new/
 Disallow:/time/
+Disallow:/chromecast-receiver/

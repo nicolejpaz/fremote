@@ -1,8 +1,10 @@
 !!!
-%html
+%html{"data-cast-api-enabled" => "true"}
   %head
     %meta{content: "width=device-width, initial-scale=1.0", name: "viewport"}/
     %title= content_for?(:title) ? yield(:title) : "Fremote"
+    = favicon_link_tag 'favicon.ico'
+    = favicon_link_tag 'favicon.png', rel: 'apple-touch-icon', type: 'image/png'
     = metamagic :description => "Take control of your online videos.  Create remotes to watch videos together with others simultaneously.", :keywords => %w(video remote music audio movies share chat playlist simultaneous synchronous sync synchronized youtube vimeo blip soundcloud mp3 mp4 stream), :'revisit-after' => "1 days", :robots => "index, follow", :author => "ParadoxSector"
     = stylesheet_link_tag "application", media: "all"
     = javascript_include_tag "application"

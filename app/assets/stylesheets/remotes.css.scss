@@ -306,6 +306,30 @@ canvas#drawing-surface {
 
     #chat_table_body {
       font-size: 12px;
+
+      td {
+        border: none;
+      }
+
+      tr {
+        border-top: 1px solid #ddd;
+        clear: both;
+        word-wrap: break-word;
+        white-space: normal;
+      }
+
+      tr.chat-body td {
+        &:first-child {
+          width: 60%;
+          float: left;
+        }
+
+        &:last-child {
+          width: 40%;
+          float: right;
+          text-align: right;
+        }
+      }
     }
   }
 

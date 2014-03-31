@@ -47,7 +47,7 @@ function Chat(source,remote){
   self.sendChatMessage = function(event) {
     var data = JSON.parse(event.data)
     chatInput.val('')
-    chatTableBody.prepend('<tr>' + '<td>' + data.message + '</td>' + '<td class="grey-text">' + data.name + '</td>' + '</tr>')
+    chatTableBody.prepend('<tr class="chat-body">' + '<td>' + data.message + '</td>' + '<td class="grey-text">' + data.name + '</td>' + '</tr>')
     self.checkCharacterLimit(chatInput.val())
   }
 } // END CHAT CONSTRUCTOR

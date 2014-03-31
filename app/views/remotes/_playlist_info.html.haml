@@ -12,7 +12,7 @@
       %label 
         Share URL: #{ text_field_tag :share, 'http://fremote.tv' + remote_path(@remote), spellcheck: "false" }
       -if @remote.authorization.is_authorized?('settings', current_user)
-        = link_to 'Edit Remote', edit_remote_path(@remote.remote_id), class: "btn btn-edit right"
+        = link_to 'Edit Remote', edit_remote_path(@remote.remote_id), class: "btn btn-noborder right"
     -if @remote.authorization.is_authorized?('settings', current_user)
       #remote_description
         %span.glyphicon.glyphicon-edit.left

@@ -3,7 +3,7 @@ class RegistrationsController < Devise::RegistrationsController
   prepend_before_filter :authenticate_scope!, only: [:edit, :update, :destroy]
 
   def create
-    if Rails.env == 'test' || verify_solvemedia_puzzle
+    if is_not_production? || verify_solvemedia_puzzle
       super
     else
       build_resource(sign_up_params)
@@ -12,5 +12,10 @@ class RegistrationsController < Devise::RegistrationsController
       clean_up_passwords(resource)
       respond_with(resource)
     end
+  end
+
+  private
+  def is_not_production?
+    Rails.env == 'test' || Rails.env == 'development'
   end
 end

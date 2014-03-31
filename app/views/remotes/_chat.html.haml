@@ -12,7 +12,7 @@
     %table#chat_table.table
       %tbody#chat_table_body
         %tr
-          %td.small.grey-text 
+          %td.small.grey-text{colspan: "2"}
             - if remote.authorization.is_authorized?("chat", @user)
               Welcome to Fremote chat.  
               - unless current_user

@@ -7,9 +7,13 @@ class RemotesController < ApplicationController
 	end
 
 	def new
-		@user = current_user if current_user
-		@remote = Remote.new
-    redirect_to root_path unless @remote.authorization.is_authorized?("settings", @user)
+    if current_user
+  		@user = current_user
+  		@remote = Remote.new
+      redirect_to root_path unless @remote.authorization.is_authorized?("settings", @user)
+    else
+      redirect_to root_path
+    end
 	end
 
 	def create

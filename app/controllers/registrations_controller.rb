@@ -3,7 +3,7 @@ class RegistrationsController < Devise::RegistrationsController
   prepend_before_filter :authenticate_scope!, only: [:edit, :update, :destroy]
 
   def create
-    if verify_solvemedia_puzzle
+    if Rails.env == 'test' || verify_solvemedia_puzzle
       super
     else
       build_resource(sign_up_params)

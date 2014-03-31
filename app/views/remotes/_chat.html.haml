@@ -6,7 +6,7 @@
           = hidden_field_tag :username, username
           = text_field_tag :chat_message, "", :class => 'form-control', placeholder: 'enter a chat message here...', html: {:autocomplete => "off"}
           %span.input-group-btn
-            = submit_tag "Send", class: "btn btn-landing"
+            = submit_tag "Send", class: "btn btn-inline"
         #chat_character_limit 500 characters left
   %li#chat_messages.list-group-item
     %table#chat_table.table

@@ -6,7 +6,7 @@
       .form-group
         - if devise_mapping.registerable?
           = link_to 'Sign up', new_registration_path(resource_name), class: 'right'
-        = f.label :login
+        = label_tag 'Username or email'
         = f.text_field :login, :class => 'form-control'
       .form-group
         - if devise_mapping.recoverable?

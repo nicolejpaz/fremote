@@ -7,6 +7,17 @@ require "action_mailer/railtie"
 require "sprockets/railtie"
 # require "rails/test_unit/railtie"
 
+unless Rails.env == 'production'
+  require 'yaml'
+  rails_root = Rails.root || File.dirname(__FILE__)
+  config = YAML.load_file(rails_root.to_s + '/env_vars.yml')
+  if config.key?(Rails.env) && config[Rails.env].is_a?(Hash)
+    config[Rails.env].each do |key, value|
+      ENV[key] = value.to_s
+    end
+  end
+end
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(:default, Rails.env)
@@ -28,5 +39,8 @@ module Fremote
     config.i18n.enforce_available_locales = false
     config.exceptions_app = self.routes
     config.middleware.use Rack::Deflater
+    config.solvemedia.ckey = ENV['SOLVEMEDIA_CHALLENGE_KEY']
+    config.solvemedia.vkey = ENV['SOLVEMEDIA_VERIFICATION_KEY']
+    config.solvemedia.hkey = ENV['SOLVEMEDIA_HASH_KEY']
   end
 end

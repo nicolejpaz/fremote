@@ -471,6 +471,16 @@ canvas#drawing-surface {
       width: 7%;
     }
   }
+
+  input#adcopy_response {
+    color: black;
+  }
+
+  #adcopy-outer {
+    width: 306px;
+    border-radius: 0;
+    border: none;
+  }
 }
 
 .list-group-item {

@@ -22,6 +22,7 @@ gem 'metamagic'
 gem 'google-analytics-rails'
 gem 'sitemap'
 gem 'rack-rewrite'
+gem 'solvemedia'
 
 group :doc do
   gem 'sdoc', require: false

@@ -365,22 +365,28 @@ canvas#drawing-surface {
   }
 }
 
-#landing, #remote, #registration, #show_remote {
-  .btn {
-    border: none;
-    background-color: $dark-gold;
-    border-bottom: $border $light-gold;
-    color: white;
-    font-weight: 300;
+.btn {
+  border: none;
+  background-color: $dark-gold;
+  border-bottom: $border $light-gold;
+  color: white;
+  font-weight: 300;
 
-    &:hover {
-      background-color: $light-gold;
-      color: white; 
-    }
+  &:hover {
+    background-color: $light-gold;
+    color: white; 
   }
+}
 
-  .btn-landing {
-    border-right: $border $light-gold;
+.btn-landing {
+  border-right: $border $light-gold;
+}
+
+.btn-success {
+  border-right: $border $light-gold;
+
+  &:hover {
+    border: none;
   }
 }
 

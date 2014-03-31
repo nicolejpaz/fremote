@@ -9,7 +9,7 @@ function Playlist(source, remote){
 
   if (authorized === 'true') {
     self.playlistItemHead = '<li class="playlist_item sortable" draggable="true"><a class="playlist-title">'
-    self.playlistItemFoot = '</a><button class="btn btn-xfs btn-danger right playlist-delete">X</button></li>'
+    self.playlistItemFoot = '</a><button class="btn-xfs btn-danger right playlist-delete">X</button></li>'
   } else {
     self.playlistItemHead = '<li class="playlist_item"><a>'
     self.playlistItemFoot = '</a></li>'

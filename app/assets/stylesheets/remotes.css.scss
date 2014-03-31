@@ -127,7 +127,7 @@ canvas#drawing-surface {
     border-right: $border $medium-green;
   }
 
-  input, textarea {
+  input[type="text"], textarea {
     border-radius: 0;
     border-bottom: $border $light-gray;
     width: 100%;
@@ -371,43 +371,37 @@ canvas#drawing-surface {
   border-bottom: $border $light-gold;
   color: white;
   font-weight: 300;
+  border-radius: 0;
 
   &:hover {
-    background-color: $light-gold;
+    background-color: $light-gold !important;
     color: white; 
   }
 }
 
-.btn-landing {
-  border-right: $border $light-gold;
-}
-
-.btn-success {
+.btn-inline {
   border-right: $border $light-gold;
 
   &:hover {
-    border: none;
+    border-right: $border $light-gold;
   }
 }
 
-#show_remote {
-  .btn-edit {
-    border-bottom: none;
-    padding: 5px;
-  }
-
-  .video-heading {
-    .btn-landing {
-      border: none;
-    }
-  }
+.btn-noborder {
+  border: none;
+  padding: 5px;
 }
 
 .btn-danger {
   width: 20px;
   height: 20px;
   padding: 0;
-  border-radius: 0;
+  border: none;
+  background-color: #d2322d;
+
+  &:hover {
+    background-color: #ac2925;
+  }
 }
 
 #registration {
@@ -464,7 +458,6 @@ canvas#drawing-surface {
       border: none;
       border-radius: 0;
       box-shadow: 0;
-      border-bottom: $border $light-gray;
     }
   }
 
@@ -498,7 +491,7 @@ canvas#drawing-surface {
   color: #999;
 }
 
-input[type="text"], textarea {
+input, textarea {
   border-bottom: $border $light-gray;
 }
 
@@ -664,5 +657,5 @@ textarea.error {
 }
 
 #share {
-  width: 19em;
+  width: 20em;
 }

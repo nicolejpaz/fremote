@@ -50,7 +50,7 @@ describe RemotesController do
         expect(assigns(:user)).to be_nil
       end
 
-      it "assigns @remote to a new remote" do
+      it "does not assign @remote to a new remote" do
         expect(assigns(:remote)).to be_nil
       end
     end
@@ -358,7 +358,7 @@ describe RemotesController do
       context 'and the current user is not the remote owner' do
         before(:each) do
           @password = Faker::Internet.password(8)
-          @another_user = create(:user, name: Faker::Internet.user_name, email: Faker::Internet.email, password: @password, password_confirmation: @password)
+          @another_user = create(:user, name: Faker::Internet.user_name.tr('^a-zA-Z0-9\-\_\s', '').slice(1..15), email: Faker::Internet.email, password: @password, password_confirmation: @password)
           controller.stub(:current_user){@another_user}
           get :edit, id: @sample_owned_remote.remote_id
         end

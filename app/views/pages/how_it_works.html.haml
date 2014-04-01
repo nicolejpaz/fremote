@@ -1,5 +1,10 @@
 - content_for(:title){ "How it Works - Fremote" }
 - meta :description => "With Fremote, you can create a remote to take control of your online videos.  Learn more about how Fremote works."
+%div.text-align-center
+  %script{async: "", src: "//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"}
+  %ins.adsbygoogle{"data-ad-client" => "ca-pub-2416283885970714", "data-ad-slot" => "3393820586", style: "display:inline-block;width:728px;height:90px"}
+  :javascript
+    (adsbygoogle = window.adsbygoogle || []).push({});
 .col-xs-6.col-xs-offset-3
   %h3
     What's this "Fremote" thing?
@@ -9,6 +14,8 @@
     You can make remotes without registering, but an account gives you a dedicated chat handle and extra remote settings. 
   %p
     All you need to get started is a YouTube, Vimeo, Blip, Veoh, or Soundcloud link.
+  %p
+    = link_to "Check out our demo to get an idea of how the remotes work.", "http://fremote.tv/remotes/acf41ccf76"
   %p
     Keep in mind that you must have a fast internet connection for a good Fremote experience.  We also suggest using a modern web browser that supports HTML5 video.  We like Google Chrome, Mozilla Firefox, and Internet Explorer 10+.
   = image_tag("ski_instructor.jpg", class: "img-responsive margin-center")

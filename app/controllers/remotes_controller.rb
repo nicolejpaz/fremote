@@ -51,7 +51,7 @@ class RemotesController < ApplicationController
 		@user = current_user if current_user
 		@remote = Remote.find_by({remote_id: params[:id]})
     @remote_owner = @user if @user == @remote.user
-    @remote.control(params, @remote_owner) if @remote.authorization.is_authorized?("settings", @user)
+    @remote.control(params, @remote_owner) if @remote.authorization.is_authorized?("control", @user)
     render nothing: true
 	end
 

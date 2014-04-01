@@ -45,9 +45,11 @@ describe RemotesController do
     end
 
     it "assigns @remote to a new remote" do
+      controller.stub(:current_user){@sample_user}
       get :new
       expect(assigns(:remote).is_a?(Remote)).to eq true
     end
+
   end
 
   describe "POST create" do

@@ -34,7 +34,7 @@ module RemotesHelper
 
   def sanitized_name(user)
     user_name = user.name.split(' ')
-    return user_name.join('_')
+    return user_name.join('+')
   end
 
   def remote_authorization_checkbox(remote, kind, permission)

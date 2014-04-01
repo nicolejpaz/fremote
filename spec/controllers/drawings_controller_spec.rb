@@ -1,26 +1,22 @@
 require 'spec_helper'
+require 'faker'
 
 describe DrawingsController do
   before(:each) do
-    @sample_user = User.create name: "john", email: "john@john.com", password: "password"
-    @another_user = User.create name: "jane", email: "jane@jane.com", password: "password"
+    @sample_user = create(:user)
+    @another_user = create(:user, name: Faker::Internet.user_name.tr('^a-zA-Z0-9\-\_\s', '').slice(1..15), email: Faker::Internet.email)
     
-    @params = {
-      name: "Test name",
-      alternate_name: "Alternate name",
-      description: "Test description",
-      video_url: "https://www.youtube.com/watch?v=NX_23r7vYak"
-    }
+    @params = attributes_for(:remote)
 
     @sample_remote = Remote.make
     VCR.use_cassette('remote') do
-      @sample_remote.populate(@params[:video_url])
+      @sample_remote.populate(@params[:url])
     end
     @sample_remote.save
 
     @sample_owned_remote = Remote.make(@sample_user)
-    VCR.use_cassette('create_owned_remote') do
-      @sample_owned_remote.populate(@params[:video_url])
+    VCR.use_cassette('remote') do
+      @sample_owned_remote.populate(@params[:url])
     end
     @sample_owned_remote.save
 

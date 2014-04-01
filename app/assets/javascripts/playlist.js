@@ -11,7 +11,7 @@ function Playlist(source, remote){
     self.playlistItemHead = '<li class="playlist_item sortable" draggable="true"><a class="playlist-title">'
     self.playlistItemFoot = '</a><button class="btn-xfs btn-danger right playlist-delete">X</button></li>'
   } else {
-    self.playlistItemHead = '<li class="playlist_item"><a>'
+    self.playlistItemHead = '<li class="playlist_item"><a class="playlist-title">'
     self.playlistItemFoot = '</a></li>'
   }
 

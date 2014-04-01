@@ -8,7 +8,7 @@ describe Remote do
     @params[:alternate_name] = Faker::Lorem.sentence.slice(1...60)
     @params[:alternate_description] = Faker::Lorem.paragraph.slice(1...5000)
     @sample_user = create(:user)
-	  @another_user = create(:user, name: Faker::Internet.user_name.slice(1...16), email: Faker::Internet.email)
+	  @another_user = create(:user, name: Faker::Internet.user_name.tr('^a-zA-Z0-9\-\_\s', '').slice(1..15), email: Faker::Internet.email)
 	end
 
 	it "should create a new instance given a valid attribute" do

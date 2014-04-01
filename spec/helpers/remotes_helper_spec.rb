@@ -31,7 +31,7 @@ describe RemotesHelper do
   context "is_authorized?" do
     before(:each) do
       @sample_user = create(:user)
-      @another_user = create(:user, name: Faker::Internet.user_name, email: Faker::Internet.email)
+      @another_user = create(:user, name: Faker::Internet.user_name.tr('^a-zA-Z0-9\-\_\s', '').slice(1..15), email: Faker::Internet.email)
 
       @sample_remote = Remote.make(@sample_user)
       VCR.use_cassette('remote') do
@@ -87,11 +87,11 @@ describe RemotesHelper do
     end
 
     it "returns the user's sanitzed name if their name is two words" do
-      expect(sanitized_name(@two_word_user_name)).to eq @params[:two].gsub(' ', '_')
+      expect(sanitized_name(@two_word_user_name)).to eq @params[:two].gsub(' ', '+')
     end
 
     it "returns the user's sanitized name if their name is three words" do
-      expect(sanitized_name(@three_word_user_name)).to eq @params[:three].gsub(' ', '_')
+      expect(sanitized_name(@three_word_user_name)).to eq @params[:three].gsub(' ', '+')
     end
   end
 end
@@ -103,7 +103,7 @@ def create_user_name(num)
   user_name = ''
 
   num.times do
-    user_name += Faker::Internet.user_name.gsub('_', '').slice(1...slice_needed) + ' '
+    user_name += Faker::Internet.user_name.tr('^a-zA-Z0-9\-\_\s', '').slice(1...slice_needed) + ' '
   end
   
   user_name.gsub(/\s$/, '')

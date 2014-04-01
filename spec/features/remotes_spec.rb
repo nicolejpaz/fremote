@@ -10,11 +10,11 @@ describe 'In the remote views' do
                 name:          Faker::Lorem.sentence.slice(1...60),
                 alt_name:      Faker::Lorem.sentence.slice(1...60), 
                 description:   Faker::Lorem.paragraph.slice(1...5000),
-                guest_name:    Faker::Internet.user_name,
-                user_name:     Faker::Internet.user_name,
+                guest_name:    Faker::Internet.user_name.tr('^a-zA-Z0-9\-\_\s', '').slice(1..15),
+                user_name:     Faker::Internet.user_name.tr('^a-zA-Z0-9\-\_\s', '').slice(1..15),
                 email:         Faker::Internet.email,
                 password:      Faker::Internet.password,
-                alt_user_name: Faker::Internet.user_name,
+                alt_user_name: Faker::Internet.user_name.tr('^a-zA-Z0-9\-\_\s', '').slice(1..15),
                 alt_email:     Faker::Internet.email
               }
   end

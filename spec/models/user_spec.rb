@@ -15,8 +15,11 @@ describe User do
 	end
 
 	it "should accept valid usernames" do
-		sample_user = User.new(@attr.merge(:name => "john"))
-		sample_user.should be_valid
+		names = ["test", "test test", "test test test", "test_test", "test-test", "test2test", "test3", "Test"]
+		names.each do |name|
+			sample_user = User.new(@attr.merge(:name => name))
+			sample_user.should be_valid
+		end
 	end
 
 	it "should require an email address" do
@@ -34,6 +37,14 @@ describe User do
 
 	it "should reject blacklisted usernames" do
 		names = %w[sign_in sign_out sign_up password cancel edit]
+		names.each do |name|
+			invalid_username = User.new(@attr.merge(:name => name))
+			invalid_username.should_not be_valid
+		end
+	end
+
+	it "should reject usernames with invalid characters" do
+		names = ["test+test", "test!", "test~test"]
 		names.each do |name|
 			invalid_username = User.new(@attr.merge(:name => name))
 			invalid_username.should_not be_valid

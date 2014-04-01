@@ -4,7 +4,7 @@ require 'faker'
 describe RemotesController do
   before(:each) do
     @sample_user = create(:user)
-    @another_user = create(:user, name: "bob", email: "bob@bob.com")
+    @another_user = create(:user, name: Faker::Internet.user_name.tr('^a-zA-Z0-9\-\_\s', '').slice(1..15), email: Faker::Internet.email)
 
     @params = attributes_for(:remote)
     @params[:alternate_name] = Faker::Lorem.sentence.slice(1...60)

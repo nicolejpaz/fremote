@@ -2,7 +2,7 @@ require 'spec_helper'
 
 feature 'When a user creates an account and logs in' do
   before(:all) do
-    @params = { user_name:     Faker::Internet.user_name,
+    @params = { user_name:     Faker::Internet.user_name.tr('^a-zA-Z0-9\-\_\s', '').slice(1..15),
                 email:         Faker::Internet.email,
                 password:      Faker::Internet.password
               }

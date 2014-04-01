@@ -2,20 +2,18 @@ require 'spec_helper'
 
 describe Playlist do
   before(:each) do
-    @params = {
-      name: "Test name",
-      description: "Test description",
-      video_url: "https://www.youtube.com/watch?v=NX_23r7vYak"
-    }
+    @params = attributes_for(:remote)
+    @params[:alternate_url] = "https://www.youtube.com/watch?v=R4i8SpNgzA4"
 
     @sample_user = create(:user)
     @sample_remote = Remote.make(@sample_user)
-    VCR.use_cassette('create_owned_remote') do
-      @sample_remote.populate(@params[:video_url])
+    VCR.use_cassette('remote') do
+      @sample_remote.populate(@params[:url])
     end
     @sample_remote.save
-    VCR.use_cassette('add_playlist_item') do
-      @sample_playlist_item = Media.new('https://www.youtube.com/watch?v=zoO0s1ukcqQ')
+
+    VCR.use_cassette('playlist') do
+      @sample_playlist_item = Media.new(@params[:alternate_url])
     end
   end
 

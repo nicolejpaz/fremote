@@ -10,6 +10,7 @@ class User
   validates_uniqueness_of :name, :email, :case_sensitive => false
   validates_length_of :name, maximum: 16
   validates :name, :exclusion => %w[sign_in sign_out sign_up password cancel edit]
+  validate :disallow_nonalphanumerics
   # attr_accessible :name, :email, :password, :password_confirmation, :remember_me
 
   ## Database authenticatable
@@ -74,5 +75,11 @@ class User
   private
   def spawn_memberships
     self.membership = Membership.new if self.membership == nil
+  end
+
+  def disallow_nonalphanumerics
+    if name.match(/^[a-zA-Z0-9\-\_\s]+$/).nil?
+      errors.add(:name, "can only include letters, numbers, dashes (-), and underscores (_)")
+    end
   end
 end

@@ -1,15 +1,14 @@
 require 'spec_helper'
+require 'faker'
 
 describe Remote do
 
 	before(:each) do
-		@params = {
-      name: "Test name",
-      description: "Test description",
-      video_url: "https://www.youtube.com/watch?v=NX_23r7vYak"
-		}
-     @sample_user = create(:user)
-		 @another_user = create(:user, name: 'Another name', email: 'test2@test.com')
+		@params = attributes_for(:remote)
+    @params[:alternate_name] = Faker::Lorem.sentence.slice(1...60)
+    @params[:alternate_description] = Faker::Lorem.paragraph.slice(1...5000)
+    @sample_user = create(:user)
+	  @another_user = create(:user, name: Faker::Internet.user_name.tr('^a-zA-Z0-9\-\_\s', '').slice(1..15), email: Faker::Internet.email)
 	end
 
 	it "should create a new instance given a valid attribute" do
@@ -23,8 +22,9 @@ describe Remote do
 
 	it "have a remote id attribute" do
 		@test_remote = create(:remote)
+
     VCR.use_cassette('remote') do
-  		@test_remote.populate(@params[:video_url])
+  		@test_remote.populate(@params[:url])
 		end
     @test_remote.remote_id.should_not eq(nil)
 	end
@@ -36,19 +36,22 @@ describe Remote do
 
 	it "should have an owner if created by a user" do
     @sample_remote = Remote.make(@sample_user)
+
     VCR.use_cassette('remote') do
-      @sample_remote.populate(@params[:video_url])
+      @sample_remote.populate(@params[:url])
     end
     @sample_remote.save
+
     @sample_remote.user.should equal(@sample_user)
 	end
 
 	it "should not have an owner if not created by a user" do
     @sample_remote = Remote.make(nil)
     VCR.use_cassette('remote') do
-      @sample_remote.populate(@params[:video_url])
+      @sample_remote.populate(@params[:url])
     end
     @sample_remote.save
+
     @sample_remote.user.should equal(nil)
 	end
 
@@ -65,84 +68,87 @@ describe Remote do
   it "should have a default name if no name given" do
     @sample_remote = Remote.make
     VCR.use_cassette('remote') do
-      @sample_remote.populate(@params[:video_url])
+      @sample_remote.populate(@params[:url])
     end
     @sample_remote.save
+
     @sample_remote.name.should eq "Unnamed Remote"
   end
 
   it "should have a default description if no name given" do
     @sample_remote = Remote.make
     VCR.use_cassette('remote') do
-      @sample_remote.populate(@params[:video_url])
+      @sample_remote.populate(@params[:url])
     end
     @sample_remote.save
+
     @sample_remote.description.should eq "No description."
   end
 
   it "should have a custom name if given" do
     @sample_remote = Remote.make
     VCR.use_cassette('remote') do
-      @sample_remote.populate(@params[:video_url])
+      @sample_remote.populate(@params[:url])
     end
     @sample_remote.name = @params[:name]
     @sample_remote.save
 
-    @sample_remote.name.should eq "Test name"
+    @sample_remote.name.should eq @params[:name]
   end
 
   it "should have a custom description if given" do
     @sample_remote = Remote.make
     VCR.use_cassette('remote') do
-      @sample_remote.populate(@params[:video_url])
+      @sample_remote.populate(@params[:url])
     end
     @sample_remote.description = @params[:description]
     @sample_remote.save
 
-    @sample_remote.description.should eq "Test description"
+    @sample_remote.description.should eq @params[:description]
   end
 
   it "should rename a remote if the parameters include a :name key" do
     @sample_remote = Remote.make
     VCR.use_cassette('remote') do
-      @sample_remote.populate(@params[:video_url])
+      @sample_remote.populate(@params[:url])
     end
     @sample_remote.save
-    @params[:description] = ''
+
+    @params[:name] = @params[:alternate_name]
     @sample_remote.update(@params)
 
-    expect(@sample_remote.name).to eq @params[:name]
+    expect(@sample_remote.name).to eq @params[:alternate_name]
   end
 
   it "should change a remote description if the parameters include a :description key" do
     @sample_remote = Remote.make
     VCR.use_cassette('remote') do
-      @sample_remote.populate(@params[:video_url])
+      @sample_remote.populate(@params[:url])
     end
     @sample_remote.save
-    @params[:name] = ''
+
+    @params[:description] = @params[:alternate_description]
     @sample_remote.update(@params)
 
-    expect(@sample_remote.description).to eq @params[:description]
+    expect(@sample_remote.description).to eq @params[:alternate_description]
   end
 
   context "when checking the user type" do
     it "should return 'guest' if a guest created the remote" do
       @sample_remote = Remote.make
       VCR.use_cassette('remote') do
-        @sample_remote.populate(@params[:video_url])
+        @sample_remote.populate(@params[:url])
       end
       @sample_remote.save 
 
       guest = @sample_remote.kind_of_user
-
       expect(guest).to eq "guest"
     end
 
     it "should return 'owner' if the remote's owner is also logged in" do
       @sample_remote = Remote.make(@sample_user)
-      VCR.use_cassette('create_owned_remote') do
-        @sample_remote.populate(@params[:video_url])
+      VCR.use_cassette('remote') do
+        @sample_remote.populate(@params[:url])
       end
       @sample_remote.save 
 
@@ -153,8 +159,8 @@ describe Remote do
 
     it "should return 'user' if there is a user but they are not the remote's owner" do
       @sample_remote = Remote.make(@sample_user)
-      VCR.use_cassette('create_owned_remote') do
-        @sample_remote.populate(@params[:video_url])
+      VCR.use_cassette('remote') do
+        @sample_remote.populate(@params[:url])
       end
       @sample_remote.save 
 

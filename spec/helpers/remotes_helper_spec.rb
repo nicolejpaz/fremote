@@ -1,15 +1,6 @@
 require 'spec_helper'
+require 'faker'
 
-# Specs in this file have access to a helper object that includes
-# the RemotesHelper. For example:
-#
-# describe RemotesHelper do
-#   describe "string concat" do
-#     it "concats two strings with spaces" do
-#       expect(helper.concat_strings("this","that")).to eq("this that")
-#     end
-#   end
-# end
 describe RemotesHelper do
   context "to_boolean" do
     it "should convert true string to true boolean" do
@@ -40,10 +31,11 @@ describe RemotesHelper do
   context "is_authorized?" do
     before(:each) do
       @sample_user = create(:user)
-      @another_user = create(:user, name: 'Another user', email: 'testasdgh@test.com')
+      @another_user = create(:user, name: Faker::Internet.user_name, email: Faker::Internet.email)
+
       @sample_remote = Remote.make(@sample_user)
-      VCR.use_cassette('create_owned_remote') do
-        @sample_remote.populate('https://www.youtube.com/watch?v=NX_23r7vYak')
+      VCR.use_cassette('remote') do
+        @sample_remote.populate("https://www.youtube.com/watch?v=NX_23r7vYak")
       end
       @sample_remote.save
     end
@@ -79,21 +71,40 @@ describe RemotesHelper do
 
   context "sanitized_name" do
     before(:all) do
-      @one_word_user_name = create(:user, name: 'One')
-      @two_word_user_name = create(:user, name: 'One Two', email: 'testtwo@test.com')
-      @three_word_user_name = create(:user, name: 'One Two Three', email: 'testthree@test.com')
+      @params = {
+                  one:   create_user_name(1),
+                  two:   create_user_name(2),
+                  three: create_user_name(3)
+                }
+
+      @one_word_user_name   = create(:user, name: @params[:one])
+      @two_word_user_name   = create(:user, name: @params[:two], email: Faker::Internet.email)
+      @three_word_user_name = create(:user, name: @params[:three], email: Faker::Internet.email)
     end
 
     it "returns the user's name if their name is one word" do
-      expect(sanitized_name(@one_word_user_name)).to eq 'One'
+      expect(sanitized_name(@one_word_user_name)).to eq @params[:one]
     end
 
     it "returns the user's sanitzed name if their name is two words" do
-      expect(sanitized_name(@two_word_user_name)).to eq 'One_Two'
+      expect(sanitized_name(@two_word_user_name)).to eq @params[:two].gsub(' ', '_')
     end
 
     it "returns the user's sanitized name if their name is three words" do
-      expect(sanitized_name(@three_word_user_name)).to eq 'One_Two_Three'
+      expect(sanitized_name(@three_word_user_name)).to eq @params[:three].gsub(' ', '_')
     end
   end
+end
+
+private
+
+def create_user_name(num)
+  slice_needed = 16 / num
+  user_name = ''
+
+  num.times do
+    user_name += Faker::Internet.user_name.gsub('_', '').slice(1...slice_needed) + ' '
+  end
+  
+  user_name.gsub(/\s$/, '')
 end

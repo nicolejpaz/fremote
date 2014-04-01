@@ -1,20 +1,17 @@
 require 'spec_helper'
+require 'faker'
 
 describe RemotesController do
   before(:each) do
     @sample_user = create(:user)
     @another_user = create(:user, name: "bob", email: "bob@bob.com")
 
-    @params = {
-      name: "Test name",
-      alternate_name: "Alternate name",
-      description: "Test description",
-      video_url: "https://www.youtube.com/watch?v=NX_23r7vYak"
-    }
+    @params = attributes_for(:remote)
+    @params[:alternate_name] = Faker::Lorem.sentence.slice(1...60)
 
     @sample_remote = Remote.make
     VCR.use_cassette('remote') do
-      @sample_remote.populate(@params[:video_url])
+      @sample_remote.populate(@params[:url])
     end
     @sample_remote.name = @params[:name]
     @sample_remote.description = @params[:description]
@@ -30,31 +27,40 @@ describe RemotesController do
 
   describe "GET new" do
     context "when there is a current user" do
-      it "assigns the current user to @user" do
+      before(:each) do
         controller.stub(:current_user){@sample_user}
         get :new
+      end
+      
+      it "assigns the current user to @user" do
         expect(assigns(:user)).to eq @sample_user
+      end
+
+      it "assigns @remote to a new remote" do
+        expect(assigns(:remote).is_a?(Remote)).to eq true
       end
     end
 
     context "when there is no current user" do
-      it "does not assign any user to @user" do
+      before(:each) do
         get :new
+      end
+
+      it "does not assign any user to @user" do
         expect(assigns(:user)).to be_nil
       end
-    end
 
-    it "assigns @remote to a new remote" do
-      get :new
-      expect(assigns(:remote).is_a?(Remote)).to eq true
+      it "assigns @remote to a new remote" do
+        expect(assigns(:remote)).to be_nil
+      end
     end
   end
 
   describe "POST create" do
     it "creates a remote with a valid url" do
       count = Remote.all.count
-      VCR.use_cassette('create_remote') do
-        post :create, video_url: @params[:video_url], name: @params[:name], description: @params[:description]
+      VCR.use_cassette('remote') do
+        post :create, video_url: @params[:url], name: @params[:name], description: @params[:description]
       end
       expect(assigns(:remote).remote_id.length).to eq(10)
       expect(Remote.all.count).to eq(count + 1)
@@ -63,8 +69,8 @@ describe RemotesController do
     context "when a user is logged in" do
       before(:each) do
         controller.stub(:current_user){@sample_user}
-        VCR.use_cassette('create_remote_with_user') do
-          post :create, video_url: @params[:video_url], name: @params[:name], description: @params[:description]
+        VCR.use_cassette('remote') do
+          post :create, video_url: @params[:url], name: @params[:name], description: @params[:description]
         end
       end
 
@@ -79,8 +85,8 @@ describe RemotesController do
 
     context "when a user is not logged in" do
       before(:each) do
-        VCR.use_cassette('create_remote') do
-          post :create, video_url: @params[:video_url], name: @params[:name], description: @params[:description]
+        VCR.use_cassette('remote') do
+          post :create, video_url: @params[:url], name: @params[:name], description: @params[:description]
         end
       end
 
@@ -110,7 +116,7 @@ describe RemotesController do
 
   describe "GET ping" do
     before(:each) do
-      VCR.use_cassette('ping_remote') do
+      VCR.use_cassette('remote') do
         get :ping, id: @sample_remote.remote_id
       end
     end
@@ -131,8 +137,8 @@ describe RemotesController do
   describe "PUT control" do
     before(:each) do
       @sample_owned_remote = Remote.make(@sample_user)
-      VCR.use_cassette('create_owned_remote') do
-        @sample_owned_remote.populate(@params[:video_url])
+      VCR.use_cassette('remote') do
+        @sample_owned_remote.populate(@params[:url])
       end
       @sample_owned_remote.admin_only = true
       @sample_owned_remote.save
@@ -141,7 +147,6 @@ describe RemotesController do
     context "when the current user is the remote owner" do
       before(:each) do
         controller.stub(:current_user){@sample_user}
-
         put :control, remote: { :admin_only => "false" }, id: @sample_owned_remote.remote_id
       end
 
@@ -206,8 +211,8 @@ describe RemotesController do
   describe "PATCH update" do
     before(:each) do
       @sample_owned_remote = Remote.make(@sample_user)
-      VCR.use_cassette('create_owned_remote') do
-        @sample_owned_remote.populate(@params[:video_url])
+      VCR.use_cassette('remote') do
+        @sample_owned_remote.populate(@params[:url])
       end
       @sample_owned_remote.name = @params[:name]
       @sample_owned_remote.description = @params[:description]
@@ -323,8 +328,8 @@ describe RemotesController do
   describe 'GET edit' do
     before(:each) do
       @sample_owned_remote = Remote.make(@sample_user)
-      VCR.use_cassette('create_owned_remote') do
-        @sample_owned_remote.populate(@params[:video_url])
+      VCR.use_cassette('remote') do
+        @sample_owned_remote.populate(@params[:url])
       end
       @sample_owned_remote.save
     end
@@ -352,7 +357,8 @@ describe RemotesController do
 
       context 'and the current user is not the remote owner' do
         before(:each) do
-          @another_user = User.create name: "jane", email: "jane@jane.com", password: "password"
+          @password = Faker::Internet.password(8)
+          @another_user = create(:user, name: Faker::Internet.user_name, email: Faker::Internet.email, password: @password, password_confirmation: @password)
           controller.stub(:current_user){@another_user}
           get :edit, id: @sample_owned_remote.remote_id
         end

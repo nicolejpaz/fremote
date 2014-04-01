@@ -1,17 +1,6 @@
 function Player(source,remote){
   var self = this
-  self.element = videojs('player', {
-        'plugins': {
-         'chromecast': {
-          enabled : true,
-          appId : 'A64FA12C',
-          namespace : 'fremote',
-          title : 'Fremote',
-          description : 'Take control of your videos.'
-          }
-        }
-      }
-    )
+  self.element = videojs('player')
 
   self.addButton = function(buttonId,buttonClass,targetClass){
     var HTML = '<div id="' + buttonId + '" class="vjs-control ' + buttonClass + '" role="button" aria-live="polite" tabindex="0"></div>'

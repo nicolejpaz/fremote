@@ -1,8 +1,8 @@
 .center
   %canvas#drawing-surface{height: "310", width: "630"}
   - if remote.authorization.is_authorized?("draw", user)
-    .canvas-controls.center
-      %button#clear.btn-canvas-controls Clear Screen
+    %span.canvas-controls
+      %button#clear.btn.btn-noborder.btn-canvas-controls Clear Screen
       %p stroke color: 
       %input#color{name: "linecolor", type: "text", value: "#FF0000", class: "pick-a-color"}/
       %p stroke width: 

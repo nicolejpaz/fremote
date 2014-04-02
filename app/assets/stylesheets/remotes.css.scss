@@ -228,7 +228,7 @@ canvas#drawing-surface {
 
 .canvas-controls {
   background-color: $light-gold;
-  height: 32px;
+  min-height: 32px;
   width: 630px;
   display: inline-block;
 
@@ -411,6 +411,11 @@ canvas#drawing-surface {
 
 #clear_playlist {
   margin: -24px -7px;
+}
+
+.playlist_item {
+  clear: both;
+  margin: 10px 0;
 }
 
   /**********************/

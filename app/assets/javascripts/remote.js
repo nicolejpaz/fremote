@@ -92,7 +92,7 @@ function Remote(){
     remoteTextarea.parent().after('<span class="white-text small">' + descRemaining + ' characters remaining</span>')
     remoteInput.after('<span class="white-text small">' + nameRemaining + ' characters remaining.</span>')
     remoteTextarea.on('keyup', function() {
-      var descCharRemaining = $($('#remote').find('span')[1])
+      var descCharRemaining = $('#remote').find('span').eq(1)
       descRemaining = self.getDescriptionRemaining(remoteTextarea)
       nameRemaining = self.getNameRemaining(remoteInput)
 
@@ -140,8 +140,8 @@ function Remote(){
   }
 
   self.removeFromMemberList = function(target) {
-    if ($(target.parents()[1]).find('li').length === 1) {
-      $(target.parents()[2]).hide()
+    if (target.parents().eq(1).find('li').length === 1) {
+      target.parents().eq(2).hide()
     }
     target.parent().remove()
   }
@@ -151,7 +151,7 @@ function Remote(){
     var nameRemaining = self.getNameRemaining(nameInput)
     var nameSpans = $('#edit_remote_name span')
 
-    $(nameSpans[1]).text(nameRemaining + ' characters remaining.')
+    nameSpans.eq(1).text(nameRemaining + ' characters remaining.')
     self.applyOrDeleteErrors(nameRemaining, nameInput, nameSpans.last(), 'white-text', '#edit_remote_name')
   }
 
@@ -196,9 +196,9 @@ function Remote(){
     var descriptionTextarea = $('#remote_description form textarea')
     var remaining = self.getDescriptionRemaining($('#remote_description form textarea'))
 
-    $(descriptionSpans[1]).text(remaining + ' characters remaining.')
+    descriptionSpans.eq(1).text(remaining + ' characters remaining.')
 
-    self.applyOrDeleteErrors(remaining, descriptionTextarea, $(descriptionSpans[1]), 'grey-text', '#edit_remote_description')
+    self.applyOrDeleteErrors(remaining, descriptionTextarea, descriptionSpans.eq(1), 'grey-text', '#edit_remote_description')
   }
 
   self.getDescriptionForm = function(thisSelf, endOfFormString) {
@@ -263,11 +263,13 @@ function Remote(){
       type: 'GET',
       url: '/remotes/' + self.remoteId + "/ping"
     }).done(function(data){
+      $('#playlist span').remove()
       if (data.stream_url != undefined){
         self.player.element.src(data.stream_url)
         self.player.element.one('loadedmetadata', function(){
           self.toggle(data)
         })
+        $('#playlist li').eq(data.playing).prepend('<span class="glyphicon glyphicon-play"></span> ')
       } else {
         self.toggle(data)
       }

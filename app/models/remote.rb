@@ -134,6 +134,16 @@ class Remote
   end
 
   def check_if_selection(params)
+    if params["playing"]
+      self.playlist.playing = params["playing"].to_i
+      self.playlist.save
+      self.start_at = 0
+      self.status = 1
+      self.save
+      Notify.new("playlist_play:#{self.remote_id}", {'playing' => self.playlist.playing})
+      Notify.new("playlist_block:#{self.remote_id}", {"block" => false}.to_json)
+    end
+
     if params.has_key?("selection")
       change_playlist_selection(params)
     elsif params["status"] == 0 || params["status"] == "0"
@@ -141,6 +151,7 @@ class Remote
     else
       self.save
       Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.last_controlled_at, 'dispatched_at' => Time.now })
+      Notify.new("playlist_play:#{self.remote_id}", 'playing' => self.playlist.playing)
     end
   end
 
@@ -151,6 +162,7 @@ class Remote
     self.status = 1
     self.save
     Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.selection]["url"])) })
+    Notify.new("playlist_play:#{self.remote_id}", 'playing' => self.playlist.playing)
     Notify.new("playlist_block:#{self.remote_id}", {"block" => false}.to_json)
   end
 
@@ -161,7 +173,8 @@ class Remote
     end
     self.start_at = 0
     self.save
-    Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.selection]["url"]))  })
+    Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.selection]["url"])) })
+    Notify.new("playlist_play:#{self.remote_id}", 'playing' => self.playlist.playing)
   end
 
   def check_if_members(params)

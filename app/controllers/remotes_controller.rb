@@ -58,7 +58,7 @@ class RemotesController < ApplicationController
 	def ping
 		@remote = Remote.find_by({remote_id: params[:id]})
 		@playlist = @remote.playlist
-    result = {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.last_controlled_at.to_s, 'dispatched_at' => Time.now, 'sender_id' => 'fremote_server', 'selection' => @playlist.selection, 'stream_url' => URI::encode(Media.link(@playlist.list[@playlist.selection]["url"])), 'playlist' => @playlist.list, 'watchers' => @remote.watchers }
+    result = {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.last_controlled_at.to_s, 'dispatched_at' => Time.now, 'sender_id' => 'fremote_server', 'selection' => @playlist.selection, 'stream_url' => URI::encode(Media.link(@playlist.list[@playlist.selection]["url"])), 'playlist' => @playlist.list, 'watchers' => @remote.watchers, 'playing' => @playlist.playing }
     render json: result.to_json
 	end
 

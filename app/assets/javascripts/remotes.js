@@ -27,20 +27,3 @@ window['remotes#new'] = function(data) {
     var remote = new Remote()
   })
 }
-
-// window['remotes#index'] = function(data) {
-//   $('#owner_only_tooltip').tooltip()
-
-//   window.onload = function() {
-//     changeWindowHeight()
-//   }
-
-//   window.onresize = function() {
-//     changeWindowHeight()
-//   }
-
-//   function changeWindowHeight() {
-//     var windowHeight = $(window).height()
-//     $('#on_landing').css('padding-top', windowHeight / 3)
-//   }
-// }

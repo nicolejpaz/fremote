@@ -1,7 +1,7 @@
 // class Remote
 function Remote(){
   var self = this
-  var endOfFormString = '<span class="input-group-btn"><button class="btn btn-edit" type="submit">Edit</button><button class="btn btn-edit btn-red" type="button">Cancel</button></span></div></form>'
+  var endOfFormString = '<span class="input-group-btn"><button class="btn btn-noborder" type="submit">Edit</button><button class="btn btn-noborder btn-red" type="button">Cancel</button></span></div></form>'
   var remoteNameElement = $('#remote_name')
   var remoteDescriptionElement = $('#remote_description')
   var descriptionError = '<br><span class="error small">Please enter a description under 5000 characters</span>'

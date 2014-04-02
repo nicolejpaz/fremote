@@ -4,25 +4,24 @@
   %ins.adsbygoogle{"data-ad-client" => "ca-pub-2416283885970714", "data-ad-slot" => "3533421389", style: "display:inline-block;width:728px;height:90px"}
   :javascript
     (adsbygoogle = window.adsbygoogle || []).push({});
-#center_column
-  #show_remote
-    .container
-      .row.clearfix
-        .col-md-12.column
-          .row.clearfix
-            .col-md-8.col-lg-7.column
-              = render :partial => 'video', :locals => { :remote => @remote, :remote_user => @remote_user }
-              = render :partial => 'canvas', :locals => { :remote => @remote, :user => @user }
-            .col-md-4.col-lg-5.column
-              = render :partial => 'chat', :locals => { :username => @username, :remote => @remote }
-          .row.clearfix
-            .col-md-8.col-lg-7.column
-              = render :partial => 'playlist_info', :locals => { :remote => @remote, :remote_user => @remote_user }
-            .col-md-4.col-lg-5.column#watchers_container
-              = render :partial => 'watchers', :locals => { :remote => @remote }
-          .row.clearfix
-            .col-md-12.column
-              = render :partial => 'playlist', :locals => { :remote => @remote, :username => @username }
+#show_remote
+  .container
+    .row.clearfix
+      .col-md-12.column
+        .row.clearfix
+          .col-md-8.col-lg-7.column
+            = render :partial => 'video', :locals => { :remote => @remote, :remote_user => @remote_user }
+            = render :partial => 'canvas', :locals => { :remote => @remote, :user => @user }
+          .col-md-4.col-lg-5.column
+            = render :partial => 'chat', :locals => { :username => @username, :remote => @remote }
+        .row.clearfix
+          .col-md-8.col-lg-7.column
+            = render :partial => 'playlist_info', :locals => { :remote => @remote, :remote_user => @remote_user }
+          .col-md-4.col-lg-5.column#watchers_container
+            = render :partial => 'watchers', :locals => { :remote => @remote }
+        .row.clearfix
+          .col-md-12.column
+            = render :partial => 'playlist', :locals => { :remote => @remote, :username => @username }
 
   :javascript
     var user = '#{@identifier}'

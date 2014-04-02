@@ -1,6 +1,6 @@
-// Place all the styles related to the remotes controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+  /**********************/
+ /*** SASS Variables ***/
+/**********************/
 
 $border: 3px solid;
 
@@ -13,11 +13,35 @@ $light-green: #00a67c;
 $minty-green: #bceade;
 $default-font: 'Open Sans', sans-serif;
 
+  /**********************/
+ /***     Global     ***/
+/**********************/
+
 body {
   background-color: $dark-green;
   font-family: $default-font;
   color: white;
 }
+
+main {
+  margin-top: 60px;
+}
+
+a {
+  color: $dark-green;
+
+  &:hover {
+    color: $light-green;
+  }
+}
+
+h1, h2, h3 {
+  font-weight: 300;
+}
+
+  /**********************/
+ /***   Navigation   ***/
+/**********************/
 
 nav {
   background-color: $light-green;
@@ -27,20 +51,26 @@ nav {
     max-height: 40px;
   }
 
-  img {
-    margin-top: -10px;
+  .navbar-brand {
+    padding: 5px;
   }
 
-  a {
-    color: $minty-green;
+  .navbar-text {
+    font-size: 1em;
 
-    &:hover {
+    .navbar-link {
       color: white;
+
+      &:hover {
+        color: $minty-green;
+      }
     }
   }
 
-  p.navbar-text {
-    font-size: 1em;
+  .spaced-apart-links {
+    a {
+      margin: 15px 25px;
+    }
   }
 
   .navbar-toggle {
@@ -57,12 +87,16 @@ nav {
   }
 }
 
-div#footer {
+  /**********************/
+ /***     Footer     ***/
+/**********************/
+
+#footer {
   background: $light-green;
   box-shadow: -1px -1px 1px $medium-green;
-  text-align: center;
   min-height: 20px;
   font-size: 1em;
+  text-align: center;
   bottom: 0;
   position: fixed;
   width: 100%;
@@ -70,6 +104,7 @@ div#footer {
 
   p {
     padding: 0.25em;
+    margin: 0 0 0;
   }
 
   a {
@@ -82,34 +117,422 @@ div#footer {
   }
 }
 
-main {
-  margin-top: 60px;
+  /***********************/
+ /*** Reset Bootstrap ***/
+/***********************/
+
+.input-group-sm > .input-group-btn > .btn {
+  height: 30px;
+  border-radius: 0;
 }
+
+.form-control {
+  border-radius: 0;
+  border-bottom: $border $light-gray;
+  box-shadow: none;
+}
+
+label {
+  font-weight: 300;
+
+  input#share {
+    width: 18em;
+  }
+}
+
+fieldset {
+  padding: 10px;
+}
+
+fieldset.fieldset-background {
+  background-color: rgba(128, 128, 128, 0.5);
+}
+
+.panel {
+  border: none;
+  border-radius: 0;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.list-group-item {
+  border: none;
+
+  &:first-child {
+    border-radius: 0;
+  }
+
+  &:last-child {
+    border-radius: 0;
+  }
+}
+
+.video-heading {
+  background-color: $light-green;
+  padding: 10px;
+  color: white;
+}
+
+.video-body {
+  padding: 10px;
+  color: #999;
+}
+
+  /**********************/
+ /***    Buttons     ***/
+/**********************/
+
+.btn {
+  border: none;
+  background-color: $dark-gold;
+  border-bottom: $border $light-gold;
+  color: white;
+  font-weight: 300;
+  border-radius: 0;
+
+  &:hover {
+    background-color: $light-gold;
+    color: white; 
+  }
+}
+
+.input-group-btn:last-child > .btn {
+  margin-left: 0;
+}
+
+.btn-inline {
+  border-right: $border $light-gold;
+}
+
+.btn-noborder {
+  border: none;
+  padding: 5px;
+}
+
+.btn-danger {
+  border: none;
+}
+
+.btn-red {
+  background-color: #9b001c;
+}
+
+  /**********************/
+ /***     Canvas     ***/
+/**********************/
 
 canvas#drawing-surface {
   position: absolute;
   top: 0;
 }
 
-.connect-alert {
-  position: fixed;
-  display: none;
-  border-radius: 0;
-  margin: 0;
-  z-index: 9999;
+.canvas-controls {
+  background-color: $light-gold;
+  height: 32px;
+  width: 630px;
+  display: inline-block;
+
+  div {
+    display: inline;
+  }
+
+  p {
+    display: inline;
+    padding: 10px;
+    font-weight: 300;
+  }
+
+  input#line {
+    display: inline;
+    width: 250px;
+  }
+
+    /***********************************/
+   /*** Dropdown Color Picker Reset ***/
+  /***********************************/
+
+  .color-dropdown {
+    border-radius: 0;
+    height: 27px;
+    padding: 0 5px;
+    background-color: $light-gold;
+    border: none;
+  }
+
+  .pick-a-color-markup {
+    .input-group-btn {
+      .color-dropdown.no-hex {
+        border-radius: 0;
+      }
+    }
+
+    .advanced-content {
+      ul {
+        margin-top: 0;
+      }
+
+      .hue-text, .saturation-text, .lightness-text, .preview-text {
+        color: #999;
+      }
+
+      .color-box {
+        border-radius: 0;
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+
+  .color-preview {
+    border-radius: 0;
+  }
+
+  .color-menu {
+    border-radius: 0;
+    margin: 0;
+  }
+
+  .dropdown-menu {
+    min-width: 335px;
+    display: none;
+  }
 }
 
-#remote {
+  /**********************/
+ /***      Chat      ***/
+/**********************/
+
+#chat {
+  color: #999;
+  font-weight: 300;
+
+  #chat_character_limit {
+    margin-left: 11px;
+    font-size: 10px;
+  }
+
+  #chat_messages {
+    height: 320px;
+    overflow-y: scroll;
+  }
+
+  #chat_table_body {
+    font-size: 12px;
+
+    td {
+      border: none;
+    }
+
+    tr {
+      border-top: 1px solid #ddd;
+      clear: both;
+      word-wrap: break-word;
+      white-space: normal;
+    }
+
+    tr.chat-body td {
+      &:first-child {
+        width: 60%;
+        float: left;
+      }
+
+      &:last-child {
+        width: 40%;
+        float: right;
+        text-align: right;
+      }
+    }
+  }
+}
+
+  /**********************/
+ /***    Watchers    ***/
+/**********************/
+
+#watchers_container {
+  height: 250px;
+
+  ul#watchers_group {
+    height: 185px;
+  }
+
+  ul#watchers {
+    height: 185px;
+    overflow: auto;
+  }
+}
+
+  /**********************/
+ /***  Video Panel   ***/
+/**********************/
+
+#video_info {
+  width: 630px;
+  height: 245px;
+
+  .glyphicon {
+    margin-right: 10px;
+  }
+
+  .video-body {
+    height: 190px;
+    overflow: auto;
+  }
+}
+
+#remote_name, #remote_description {
+  cursor: pointer;
+}
+
+#edit_remote_description {
+  button {
+    display: table;
+    width: 60px;
+  }
+
+  textarea {
+    height: 60px;
+  }
+}
+
+  /**********************/
+ /***    Playlist    ***/
+/**********************/
+
+#playlist {
+  a {
+    font-size: 12px;
+  }
+}
+
+#playlist_group {
+  min-height: 155px;
+}
+
+#clear_playlist {
+  margin: -24px -7px;
+}
+
+  /**********************/
+ /***  Landing Page  ***/
+/**********************/
+
+#landing {
   max-width: 960px;
   margin: 0 auto;
 
-  h3 {
+  p {
+    font-size: 1.6em;
+    color: white;
+    margin: 20px 0;
     font-weight: 300;
   }
+
+  input {
+    height: 35px;
+  }
+}
+
+  /**************************/
+ /*** Registration Pages ***/
+/**************************/
+
+#registration {
+  max-width: 500px;
+  margin: 0 auto;
+
   a {
-    color: white;
+    color: $minty-green;
   }
 
+  input#adcopy_response {
+    color: black;
+  }
+
+  #adcopy-outer {
+    width: 306px;
+    border-radius: 0;
+    border: none;
+  }
+}
+
+  /**********************/
+ /***   New Remote   ***/
+/**********************/
+
+#remote {
+  .user-remove, .user-delete {
+    border: none;
+  }
+
+  .user-add {
+    border: none;
+    font-weight: 600;
+    background: $dark-green;
+  }
+
+  .to-delete {
+    text-decoration: line-through;
+    color: #9b001c;
+  }
+  
+  table {
+    background-color: rgba(128, 128, 128, 0.5);
+    margin: 10px 0;
+  }
+
+  thead, tbody td:first-child {
+    background-color: $medium-green;
+  }
+  
+  tbody tr:hover {
+    background-color: $light-green;
+  }
+
+  td {
+    width: 15%;
+  }
+
+  .glyphicon-plus {
+    font-size: 28px;
+    margin-left: 5px;
+    position:absolute;
+    right: 2px;
+    color: $dark-green;
+    z-index: 999
+  }
+  
+  .inside-member-list {
+    background: transparent !important;
+    padding-left: 20px;
+
+    li {
+      padding: 10px 0;
+    }
+  }
+
+  ul.padded {
+    padding: 45px 10px 10px;
+  }
+}
+
+  /**********************/
+ /***  Add Members   ***/
+/**********************/
+
+#add_member {
+  cursor: pointer;
+}
+
+#added_members {
+  display: none;
+}
+
+  /**********************/
+ /***   Users#show   ***/
+/**********************/
+
+#show_user {
   ul {
     background-color: $light-green;
 
@@ -127,449 +550,20 @@ canvas#drawing-surface {
     border-right: $border $medium-green;
   }
 
-  input[type="text"], textarea {
-    border-radius: 0;
-    border-bottom: $border $light-gray;
-    width: 100%;
-    margin: 5px 0;
-  }
-
-  .user-remove, .user-delete {
-    border: none;
-  }
-
-  .user-add {
-    border: none;
-    font-weight: 600;
-    background: $dark-green;
-  }
-
-  .to-delete {
-    text-decoration: line-through;
-    color: #9b001c;
-  }
-
-  table {
-    background-color: rgba(128, 128, 128, 0.5);
-    margin: 10px 0;
-  }
-
-  thead, tbody td:first-child {
-    background-color: $medium-green;
-  }
-
-  tbody tr:hover {
-    background-color: $light-green;
-  }
-
-  td {
-    width: 15%;
-  }
-
-  .glyphicon-plus {
-    font-size: 28px;
-    margin-left: 5px;
-    margin-top: 5px;
-    position:absolute;
-    right: 2px;
-    color: $dark-green;
-    z-index: 999
-  }
-
-  .tooltip-wrap {
-    position: relative;
-  }
-
-  .tooltip-wrap .tooltip-content {
-    display: none;
-    position: absolute;
-    top: 0;
-    padding-left: 20px;
-  }
-
-  .tooltip-wrap:hover .tooltip-content {
-    display: block;
-  }
-
-  .opacity {
-    background-color: rgba(128, 128, 128, 0.5);
-  }
-
-  ul.padded {
-    padding-top: 50px;
-  }
-}
-
-#landing {
-  max-width: 960px;
-  margin: 0 auto;
-
-  p {
-    font-size: 1.6em;
-    color: white;
-    margin: 20px 0;
-    font-weight: 300;
-  }
-
-  form {
-    clear: both;
-  }
-
-  input {
-    border-radius: 0;
-    height: 35px;
-  }
-}
-
-#show_remote {
-  .canvas-controls {
-    background-color: $light-gold;
-    height: 32px;
-    width: 630px;
-
-    .btn-canvas-controls {
-      background-color: $dark-gold;
-      border: none;
-      border-bottom: $border $light-gold;
-      height: 24px;
-
-      &:hover {
-        background-color: $light-gold;
-      }
-    }
-
-    p {
-      display: inline;
-      padding: 10px;
-    }
-
-    #linecolor {
-      display: inline !important;
-
-      .input-group-btn {
-        display: inline;
-      }
-    }
-
-    button.color-dropdown {
-      border-radius: 0;
-      height: 27px;
-      padding: 0 5px;
-      background-color: $light-gold;
-      border: none;
-    }
-
-    .hex-pound, input#color, .color-menu-tabs {
-      display: none;
-    }
-
-    .saturation-text, .lightness-text, .hue-text, .preview-text {
-      display: none;
-    }
-
-    .color-menu {
-      border-radius: 0;
-    }
-
-    .dropdown-menu {
-      min-width: 335px;
-    }
-
-    .advanced-list {
-      margin-top: 0;
-    }
-
-    .advanced-content {
-      top: 10px;
-    }
-
-    .color-preview, .color-box {
-      border-radius: 0;
-    }
-
-    input#line {
-      display: inline;
-      width: 250px;
-    }
-  }
-
-  #chat {
-    #chat_character_limit {
-      margin-left: 11px;
-      font-size: 10px;
-    }
-
-    #chat_messages {
-      height: 320px;
-      overflow-y: scroll;
-    }
-
-    #chat_table_body {
-      font-size: 12px;
-
-      td {
-        border: none;
-      }
-
-      tr {
-        border-top: 1px solid #ddd;
-        clear: both;
-        word-wrap: break-word;
-        white-space: normal;
-      }
-
-      tr.chat-body td {
-        &:first-child {
-          width: 60%;
-          float: left;
-        }
-
-        &:last-child {
-          width: 40%;
-          float: right;
-          text-align: right;
-        }
-      }
-    }
-  }
-
-  #video_info {
-    width: 630px;
-    height: 245px;
-
-    .glyphicon {
-      margin-right: 10px;
-    }
-
-    div.video-body {
-      height: 190px;
-      overflow: auto;
-    }
-  }
-
-  .video-heading {
-    background-color: $light-green;
-    padding: 10px;
-    color: white;
-    font-weight: 300;
-    font-size: 16px;
-
-    h3.panel-title {
-      font-weight: 300;
-      font-size: 16px;
-    }
-  }
-
-  .video-body {
-    padding: 10px;
-    color: #999;
-  }
-
-  #watchers_container {
-    height: 250px;
-
-    ul#watchers_group {
-      height: 185px;
-    }
-
-    ul#watchers {
-      height: 185px;
-      overflow: auto;
-    }
-  }
-
-  #playlist {
-    a {
-      font-size: 12px;
-    }
-  }
-
-  #playlist_group {
-    min-height: 155px;
-  }
-}
-
-.btn {
-  border: none;
-  background-color: $dark-gold;
-  border-bottom: $border $light-gold;
-  color: white;
-  font-weight: 300;
-  border-radius: 0;
-
-  &:hover {
-    background-color: $light-gold !important;
-    color: white; 
-  }
-}
-
-.btn-inline {
-  border-right: $border $light-gold;
-
-  &:hover {
-    border-right: $border $light-gold;
-  }
-}
-
-.btn-noborder {
-  border: none;
-  padding: 5px;
-}
-
-.btn-danger {
-  width: 20px;
-  height: 20px;
-  padding: 0;
-  border: none;
-  background-color: #d2322d;
-
-  &:hover {
-    background-color: #ac2925;
-  }
-}
-
-#registration {
-  h1, h2, h3 {
-    font-weight: 300;
-  }
-
   a {
-    color: $minty-green;
+    color: white;
+    padding: 10px;
+    font-size: 18px;
 
     &:hover {
-      color: white;
+      color: $minty-green;
     }
   }
-
-  label {
-    font-weight: 300;
-  }
-
-  .btn-edit {
-    margin-top: 10px;
-  }
-
-  .authform {
-    padding-top: 0;
-    max-width: 500px;
-    margin: 0 auto;
-
-    form {
-      border-radius: 0;
-      box-shadow: none;
-      -webkit-box-shadow: none;
-      border: none;
-      background-color: rgba(128, 128, 128, 0);
-      margin-bottom: 50px;
-      padding-bottom: 50px;
-    }
-
-    fieldset {
-      border: none;
-      border-radius: 0;
-      box-shadow: none;
-      background-color: rgba(128, 128, 128, 0.5);
-      padding: 10px;
-    }
-
-    input {
-      height: 30px;
-      width: 100%;
-      border-radius: 0;
-    }
-
-    .form-control {
-      border: none;
-      border-radius: 0;
-      box-shadow: 0;
-    }
-  }
-
-  .checkbox {
-    margin-top: 70px;
-
-    input[type="checkbox"] {
-      height: auto;
-      margin: 4px 0 0 -20px;
-      width: 7%;
-    }
-  }
-
-  input#adcopy_response {
-    color: black;
-  }
-
-  #adcopy-outer {
-    width: 306px;
-    border-radius: 0;
-    border: none;
-  }
 }
 
-.list-group-item {
-  border: none;
-}
-
-.list-group-item:first-child, .list-group-item:last-child {
-  border-radius: 0;
-  color: #999;
-}
-
-input, textarea {
-  border-bottom: $border $light-gray;
-}
-
-.btn-edit {
-  background-color: $dark-gold;
-  font-weight: 300;
-  color: white;
-  padding: 2px;
-  border-radius: 0;
-}
-
-.btn-red {
-  background-color: #9b001c;
-}
-
-.display-table {
-  display: table;
-}
-
-.description-height {
-  height: 125px;
-}
-
-.edit-description {
-  width: 400px;
-  height: 60px;
-
-  button[type="button"] {
-    display: table;
-    border-bottom: $border #f73e5f;
-    border-right: $border #f73e5f;
-  }
-
-  button[type="submit"] {
-    border-right: $border $light-gold;
-    width: 100%;
-  }
-
-  textarea {
-    height: 60px !important;
-    border-bottom: $border $light-gray;
-  }
-}
-
-.input-group-sm > .input-group-btn > .btn, .input-group-sm > .form-control {
-  border-radius: 0;
-}
-
-.panel {
-  border-radius: 0;
-  border: none;
-  box-shadow: none;
-  -webkit-box-shadow: none;
-}
+  /*****************************/
+ /*** General Style Classes ***/
+/*****************************/
 
 .left {
   float: left;
@@ -579,62 +573,21 @@ input, textarea {
   float: right;
 }
 
-.no-margin {
-  margin: 0 -30px;
+.sortable {
+  cursor: pointer;
+  color: $dark-green;
 }
 
 .inline {
-  display:inline;
+  display: inline;
 }
 
 .full-width {
   width: 100%;
 }
 
-.alert {
-  border-radius: 0;
-  margin: 0 auto;
-}
-
-#remote_name, #remote_description, #add_members {
-  cursor: pointer;
-}
-
-#added_members {
-  display: none;
-}
-
-.inside-member-list {
-  background: transparent !important;
-  padding-left: 20px;
-}
-
-.grey-text {
-  color: grey;
-}
-
 .padding {
   padding: 10px
-}
-
-.show {
-  display: block !important;
-}
-
-.sortable {
-  cursor: pointer;
-}
-
-#clear_playlist {
-  margin-top: -25px;
-  border-radius: 0;
-  font-weight: 300;
-  background: $dark-gold;
-  font-size: 12px;
-}
-
-.tooltip-inner {
-  max-width: 480px;
 }
 
 .text-align-center {
@@ -645,6 +598,30 @@ input, textarea {
   color: #00a67c;
 }
 
+.margin-center {
+  margin: 0 auto;
+}
+
+.margin-left {
+  margin-left: 20px;
+}
+
+.grey-text {
+  color: grey;
+}
+
+.show {
+  display: block !important;
+}
+
+.opacity {
+  background-color: rgba(128, 128, 128, 0.5);
+}
+
+  /************************/
+ /***   Form Errors    ***/
+/************************/
+
 .error {
   color: red;
 }
@@ -653,23 +630,14 @@ textarea.error {
   border: 3px solid red;
 }
 
-.spaced-apart-links a {
-  padding-right: 25px;
-}
-
-.spacer {
-  height: 50px;
-  width: 100%;
-  clear: both;
-}
-
-#footer p {
-  margin: 0 0 0;
-}
-
-.margin-center {
+.alert {
+  border-radius: 0;
   margin: 0 auto;
 }
+
+  /************************/
+ /***      Resync      ***/
+/************************/
 
 #resync:before {
   font-family: VideoJS;
@@ -680,6 +648,24 @@ textarea.error {
   cursor:pointer;
 }
 
-#share {
-  width: 20em;
+  /************************/
+ /*** Disconnect Alert ***/
+/************************/
+
+.connect-alert {
+  position: fixed;
+  display: none;
+  border-radius: 0;
+  margin: 0;
+  z-index: 9999;
+}
+
+  /************************/
+ /***  Bottom Spacer   ***/
+/************************/
+
+.spacer {
+  height: 50px;
+  width: 100%;
+  clear: both;
 }

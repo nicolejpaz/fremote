@@ -5,6 +5,7 @@ class Playlist
   include RemotesHelper
   field :list, type: Array, default: []
   field :selection, type: Integer, default: 0
+  field :playing, type: Integer
   embedded_in :remote
 
   def sort_list_item(old_position, new_position, user = nil)
@@ -13,9 +14,11 @@ class Playlist
     list.delete_at(old_position)
     list.insert(new_position, element)
     self.list = list
+    self.playing = new_position
     if is_authorized?(self.remote, user)
-     self.save
-     ActiveSupport::Notifications.instrument("playlist_sort:#{self.remote.remote_id}", {'playlist' => self.list }.to_json)
+      self.save
+      ActiveSupport::Notifications.instrument("playlist_sort:#{self.remote.remote_id}", {'playlist' => self.list }.to_json)
+      Notify.new("playlist_play:#{self.remote.remote_id}", {"playing" => self.playing})
     end
   end
 
@@ -46,7 +49,8 @@ class Playlist
       self.save
       self.remote.save
       if self.list[self.selection]
-        Notify.new("control:#{self.remote.remote_id}", {'start_at' => self.remote.start_at, 'status' => self.remote.status, 'updated_at' => self.remote.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.list[self.selection]["url"]))  })
+        Notify.new("control:#{self.remote.remote_id}", {'start_at' => self.remote.start_at, 'status' => self.remote.status, 'updated_at' => self.remote.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.list[self.selection]["url"])) })
+        Notify.new("playlist_play:#{self.remote.remote_id}", 'playing' => self.playing)
       end
     end
     self.remote.save

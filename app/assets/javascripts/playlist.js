@@ -5,6 +5,7 @@ function Playlist(source, remote){
   var playlistGroup = $('#playlist_group')
   var listItems = $('#playlist li')
   var playlistClearButton = $('#clear_playlist')
+  var playIcon = '<span class="glyphicon glyphicon-play"></span> '
   self.selectedListItem = 0
 
   if (authorized === 'true') {
@@ -35,13 +36,21 @@ function Playlist(source, remote){
     self.clearPlaylist(event)   
   })
 
+  source.addEventListener("playlist_play:" + remote.remoteId, function(event) {
+    var data = JSON.parse(event.data)
+    $('#playlist span').remove()
+    $('#playlist li').eq(data.playing).prepend(playIcon)
+  })
+
   // Click event for playlist items.
   self.element.on('click', '.playlist-title', function(){
     var thisSelf = $(this)
+    var select = $('#playlist li').index(thisSelf.parent())
+
     $.ajax({
       type: 'POST',
       url: '/remotes/' + remote.remoteId + '/control',
-      data: { _method:'PUT', status: 0, start_at: remote.startAt, sender_id: user, selection: $('#playlist li').index(thisSelf.parent())},
+      data: { _method:'PUT', status: 0, start_at: remote.startAt, sender_id: user, selection: select, playing: select},
       dataType: 'JSON'
     })
   })

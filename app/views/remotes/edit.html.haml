@@ -1,5 +1,5 @@
 - content_for(:title){ "Edit Remote - Fremote" }
-#center_column
+.container
   #remote
     %h3 Edit Remote
     = form_for @remote, :url => { :controller => 'remotes', :action => 'update' }, :html => {:id => "edit_remote"} do |f|

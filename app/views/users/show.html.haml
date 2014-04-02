@@ -1,5 +1,5 @@
-#center_column
-  #remote
+.container
+  #show_user
     %h3
       #{@user_viewed.name}
     .container
@@ -15,8 +15,8 @@
                       %h5
                         %span.glyphicon.glyphicon-link
                         = link_to "#{remote.name}", remote_path(remote.remote_id)
-                      %ul
-                        %li #{remote.description}
+                      %ul.list-unstyled
+                        %li.margin-left #{remote.description}
               - else
                 %p This user has no remotes.
                 

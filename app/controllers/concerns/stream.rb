@@ -22,6 +22,10 @@ module Stream
     # cause the thread to die.
     # This thread also notifies the server and clients whether or not a person is viewing a remote.
     heartbeat = Thread.new do
+      remote.watchers = [] if ENV['server_mode'] == '1'
+      remote.save
+      ENV['server_mode'] = '0'
+
       # Define lambdas that are called to add and remote watchers from the watcher list.
       watch = lambda { |remote, username, user_kind|
         remote = remote.reload

@@ -12,8 +12,9 @@ function Playlist(source, remote){
     self.playlistItemHead = '<li class="playlist_item sortable" draggable="true"><a class="playlist-title">'
     self.playlistItemFoot = '</a><button class="btn-xfs btn-danger right playlist-delete">X</button></li>'
   } else {
-    self.playlistItemHead = '<li class="playlist_item"><a class="playlist-title">'
+    self.playlistItemHead = '<li class="playlist_item" draggable="false"><a class="playlist-title">'
     self.playlistItemFoot = '</a></li>'
+    $('ol.sortable').removeClass('sortable')
   }
 
   source.addEventListener("playlist_sort:" + remote.remoteId, function(event){
@@ -76,6 +77,12 @@ function Playlist(source, remote){
     })
   })
 
+  self.makeSortable = function(element) {
+    if (authorized === 'true') {
+      element.sortable()
+    }
+  }
+
   $('#playlist_group form').on('ajax:success', function(){
     $('#playlist_url_field').val('')
   })
@@ -108,7 +115,7 @@ function Playlist(source, remote){
       $.each(response, function(index, item){
         self.element.append(self.playlistItemHead + item.title + self.playlistItemFoot)
       })
-      self.element.sortable()
+      self.makeSortable(self.element)
     })    
   }
 
@@ -121,7 +128,7 @@ function Playlist(source, remote){
       self.element.append(self.playlistItemHead + item.title + self.playlistItemFoot)
     })
 
-    self.element.sortable()
+    self.makeSortable(self.element)
   }
 
   self.blockPlaylist = function(event) {
@@ -142,7 +149,7 @@ function Playlist(source, remote){
   self.addToPlaylist = function(event) {
     var data = JSON.parse(event.data)
     self.element.append(self.playlistItemHead + JSON.parse(data).title + self.playlistItemFoot)
-    self.element.sortable()
+    self.makeSortable(self.element)
   }
 
   self.deleteFromPlaylist = function(event) {
@@ -165,7 +172,7 @@ function Playlist(source, remote){
       $.each(response, function(index, item){
         self.element.append(self.playlistItemHead + item.title + self.playlistItemFoot)
       })
-      self.element.sortable()
+      self.makeSortable(self.element)
     })
   }
 

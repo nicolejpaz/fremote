@@ -6,6 +6,7 @@ class Playlist
   field :list, type: Array, default: []
   field :selection, type: Integer, default: 0
   field :playing, type: Integer
+  field :votes, type: Integer, default: 0
   embedded_in :remote
 
   def sort_list_item(old_position, new_position, user = nil)

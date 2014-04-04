@@ -383,4 +383,20 @@ describe RemotesController do
       end
     end
   end
+
+  context 'POST change' do
+    before(:each) do
+      VCR.use_cassette('playlist') do
+        @added_item = Media.new("https://www.youtube.com/watch?v=R4i8SpNgzA4")
+      end
+
+      @sample_remote.playlist.add_list_item(@added_item)
+    end
+    
+    it 'adds to the remote\'s votes' do
+      post :change, id: @sample_remote.remote_id
+
+      expect(@sample_remote.playlist.votes).to eq 0
+    end 
+  end
 end

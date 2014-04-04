@@ -11,6 +11,7 @@ Fremote::Application.routes.draw do
   post 'remotes/:id/write' => 'drawings#write'
   put 'remotes/:id/drawings' => 'drawings#update'
   get 'remotes/:id/read' => 'drawings#read'
+  post 'remotes/:id/change' => 'remotes#change'
   get 'time' => 'remotes#time'
   put 'remotes/:id/control' => 'remotes#control'
   get 'how-it-works' => 'pages#how_it_works'

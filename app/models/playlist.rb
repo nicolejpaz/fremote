@@ -15,7 +15,14 @@ class Playlist
     list.delete_at(old_position)
     list.insert(new_position, element)
     self.list = list
-    self.playing = new_position
+    if old_position == self.selection
+      self.selection = new_position
+    elsif new_position <= self.selection
+      self.selection += 1
+    elsif new_position > self.selection
+      self.selection -= 1
+    end
+    self.playing = self.selection
     if is_authorized?(self.remote, user)
       self.save
       ActiveSupport::Notifications.instrument("playlist_sort:#{self.remote.remote_id}", {'playlist' => self.list }.to_json)

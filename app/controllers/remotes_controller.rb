@@ -64,16 +64,13 @@ class RemotesController < ApplicationController
   
   def change
     @remote = Remote.find_by({remote_id: params[:id]})
-    @remote_watchers = @remote.watchers.length / 3
+    @votes_to_skip = @remote.watchers.length / 3
     @remote.playlist.votes += 1
     @remote.playlist.save
     @remote.save
-    if @remote_watchers > 0
-      @votes_to_skip = @remote_watchers
-    else
-      @votes_to_skip = 1
-    end
-    @remote.skip if @remote.playlist.votes > @remote_watchers
+    @votes_to_skip = 1 if @votes_to_skip == 0
+    Notify.new("playlist_votes:#{@remote.remote_id}", {"votes" => @remote.playlist.votes}.to_json)
+    @remote.skip if @remote.playlist.votes >= @votes_to_skip
 
     render nothing: true
   end
@@ -89,6 +86,7 @@ class RemotesController < ApplicationController
     @playlist = Playlist.new
     @remote_name = @remote.name
     @remote_description = @remote.description
+    @remote_votes = @remote.playlist.votes
     @guest_name = Object.new
     render Remotes.what_to_render(@user, params[:guest_name])
 	end

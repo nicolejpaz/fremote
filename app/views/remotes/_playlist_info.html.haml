@@ -13,9 +13,12 @@
         Share URL: #{ text_field_tag :share, 'http://fremote.tv' + remote_path(@remote), spellcheck: "false" }
       -if @remote.authorization.is_authorized?('settings', current_user)
         = link_to 'Edit Remote', edit_remote_path(@remote.remote_id), class: "btn btn-noborder right"
-    %span#skip.btn.btn-noborder.right
-      Skip Video
-      %span.glyphicon.glyphicon-fast-forward
+    %span.right
+      %span#skip.btn.btn-noborder
+        Skip
+        %span.glyphicon.glyphicon-fast-forward
+      %span#votes_skip
+        Votes: #{ @remote_votes }
     -if @remote.authorization.is_authorized?('settings', current_user)
       #remote_description
         %span.glyphicon.glyphicon-edit.left

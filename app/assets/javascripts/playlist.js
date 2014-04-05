@@ -43,6 +43,13 @@ function Playlist(source, remote){
     $('#playlist li').eq(data.playing).prepend(playIcon)
   })
 
+  source.addEventListener("playlist_votes:" + remote.remoteId, function(event) {
+    var data = JSON.parse(event.data)
+    data = JSON.parse(data)
+    
+    $('#votes_skip').text('Votes: ' + data.votes)
+  })
+
   // Click event for playlist items.
   self.element.on('click', '.playlist-title', function(){
     var thisSelf = $(this)

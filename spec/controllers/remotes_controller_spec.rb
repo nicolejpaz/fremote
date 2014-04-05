@@ -394,7 +394,9 @@ describe RemotesController do
     end
     
     it 'adds to the remote\'s votes' do
-      post :change, id: @sample_remote.remote_id
+      VCR.use_cassette('playlist') do
+        post :change, id: @sample_remote.remote_id
+      end
 
       expect(@sample_remote.playlist.votes).to eq 0
     end 

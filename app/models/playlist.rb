@@ -5,7 +5,7 @@ class Playlist
   include RemotesHelper
   field :list, type: Array, default: []
   field :selection, type: Integer, default: 0
-  field :playing, type: Integer
+  field :playing, type: Integer, default: 0
   field :votes, type: Integer, default: 0
   embedded_in :remote
 

@@ -64,10 +64,16 @@ class RemotesController < ApplicationController
   
   def change
     @remote = Remote.find_by({remote_id: params[:id]})
+    @remote_watchers = @remote.watchers.length / 3
     @remote.playlist.votes += 1
     @remote.playlist.save
     @remote.save
-    @remote.skip if @remote.playlist.votes > 5
+    if @remote_watchers > 0
+      @votes_to_skip = @remote_watchers
+    else
+      @votes_to_skip = 1
+    end
+    @remote.skip if @remote.playlist.votes > @remote_watchers
 
     render nothing: true
   end

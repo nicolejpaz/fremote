@@ -101,11 +101,11 @@ class Remote
       check_if_selection(params)
     end
   end
-    
+
   def skip
-    unless ((self.playlist.selection + 1) > (self.playlist.list.count - 1))
+    unless (self.playlist.playing + 1) > (self.playlist.list.count - 1)
+      self.playlist.playing += 1 if self.playlist.playing
       self.playlist.selection += 1
-      self.playlist.playing += 1
       self.status = 1
     end
     self.start_at = 0
@@ -113,7 +113,7 @@ class Remote
     self.playlist.save
     self.save
     Notify.new("playlist_block:#{self.remote_id}", {"block" => true}.to_json)
-    Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.selection]["url"])) })
+    Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.playing]["url"])) })
     Notify.new("playlist_play:#{self.remote_id}", 'playing' => self.playlist.playing)
     Notify.new("playlist_block:#{self.remote_id}", {"block" => false}.to_json)
   end

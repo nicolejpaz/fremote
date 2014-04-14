@@ -61,6 +61,19 @@ class RemotesController < ApplicationController
     result = {'start_at' => @remote.start_at, 'status' => @remote.status, 'updated_at' => @remote.last_controlled_at.to_s, 'dispatched_at' => Time.now, 'sender_id' => 'fremote_server', 'selection' => @playlist.selection, 'stream_url' => URI::encode(Media.link(@playlist.list[@playlist.selection]["url"])), 'playlist' => @playlist.list, 'watchers' => @remote.watchers, 'playing' => @playlist.playing }
     render json: result.to_json
 	end
+  
+  def change
+    @remote = Remote.find_by({remote_id: params[:id]})
+    @votes_to_skip = @remote.watchers.length / 3
+    @remote.playlist.votes += 1
+    @remote.playlist.save
+    @remote.save
+    @votes_to_skip = 1 if @votes_to_skip == 0
+    Notify.new("playlist_votes:#{@remote.remote_id}", {"votes" => @remote.playlist.votes}.to_json)
+    @remote.skip if @remote.playlist.votes >= @votes_to_skip
+
+    render nothing: true
+  end
 
 	def show
     @user = current_user if current_user
@@ -73,6 +86,7 @@ class RemotesController < ApplicationController
     @playlist = Playlist.new
     @remote_name = @remote.name
     @remote_description = @remote.description
+    @remote_votes = @remote.playlist.votes
     @guest_name = Object.new
     render Remotes.what_to_render(@user, params[:guest_name])
 	end

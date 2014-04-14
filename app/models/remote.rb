@@ -102,6 +102,23 @@ class Remote
     end
   end
 
+  def skip
+    unless (self.playlist.playing + 1) > (self.playlist.list.count - 1)
+      self.playlist.playing += 1 if self.playlist.playing
+      self.playlist.selection += 1
+      self.status = 1
+    end
+    self.start_at = 0
+    self.playlist.votes = 0
+    self.playlist.save
+    self.save
+    Notify.new("playlist_block:#{self.remote_id}", {"block" => true}.to_json)
+    Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.playing]["url"])) })
+    Notify.new("playlist_play:#{self.remote_id}", 'playing' => self.playlist.playing)
+    Notify.new("playlist_votes:#{self.remote_id}", {"votes" => self.playlist.votes}.to_json)
+    Notify.new("playlist_block:#{self.remote_id}", {"block" => false}.to_json)
+  end
+
   def kind_of_user(user = nil)
     if user
       determine_user_type(user)
@@ -136,11 +153,13 @@ class Remote
   def check_if_selection(params)
     if params["playing"]
       self.playlist.playing = params["playing"].to_i
+      self.playlist.votes = 0
       self.playlist.save
       self.start_at = 0
       self.status = 1
       self.save
       Notify.new("playlist_play:#{self.remote_id}", {'playing' => self.playlist.playing})
+      Notify.new("playlist_votes:#{self.remote_id}", {"votes" => self.playlist.votes}.to_json)
       Notify.new("playlist_block:#{self.remote_id}", {"block" => false}.to_json)
     end
 
@@ -151,6 +170,7 @@ class Remote
     else
       self.save
       Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.last_controlled_at, 'dispatched_at' => Time.now })
+      Notify.new("playlist_votes:#{self.remote_id}", {"votes" => self.playlist.votes}.to_json)
       Notify.new("playlist_play:#{self.remote_id}", 'playing' => self.playlist.playing)
     end
   end
@@ -163,6 +183,7 @@ class Remote
     self.save
     Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.selection]["url"])) })
     Notify.new("playlist_play:#{self.remote_id}", 'playing' => self.playlist.playing)
+    Notify.new("playlist_votes:#{self.remote_id}", {"votes" => self.playlist.votes}.to_json)
     Notify.new("playlist_block:#{self.remote_id}", {"block" => false}.to_json)
   end
 
@@ -170,10 +191,14 @@ class Remote
     unless ((self.playlist.selection + 1) > (self.playlist.list.count - 1))
       self.playlist.selection = (self.playlist.selection + 1)
       self.status = 1
+      self.playlist.playing += 1
     end
     self.start_at = 0
+    self.playlist.votes = 0
+    self.playlist.save
     self.save
     Notify.new("control:#{self.remote_id}", {'start_at' => self.start_at, 'status' => self.status, 'updated_at' => self.updated_at, 'dispatched_at' => Time.now, 'stream_url' => URI::encode(Media.link(self.playlist.list[self.playlist.selection]["url"])) })
+    Notify.new("playlist_votes:#{self.remote_id}", {"votes" => self.playlist.votes}.to_json)
     Notify.new("playlist_play:#{self.remote_id}", 'playing' => self.playlist.playing)
   end
 

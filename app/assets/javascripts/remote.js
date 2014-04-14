@@ -56,6 +56,13 @@ function Remote(){
     }
   })
 
+  $('#skip').on('click', function() {
+    $.ajax({
+      type: 'POST',
+      url: '/remotes/' + self.remoteId + '/change'
+    }) 
+  })
+
   self.applyOrDeleteErrors = function(remaining, textarea, spans, textClass, remote, otherRemaining) {
     var editButton = $(remote).find('button').first()
     var submitInput = $(remote + ' input[type="submit"]')

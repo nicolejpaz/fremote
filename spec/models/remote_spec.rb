@@ -169,4 +169,29 @@ describe Remote do
       expect(user).to eq "user"
     end
   end
+
+  context "skip" do
+    before(:each) do
+      VCR.use_cassette('playlist') do
+        @added_item = Media.new("https://www.youtube.com/watch?v=R4i8SpNgzA4")
+      end
+      @sample_remote = Remote.make
+      VCR.use_cassette('remote') do
+        @sample_remote.populate(@params[:url])
+      end
+      @sample_remote.save  
+      @sample_remote.playlist.add_list_item(@added_item)
+      VCR.use_cassette('playlist') do
+        @sample_remote.skip
+      end
+    end
+
+    it "should set the start_at value to zero" do
+      expect(@sample_remote.start_at).to eq 0
+    end
+
+    it "should set the playlist votes to zero" do
+      expect(@sample_remote.playlist.votes).to eq 0
+    end
+  end
 end
